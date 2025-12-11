@@ -1,0 +1,9 @@
+# Es el archivo que lista todas las dependencias de
+# Python que necesita tu frontend Reflex.
+
+
+reflex>=0.4.0 
+ 
+
+
+ 
