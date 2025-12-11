@@ -4,7 +4,7 @@
 
 ---
 
-## 📅 Día 1 - 11 Diciembre 2024
+## 📅 Día 1 - 11 Diciembre 2025
 
 ### ✅ COMPLETADO: FASE 1 - Setup Inicial del Proyecto
 
@@ -99,7 +99,7 @@ mi_portfolio_reflex/
 
 ## 🎯 FASES COMPLETAS
 
-- [x] **FASE 1:** Setup inicial del proyecto ✅ (11/12/2024)
+- [x] **FASE 1:** Setup inicial del proyecto ✅ (11/12/2025)
 - [ ] **FASE 2:** Frontend básico (portada + home)
 - [ ] **FASE 3:** Secciones de contenido estático
 - [ ] **FASE 4:** Backend FastAPI + Base de datos

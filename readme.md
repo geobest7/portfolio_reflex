@@ -249,7 +249,7 @@ La API estará en: `http://localhost:8000/docs`
 
 ## 📊 Estado del Proyecto
 
-**Fase actual:** ✅ Fase 1 - Setup inicial completado (11/12/2024)
+**Fase actual:** ✅ Fase 1 - Setup inicial completado (11/12/2025)
 
 Ver `PROGRESO_DIARIO.md` para el tracking detallado del avance.
 
@@ -295,9 +295,8 @@ Todos los derechos reservados - Proyecto personal
 
 ## 👤 Autor
 
-[Tu Nombre]  
-[Tus enlaces: LinkedIn, GitHub, etc.]
+Alessandro Febbrai 
 
 ---
 
-**Última actualización:** 11 Diciembre 2024
+**Última actualización:** 11 Diciembre 2025
