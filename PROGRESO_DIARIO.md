@@ -72,25 +72,63 @@ mi_portfolio_reflex/
 
 ---
 
-## 📋 SIGUIENTE SESIÓN: FASE 2
+## 📅 Día 2 - 18 Diciembre 2025
+
+### ✅ COMPLETADO: FASE 2 (Parcial) - Sistema Multi-idioma
+
+#### 📄 Archivos creados
+
+1. **`frontend/mi_portfolio_reflex/state.py`** ✅
+   - Clase `State(rx.State)` con estado global
+   - Variable `idioma: str = "es"` (idioma por defecto)
+   - Método `cambiar_idioma(self, nuevo_idioma: str)` para cambiar idioma
+   - Método `t(self, key: str) -> str` helper para obtener traducciones
+   - Import: `from .translations import TRANSLATIONS`
+
+2. **`frontend/mi_portfolio_reflex/translations.py`** ✅
+   - Diccionario `TRANSLATIONS` con 4 idiomas completos
+   - **ES:** Español
+   - **EN:** Inglés (English)
+   - **IT:** Italiano
+   - **CA:** Catalán
+   - Traducciones navbar: nav_inicio, nav_sobre_mi, nav_proyectos, nav_contacto
+   - Traducciones hero: hero_titulo, hero_subtitulo, hero_descripcion, btn_proyectos, btn_cv
+   - **Nombre personal:** Alessandro Febbrai
+   - **Rol:** Desarrollador Python / Python Developer
+
+#### 🎓 Conceptos aprendidos hoy:
+1. **Estado global en Reflex:** Clase que hereda de `rx.State` para compartir datos
+2. **Diccionarios anidados:** Organización de traducciones por idioma y clave
+3. **Métodos helper:** Función `t()` para simplificar acceso a traducciones
+4. **Type hints:** Anotaciones de tipos (`str`, `-> str`)
+5. **Imports relativos:** `from .translations import TRANSLATIONS`
+
+---
+
+## 📋 SIGUIENTE SESIÓN: FASE 2 (Continuación)
 
 ### Frontend Básico (Portada + Home)
 
 **Tareas pendientes:**
 
-- [ ] 2.1 Sistema de estado global para idiomas (EN/IT/ES/CA)
-- [ ] 2.2 Diccionario de traducciones
-- [ ] 2.3 Componente selector de idioma
-- [ ] 2.4 Portada/landing con nombre
-- [ ] 2.5 Efecto lettering CSS al nombre
-- [ ] 2.6 Botones "Ver proyectos" y "CV"
-- [ ] 2.7 Crear navbar transparente/sticky
-- [ ] 2.8 Efecto navbar sólida al scroll
-- [ ] 2.9 Estilo negro minimalista base
+- [x] 2.1 Sistema de estado global para idiomas (EN/IT/ES/CA) ✅
+- [x] 2.2 Diccionario de traducciones ✅
+- [x] 2.3 Función helper para traducciones ✅
+- [ ] 2.4 Componente selector de idioma (4 botones visuales)
+- [ ] 2.5 Integrar State en archivo principal
+- [ ] 2.6 Portada/landing con nombre usando traducciones
+- [ ] 2.7 Efecto lettering CSS al nombre
+- [ ] 2.8 Botones "Ver proyectos" y "CV" traducidos
+- [ ] 2.9 Crear navbar transparente/sticky con links traducidos
+- [ ] 2.10 Efecto navbar sólida al scroll
+- [ ] 2.11 Estilo negro minimalista base
+
+**Próximo paso concreto:**
+Crear componente `selector_idioma()` que retorne 4 botones (ES/EN/IT/CA) con evento `on_click` que llame a `State.cambiar_idioma`.
 
 **Conceptos a aprender:**
-- Estado global en Reflex (rx.State)
-- Eventos y callbacks
+- Eventos y callbacks en Reflex
+- Componentes visuales (rx.button, rx.hstack)
 - Estilos CSS personalizados
 - Animaciones CSS
 - Componentes condicionales
@@ -100,7 +138,8 @@ mi_portfolio_reflex/
 ## 🎯 FASES COMPLETAS
 
 - [x] **FASE 1:** Setup inicial del proyecto ✅ (11/12/2025)
-- [ ] **FASE 2:** Frontend básico (portada + home)
+- [x] **FASE 2 (Parcial):** Sistema multi-idioma ✅ (18/12/2025)
+- [ ] **FASE 2 (Resto):** Portada, navbar, estilos
 - [ ] **FASE 3:** Secciones de contenido estático
 - [ ] **FASE 4:** Backend FastAPI + Base de datos
 - [ ] **FASE 5:** Integración Frontend-Backend
