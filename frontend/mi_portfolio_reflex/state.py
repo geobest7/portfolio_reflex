@@ -31,6 +31,22 @@ class State(rx.State):
     def btn_cv(self) -> str:
         return TRANSLATIONS.get(self.idioma, {}).get("btn_cv", "")
 
+    @rx.var
+    def nav_inicio(self) -> str:
+        return TRANSLATIONS.get(self.idioma, {}).get("nav_inicio", "")
+    
+    @rx.var
+    def nav_sobre_mi(self) -> str:
+        return TRANSLATIONS.get(self.idioma, {}).get("nav_sobre_mi", "")
+    
+    @rx.var
+    def nav_proyectos(self) -> str:
+        return TRANSLATIONS.get(self.idioma, {}).get("nav_proyectos", "")
+    
+    @rx.var
+    def nav_contacto(self) -> str:
+        return TRANSLATIONS.get(self.idioma, {}).get("nav_contacto", "")
+
     
     
 
