@@ -10,9 +10,29 @@ class State(rx.State):
         self.idioma = nuevo_idioma
     
 
-    def t(self, key: str) -> str:
-        """Obtiene la traducción de una clave según el idioma actual"""
-        return TRANSLATIONS.get(self.idioma, {}).get(key, key)
+    # Propiedades computadas para cada traducción
+    @rx.var
+    def hero_titulo(self) -> str:
+        return TRANSLATIONS.get(self.idioma, {}).get("hero_titulo", "")
+    
+    @rx.var
+    def hero_subtitulo(self) -> str:
+        return TRANSLATIONS.get(self.idioma, {}).get("hero_subtitulo", "")
+    
+    @rx.var
+    def hero_descripcion(self) -> str:
+        return TRANSLATIONS.get(self.idioma, {}).get("hero_descripcion", "")
+    
+    @rx.var
+    def btn_proyectos(self) -> str:
+        return TRANSLATIONS.get(self.idioma, {}).get("btn_proyectos", "")
+    
+    @rx.var
+    def btn_cv(self) -> str:
+        return TRANSLATIONS.get(self.idioma, {}).get("btn_cv", "")
+
+    
+    
 
 
 
