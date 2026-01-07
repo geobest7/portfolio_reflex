@@ -102,8 +102,8 @@ def portada() -> rx.Component:
     return rx.box(
         rx.center(
             rx.vstack(
-                rx.heading("Alessandro Febbrai", size="9", class_name="gradient-text"),
-                rx.text("Select language / Selecciona idioma", color="gray", size="3"),
+                rx.heading("Alessandro Febbrai", size="9", color="white"),
+                rx.text("Select language / Selecciona idioma / Seleziona lingua / Selecciona l'idioma", color="#808080", size="3", text_align="center"),
                 selector_idioma_portada(),
                 spacing="6",
             ),
@@ -136,6 +136,6 @@ def home() -> rx.Component:
     )
 
 
-app = rx.App(stylesheets=["/styles/styles.css"])
+app = rx.App()
 app.add_page(portada, route="/")
 app.add_page(home, route="/home")

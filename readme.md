@@ -7,8 +7,7 @@ Portfolio personal desarrollado con **Reflex** (frontend) y **FastAPI** (backend
 ## 📋 Características Planificadas
 
 - 🌍 **Multi-idioma:** Selector de idiomas (ES / EN / IT / CA) con estado global
-- 🎭 **Diseño negro minimalista:** Interfaz elegante y moderna
-- ✨ **Efecto lettering animado:** Animación del nombre en la portada
+- 🎭 **Diseño negro minimalista:** Interfaz elegante, limpia y profesional
 - 📊 **Panel de administración:** CRUD completo para gestionar contenido
 - 📈 **Sistema de analíticas propio:** Tracking de visitas, país, dispositivo, clicks
 - 🔐 **Autenticación JWT:** Sistema seguro de login para admin
@@ -146,17 +145,20 @@ port = 3000                        # Puerto donde corre la app
 
 ---
 
-### **Archivos de Código**
+### Archivos de Código
 
 #### `frontend/mi_portfolio_reflex/mi_portfolio_reflex.py`
 **Qué es:** Archivo principal de la aplicación Reflex.  
 **Para qué sirve:** Define las páginas, componentes y rutas de tu portfolio.  
-**Contenido actual:**
-- Función `index()` que retorna la página principal
-- `app = rx.App()` crea la aplicación
-- `app.add_page(index)` registra la página
 
-**Próximos pasos:** Aquí añadiremos el selector de idiomas, navbar, portada, secciones, etc.
+**Contenido actual:**
+- `selector_idioma_portada()` - Selector con redirección a /home
+- `selector_idioma()` - Selector sin redirección para navbar
+- `navbar()` - Barra de navegación con links traducidos
+- `portada()` - Página inicial (ruta `/`)
+- `home()` - Página principal (ruta `/home`)
+- `app = rx.App()` - Inicialización de la aplicación
+- Registro de rutas con `app.add_page()`
 
 ---
 
@@ -173,7 +175,7 @@ port = 3000                        # Puerto donde corre la app
 
 ---
 
-### **Archivos de Documentación**
+### Archivos de Documentación
 
 #### `README.md`
 **Qué es:** Este archivo que estás leyendo.  
@@ -188,7 +190,128 @@ port = 3000                        # Puerto donde corre la app
 
 ---
 
-## 🚀 Instalación y Uso
+## Estructura Detallada de las Páginas
+
+### Página 1: Portada (`/`)
+
+**Ruta:** `http://localhost:3000/`
+
+**Propósito:** Página de bienvenida donde el usuario selecciona su idioma preferido.
+
+**Layout:**
+```
+┌─────────────────────────────────────┐
+│                                     │
+│         (Centrado vertical)         │
+│                                     │
+│      Alessandro Febbrai             │  ← Heading size 9, blanco
+│                                     │
+│   Select language / Selecciona      │  ← Texto gris (#808080)
+│           idioma                    │
+│                                     │
+│    [ES] [EN] [IT] [CA]             │  ← Botones horizontales
+│                                     │
+│         (Centrado vertical)         │
+│                                     │
+└─────────────────────────────────────┘
+```
+
+**Componentes (de arriba a abajo):**
+1. **rx.heading** - Nombre "Alessandro Febbrai"
+   - Tamaño: `size="9"` (muy grande)
+   - Color: Blanco
+   - Posición: Centrado
+
+2. **rx.text** - Texto "Select language / Selecciona idioma"
+   - Tamaño: `size="3"` (pequeño)
+   - Color: Gris `#808080`
+   - Posición: Centrado debajo del nombre
+
+3. **selector_idioma_portada()** - 4 botones de idioma
+   - Disposición: Horizontal (`rx.hstack`)
+   - Botones: ES, EN, IT, CA
+   - Funcionalidad: Al hacer clic, cambia idioma y redirige a `/home`
+   - Estilo: Fondo blanco para idioma activo, gris para inactivos
+
+**Características:**
+- Fondo negro puro (`#000000`)
+- Todo centrado vertical y horizontalmente
+- Altura mínima: 100vh (pantalla completa)
+- Sin navbar ni otros elementos
+
+---
+
+### Página 2: Home (`/home`)
+
+**Ruta:** `http://localhost:3000/home`
+
+**Propósito:** Página principal con contenido del portfolio traducido.
+
+**Layout:**
+```
+┌─────────────────────────────────────────────────────────┐
+│  AF    Inicio  Sobre mí  Proyectos  Contacto  [ES][EN] │  ← Navbar (horizontal)
+├─────────────────────────────────────────────────────────┤
+│                                                         │
+│                                                         │
+│         ¡Hola! Soy Alessandro Febbrai                  │  ← Hero título
+│                                                         │
+│              Desarrollador Python                       │  ← Hero subtítulo
+│                                                         │
+│           Estudiando programación                       │  ← Hero descripción
+│                                                         │
+│      [Ver proyectos]  [Descargar CV]                   │  ← Botones horizontales
+│                                                         │
+│                                                         │
+└─────────────────────────────────────────────────────────┘
+```
+
+**Componentes (de arriba a abajo):**
+
+1. **navbar()** - Barra de navegación superior
+   - Disposición: Horizontal (`rx.hstack`)
+   - Elementos de izquierda a derecha:
+     - Logo "AF" (heading size 7)
+     - Spacer (espacio flexible)
+     - Links: Inicio, Sobre mí, Proyectos, Contacto (horizontal)
+     - Spacer (espacio flexible)
+     - Selector de idioma (4 botones horizontales)
+   - Fondo: Negro `#000000`
+   - Padding: `1em 2em`
+   - Ancho: 100%
+
+2. **rx.vstack** - Contenido hero (vertical)
+   - **rx.heading** - Título traducido (ej: "¡Hola! Soy Alessandro Febbrai")
+     - Tamaño: `size="9"` (muy grande)
+     - Color: Blanco (heredado)
+   
+   - **rx.text** - Subtítulo traducido (ej: "Desarrollador Python")
+     - Tamaño: `size="5"` (mediano)
+     - Color: Blanco (heredado)
+   
+   - **rx.text** - Descripción traducida (ej: "Estudiando programación")
+     - Tamaño: Normal
+     - Color: Blanco (heredado)
+   
+   - **rx.hstack** - Botones de acción (horizontal)
+     - Botón 1: "Ver proyectos" (traducido)
+     - Botón 2: "Descargar CV" (traducido)
+     - Fondo: Gris oscuro `#1a1a1a`
+     - Color texto: Blanco
+     - Spacing: `4` (espacio entre botones)
+
+**Características:**
+- Fondo negro puro (`#000000`)
+- Texto blanco en toda la página
+- Navbar fija en la parte superior
+- Contenido hero con padding `4em 2em`
+- Spacing vertical entre elementos: `4`
+- Altura mínima: 100vh (pantalla completa)
+- Todo el contenido es reactivo y cambia según el idioma seleccionado
+
+---
+
+## Instalación y Uso
 
 ### Requisitos Previos
 - Python 3.9 o superior
@@ -299,4 +422,4 @@ Alessandro Febbrai
 
 ---
 
-**Última actualización:** 11 Diciembre 2025
+**Última actualización:** 7 Enero 2026
