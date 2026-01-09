@@ -252,17 +252,33 @@ port = 3000                        # Puerto donde corre la app
 ┌─────────────────────────────────────────────────────────┐
 │  AF    Inicio  Sobre mí  Proyectos  Contacto  [ES][EN] │  ← Navbar (horizontal)
 ├─────────────────────────────────────────────────────────┤
-│                                                         │
-│                                                         │
-│         ¡Hola! Soy Alessandro Febbrai                  │  ← Hero título
-│                                                         │
-│              Desarrollador Python                       │  ← Hero subtítulo
-│                                                         │
-│           Estudiando programación                       │  ← Hero descripción
-│                                                         │
-│      [Ver proyectos]  [Descargar CV]                   │  ← Botones horizontales
-│                                                         │
-│                                                         │
+│                    SECCIÓN HERO                         │
+│         ¡Hola! Soy Alessandro Febbrai                  │  ← Título
+│              Desarrollador Python                       │  ← Subtítulo
+│           Estudiando programación                       │  ← Descripción
+│      [Ver proyectos]  [Descargar CV]                   │  ← Botones
+├─────────────────────────────────────────────────────────┤
+│                  SECCIÓN SOBRE MÍ                       │
+│                    Sobre mí                             │  ← Título
+│         Descripción personal detallada...               │  ← Texto
+│                  Habilidades                            │  ← Subtítulo
+│    [Python] [Reflex] [FastAPI] [JavaScript] [Git]     │  ← Badges
+├─────────────────────────────────────────────────────────┤
+│                 SECCIÓN PROYECTOS                       │
+│                   Proyectos                             │  ← Título
+│  ┌──────────┐  ┌──────────┐  ┌──────────┐            │
+│  │Proyecto 1│  │Proyecto 2│  │Proyecto 3│            │  ← 3 Cards
+│  │  Desc... │  │  Desc... │  │  Desc... │            │
+│  │[Ver código]│ │[Ver código]│ │[Ver código]│         │
+│  └──────────┘  └──────────┘  └──────────┘            │
+├─────────────────────────────────────────────────────────┤
+│                 SECCIÓN CONTACTO                        │
+│                   Contacto                              │  ← Título
+│      ¿Tienes un proyecto en mente? ¡Hablemos!         │  ← Subtítulo
+│              [Input: Nombre]                            │
+│              [Input: Email]                             │
+│              [TextArea: Mensaje]                        │
+│              [Enviar mensaje]                           │  ← Botón
 └─────────────────────────────────────────────────────────┘
 ```
 
@@ -422,4 +438,4 @@ Alessandro Febbrai
 
 ---
 
-**Última actualización:** 7 Enero 2026
+**Última actualización:** 9 Enero 2026
