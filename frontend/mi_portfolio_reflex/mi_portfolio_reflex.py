@@ -97,6 +97,135 @@ def navbar() -> rx.Component:
     )
 
 
+def seccion_sobre_mi() -> rx.Component:
+    """Sección Sobre mí"""
+    return rx.box(
+        rx.vstack(
+            rx.heading(State.sobre_mi_titulo, size="8", color="white"),
+            rx.text(
+                State.sobre_mi_descripcion,
+                color="#cccccc",
+                size="4",
+                line_height="1.8",
+                max_width="800px",
+            ),
+            rx.heading(State.habilidades_titulo, size="6", color="white", margin_top="2em"),
+            rx.hstack(
+                rx.badge("Python", variant="outline", color_scheme="gray", style={"border_color": "white", "color": "white"}),
+                rx.badge("Reflex", variant="outline", color_scheme="gray", style={"border_color": "white", "color": "white"}),
+                rx.badge("FastAPI", variant="outline", color_scheme="gray", style={"border_color": "white", "color": "white"}),
+                rx.badge("JavaScript", variant="outline", color_scheme="gray", style={"border_color": "white", "color": "white"}),
+                rx.badge("Git", variant="outline", color_scheme="gray", style={"border_color": "white", "color": "white"}),
+                spacing="3",
+                wrap="wrap",
+            ),
+            spacing="4",
+            align="center",
+            text_align="center",
+        ),
+        padding="6em 2em",
+        bg="#000000",
+        width="100%",
+        id="sobre-mi",
+    )
+
+
+
+def card_proyecto(titulo: str, descripcion: str) -> rx.Component:
+    """Card individual de proyecto"""
+    return rx.box(
+        rx.vstack(
+            rx.heading(titulo, size="5", color="white"),
+            rx.text(descripcion, color="#cccccc", size="3", line_height="1.6"),
+            rx.button(
+                State.btn_ver_codigo,
+                variant="outline",
+                color_scheme="gray",
+                style={"border_color": "white", "color": "white"},
+            ),
+            spacing="3",
+            align="start",
+        ),
+        padding="2em",
+        border="1px solid #333333",
+        border_radius="8px",
+        bg="#0a0a0a",
+        width="100%",
+        max_width="350px",
+    )
+
+
+def seccion_proyectos() -> rx.Component:
+    """Sección Proyectos con grid de cards"""
+    return rx.box(
+        rx.vstack(
+            rx.heading(State.proyectos_titulo, size="8", color="white", margin_bottom="2em"),
+            rx.flex(
+                card_proyecto(State.proyecto_1_titulo, State.proyecto_1_desc),
+                card_proyecto(State.proyecto_2_titulo, State.proyecto_2_desc),
+                card_proyecto(State.proyecto_3_titulo, State.proyecto_3_desc),
+                spacing="4",
+                wrap="wrap",
+                justify="center",
+            ),
+            spacing="4",
+            align="center",
+        ),
+        padding="6em 2em",
+        bg="#000000",
+        width="100%",
+        id="proyectos",
+    )
+
+
+def seccion_contacto() -> rx.Component:
+    """Sección Contacto con formulario"""
+    return rx.box(
+        rx.vstack(
+            rx.heading(State.contacto_titulo, size="8", color="white"),
+            rx.text(State.contacto_subtitulo, color="#cccccc", size="4", margin_bottom="2em"),
+            rx.vstack(
+                rx.input(
+                    placeholder=State.form_nombre,
+                    width="100%",
+                    max_width="500px",
+                    size="3",
+                ),
+                rx.input(
+                    placeholder=State.form_email,
+                    type="email",
+                    width="100%",
+                    max_width="500px",
+                    size="3",
+                ),
+                rx.text_area(
+                    placeholder=State.form_mensaje,
+                    width="100%",
+                    max_width="500px",
+                    min_height="150px",
+                    size="3",
+                ),
+                rx.button(
+                    State.btn_enviar,
+                    size="3",
+                    variant="solid",
+                    color_scheme="gray",
+                    style={"background": "white", "color": "black"},
+                ),
+                spacing="4",
+                width="100%",
+                align="center",
+            ),
+            spacing="4",
+            align="center",
+            text_align="center",
+        ),
+        padding="6em 2em",
+        bg="#000000",
+        width="100%",
+        id="contacto",
+    )
+
 def portada() -> rx.Component:
     """Página de portada - Solo selector de idioma"""
     return rx.box(
@@ -130,6 +259,9 @@ def home() -> rx.Component:
             padding="4em 2em",
             spacing="4",
         ),
+        seccion_sobre_mi(),
+        seccion_proyectos(),
+        seccion_contacto(),
         bg="#000000",
         color="white",
         min_height="100vh",
