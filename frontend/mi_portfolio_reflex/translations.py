@@ -35,7 +35,11 @@ TRANSLATIONS = {
         "form_nombre": "Nombre",  
         "form_email": "Email",
         "form_mensaje": "Mensaje",  
-        "btn_enviar": "Enviar mensaje",  
+        "btn_enviar": "Enviar mensaje",
+
+
+        # footer
+        "footer_derechos": "Todos los derechos reservados",  
     },
 
     "en": {
@@ -78,6 +82,10 @@ TRANSLATIONS = {
         "form_email": "Email",
         "form_mensaje": "Message",
         "btn_enviar": "Send message",
+
+        
+        # footer
+        "footer_derechos": "All rights reserved",
     },
 
     "it": {
@@ -121,6 +129,10 @@ TRANSLATIONS = {
         "form_email": "Email",
         "form_mensaje": "Messaggio",
         "btn_enviar": "Invia messaggio",
+
+
+        # footer
+        "footer_derechos": "Tutti i diritti riservati",
     },
 
     "ca": {
@@ -163,6 +175,10 @@ TRANSLATIONS = {
         "form_email": "Correu electrònic",
         "form_mensaje": "Missatge",
         "btn_enviar": "Enviar missatge",
+
+
+        # footer
+        "footer_derechos": "Tots els drets reservats",
     },
 }
 

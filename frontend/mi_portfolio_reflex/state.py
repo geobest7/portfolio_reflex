@@ -96,6 +96,11 @@ class State(rx.State):
     @rx.var
     def btn_enviar(self) -> str:
         return TRANSLATIONS.get(self.idioma, {}).get("btn_enviar", "")
+
+
+    @rx.var
+    def footer_derechos(self) -> str:
+        return TRANSLATIONS.get(self.idioma, {}).get("footer_derechos", "")
     
     @rx.var
     def habilidades_titulo(self) -> str:
