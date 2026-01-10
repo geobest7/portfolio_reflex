@@ -371,24 +371,78 @@ Implementar las secciones principales del portfolio: Sobre mí, Proyectos y Cont
 - ✅ 60+ textos traducidos en total
 
 ### 📌 Próximos Pasos
-1. Implementar sticky navbar con efecto al hacer scroll
-2. Añadir smooth scroll a las secciones
-3. Mejorar responsive design (mobile/tablet)
-4. Añadir footer con links sociales
-5. Implementar funcionalidad real del formulario de contacto
-6. Añadir animaciones sutiles (opcional)
+1. Mejorar responsive design (mobile/tablet)
+2. Implementar funcionalidad real del formulario de contacto
+3. Añadir funcionalidad a botones "Ver proyectos" y "Descargar CV"
+4. Añadir animaciones sutiles (opcional)
+5. Optimizar rendimiento y SEO
+
+---
+
+## Día 6 - 10 Enero 2026
+
+### 🎯 Objetivo de la Sesión
+Implementar mejoras de UX: sticky navbar, smooth scroll y footer con links sociales.
+
+### ✅ Tareas Completadas
+
+#### 1. Sticky Navbar
+- [x] Navbar con `position="fixed"` y `z_index="1000"`
+- [x] Ajustado `padding_top="6em"` en sección hero para compensar navbar fija
+- [x] Navbar permanece visible al hacer scroll
+
+#### 2. Smooth Scroll
+- [x] Creado archivo CSS en `assets/styles/styles.css`
+- [x] Añadido `scroll-behavior: smooth` en HTML
+- [x] Añadido `scroll-margin-top: 80px` para compensar navbar fija
+- [x] Vinculado CSS en `rx.App(stylesheets=["styles/styles.css"])`
+- [x] Añadido `id="inicio"` a sección hero
+- [x] Navegación suave funcionando entre todas las secciones
+
+#### 3. Footer con Links Sociales
+- [x] Añadidas traducciones de `footer_derechos` en 4 idiomas
+- [x] Creada propiedad computada en `state.py`
+- [x] Implementado componente `footer()` con:
+  - Links a GitHub, LinkedIn y Email
+  - Iconos de redes sociales
+  - Copyright traducido dinámicamente
+  - Atributo `is_external=True` para abrir links en nueva pestaña
+- [x] Integrado footer en página `home()`
+
+### 📊 Archivos Modificados
+- `frontend/mi_portfolio_reflex/mi_portfolio_reflex.py` - +50 líneas (navbar sticky, footer)
+- `frontend/mi_portfolio_reflex/state.py` - +5 líneas (propiedad footer)
+- `frontend/mi_portfolio_reflex/translations.py` - +8 líneas (traducciones footer)
+- `frontend/assets/styles/styles.css` - +8 líneas (smooth scroll CSS)
+- `README.md` - Actualizado con nuevos componentes
+- `PROGRESO_DIARIO.md` - Esta entrada
+
+### 🎨 Mejoras de UX Implementadas
+- **Sticky Navbar**: Siempre visible, mejora la navegación
+- **Smooth Scroll**: Transiciones suaves entre secciones
+- **Footer Profesional**: Links sociales con hover effect
+- **Links Externos**: Se abren en nueva pestaña (mejor UX)
+
+### 💾 Commits Realizados
+1. "Añadir sticky navbar, smooth scroll y footer con links sociales"
+
+### 📌 Próximos Pasos
+1. Responsive design para móvil/tablet
+2. Funcionalidad del formulario de contacto
+3. Funcionalidad de botones "Ver proyectos" y "Descargar CV"
+4. Optimizaciones de rendimiento
 
 ---
 
 ## ⏭️ PRÓXIMA SESIÓN
 
-**Objetivo:** Mejorar UX y responsive design
+**Objetivo:** Responsive design y funcionalidades
 
 **Tareas prioritarias:**
-1. Sticky navbar con scroll effect
-2. Smooth scroll entre secciones
-3. Responsive design para móvil
-4. Footer con información de contacto
-5. Funcionalidad de botones
+1. Media queries para móvil y tablet
+2. Menú hamburguesa para móvil
+3. Funcionalidad del formulario de contacto
+4. Scroll to top button
+5. Optimizar imágenes y rendimiento
 
 **Duración estimada:** 2-3 horas

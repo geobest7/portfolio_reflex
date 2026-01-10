@@ -154,10 +154,15 @@ port = 3000                        # Puerto donde corre la app
 **Contenido actual:**
 - `selector_idioma_portada()` - Selector con redirección a /home
 - `selector_idioma()` - Selector sin redirección para navbar
-- `navbar()` - Barra de navegación con links traducidos
+- `navbar()` - Barra de navegación sticky con links traducidos
+- `seccion_sobre_mi()` - Sección "Sobre mí" con descripción y badges de habilidades
+- `card_proyecto()` - Componente reutilizable para cards de proyectos
+- `seccion_proyectos()` - Sección de proyectos con grid de 3 cards
+- `seccion_contacto()` - Sección de contacto con formulario traducido
+- `footer()` - Footer con links sociales y copyright
 - `portada()` - Página inicial (ruta `/`)
 - `home()` - Página principal (ruta `/home`)
-- `app = rx.App()` - Inicialización de la aplicación
+- `app = rx.App()` - Inicialización de la aplicación con CSS personalizado
 - Registro de rutas con `app.add_page()`
 
 ---
@@ -438,4 +443,4 @@ Alessandro Febbrai
 
 ---
 
-**Última actualización:** 9 Enero 2026
+**Última actualización:** 10 Enero 2026
