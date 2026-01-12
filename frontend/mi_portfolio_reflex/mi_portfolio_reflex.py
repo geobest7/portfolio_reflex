@@ -85,6 +85,7 @@ def navbar() -> rx.Component:
                 rx.link(State.nav_proyectos, href="#proyectos", color="white"),
                 rx.link(State.nav_contacto, href="#contacto", color="white"),
                 spacing="6",
+                class_name="navbar-links",
             ),
             rx.spacer(),
             selector_idioma(),
@@ -170,6 +171,7 @@ def seccion_proyectos() -> rx.Component:
                 spacing="4",
                 wrap="wrap",
                 justify="center",
+                class_name="proyectos-grid",
             ),
             spacing="4",
             align="center",
@@ -239,7 +241,7 @@ def seccion_contacto() -> rx.Component:
             # Subtítulo antes del formulario
             rx.text(State.contacto_subtitulo, color="#cccccc", size="4", margin_bottom="2em"),
 
-            
+
             # Formulario de contacto
             rx.vstack(
                 rx.input(
@@ -311,6 +313,7 @@ def footer() -> rx.Component:
                     _hover={"color": "#808080"},
                 ),
                 spacing="6",
+                class_name="footer-social"
             ),
             rx.text(
                 f"© 2026 Alessandro Febbrai. {State.footer_derechos}",
