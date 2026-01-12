@@ -154,14 +154,15 @@ port = 3000                        # Puerto donde corre la app
 **Contenido actual:**
 - `selector_idioma_portada()` - Selector con redirección a /home
 - `selector_idioma()` - Selector sin redirección para navbar
-- `navbar()` - Barra de navegación sticky con links traducidos
+- `navbar()` - Barra de navegación sticky con links traducidos y link a CV
 - `seccion_sobre_mi()` - Sección "Sobre mí" con descripción y badges de habilidades
 - `card_proyecto()` - Componente reutilizable para cards de proyectos
 - `seccion_proyectos()` - Sección de proyectos con grid de 3 cards
-- `seccion_contacto()` - Sección de contacto con formulario traducido
+- `seccion_contacto()` - Sección de contacto con información y formulario traducido
 - `footer()` - Footer con links sociales y copyright
 - `portada()` - Página inicial (ruta `/`)
 - `home()` - Página principal (ruta `/home`)
+- `pagina_cv()` - Página CV con visor PDF a pantalla completa (ruta `/cv`)
 - `app = rx.App()` - Inicialización de la aplicación con CSS personalizado
 - Registro de rutas con `app.add_page()`
 
@@ -332,6 +333,43 @@ port = 3000                        # Puerto donde corre la app
 
 ---
 
+### Página 3: CV (`/cv`)
+
+**Ruta:** `http://localhost:3000/cv`
+
+**Propósito:** Visualizar el CV en formato PDF a pantalla completa.
+
+**Layout:**
+```
+┌─────────────────────────────────────────────────────────┐
+│  AF    Inicio  Sobre mí  Proyectos  Contacto  CV  [ES] │  ← Navbar
+├─────────────────────────────────────────────────────────┤
+│                                                         │
+│                                                         │
+│                    [PDF VIEWER]                         │
+│              Curriculum Vitae completo                  │
+│                 a pantalla completa                     │
+│                                                         │
+│                                                         │
+└─────────────────────────────────────────────────────────┘
+```
+
+**Componentes:**
+1. **navbar()** - Barra de navegación (igual que en /home)
+2. **rx.html con iframe** - Visor PDF a pantalla completa
+   - Archivo: `/CV.pdf` (servido desde `frontend/assets/`)
+   - Posición: `absolute` para ocupar toda la altura
+   - Altura: `calc(100% - 4em)` (pantalla completa menos navbar)
+   - Sin bordes
+
+**Características:**
+- PDF ocupa toda la pantalla disponible
+- Navbar permite navegar de vuelta a otras secciones
+- Diseño minimalista sin distracciones
+- El usuario puede usar el visor PDF nativo del navegador para descargar
+
+---
+
 ## Instalación y Uso
 
 ### Requisitos Previos
@@ -443,4 +481,4 @@ Alessandro Febbrai
 
 ---
 
-**Última actualización:** 10 Enero 2026
+**Última actualización:** 12 Enero 2026

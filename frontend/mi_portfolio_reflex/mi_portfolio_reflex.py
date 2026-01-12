@@ -80,10 +80,11 @@ def navbar() -> rx.Component:
             rx.heading("AF", size="7", color="white"),
             rx.spacer(),
             rx.hstack(
-                rx.link(State.nav_inicio, href="#inicio", color="white"),
-                rx.link(State.nav_sobre_mi, href="#sobre-mi", color="white"),
-                rx.link(State.nav_proyectos, href="#proyectos", color="white"),
-                rx.link(State.nav_contacto, href="#contacto", color="white"),
+                rx.link(State.nav_inicio, href="/home#inicio", color="white"),
+                rx.link(State.nav_sobre_mi, href="/home#sobre-mi", color="white"),
+                rx.link(State.nav_proyectos, href="/home#proyectos", color="white"),
+                rx.link(State.nav_contacto, href="/home#contacto", color="white"),
+            rx.link(State.nav_cv, href="/cv", color="white"),
                 spacing="6",
                 class_name="navbar-links",
             ),
@@ -356,11 +357,6 @@ def home() -> rx.Component:
             rx.heading(State.hero_titulo, size="9"),
             rx.text(State.hero_subtitulo, size="5"),
             rx.text(State.hero_descripcion),
-            rx.hstack(
-                rx.button(State.btn_proyectos, bg="#1a1a1a", color="white"),
-                rx.button(State.btn_cv, bg="#1a1a1a", color="white"),
-                spacing="4",
-            ),
             padding="4em 2em",
             padding_top="6em",
             spacing="4",
@@ -376,6 +372,20 @@ def home() -> rx.Component:
     )
 
 
+def pagina_cv() -> rx.Component:
+    """Página CV - PDF a pantalla completa con botón de descarga"""
+    return rx.box(
+        navbar(),
+        # PDF a pantalla completa con position absolute
+        rx.html(
+            '<iframe src="/CV.pdf" style="position: absolute; top: 4em; left: 0; width: 100%; height: calc(100% - 4em); border: none;"></iframe>',
+        ),
+        bg="#000000",
+        width="100%",
+        height="100vh",
+        position="relative",
+    )
+
 app = rx.App(
     stylesheets=[
         "styles/styles.css",
@@ -383,3 +393,4 @@ app = rx.App(
 )
 app.add_page(portada, route="/")
 app.add_page(home, route="/home")
+app.add_page(pagina_cv, route="/cv")

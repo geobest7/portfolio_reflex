@@ -24,14 +24,6 @@ class State(rx.State):
         return TRANSLATIONS.get(self.idioma, {}).get("hero_descripcion", "")
     
     @rx.var
-    def btn_proyectos(self) -> str:
-        return TRANSLATIONS.get(self.idioma, {}).get("btn_proyectos", "")
-    
-    @rx.var
-    def btn_cv(self) -> str:
-        return TRANSLATIONS.get(self.idioma, {}).get("btn_cv", "")
-
-    @rx.var
     def sobre_mi_titulo(self) -> str:
         return TRANSLATIONS.get(self.idioma, {}).get("sobre_mi_titulo", "")
     
@@ -102,7 +94,7 @@ class State(rx.State):
     def contacto_github(self) -> str:
         return TRANSLATIONS.get(self.idioma, {}).get("contacto_github", "")
 
-        
+
     @rx.var
     def form_nombre(self) -> str:
         return TRANSLATIONS.get(self.idioma, {}).get("form_nombre", "")
@@ -144,9 +136,6 @@ class State(rx.State):
     def nav_contacto(self) -> str:
         return TRANSLATIONS.get(self.idioma, {}).get("nav_contacto", "")
 
-    
-    
-
-
-
- 
+    @rx.var
+    def nav_cv(self) -> str:
+        return TRANSLATIONS.get(self.idioma, {}).get("nav_cv", "")

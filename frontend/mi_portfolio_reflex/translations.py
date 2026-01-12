@@ -5,13 +5,12 @@ TRANSLATIONS = {
         "nav_sobre_mi": "Sobre mí",
         "nav_proyectos": "Proyectos",
         "nav_contacto": "Contacto",
+        "nav_cv": "CV",
 
         # portada / Hero
         "hero_titulo": "¡Hola! Soy Alessandro Febbrai",
         "hero_subtitulo": "Desarrollador Python",
         "hero_descripcion": "Estudiando programación",
-        "btn_proyectos": "Ver proyectos",
-        "btn_cv": "Descargar CV",
 
         # sobre_mi  
         "sobre_mi_titulo": "Sobre mí",
@@ -44,7 +43,7 @@ TRANSLATIONS = {
 
 
         # footer
-        "footer_derechos": "Todos los derechos reservados",  
+        "footer_derechos": "Todos los derechos reservados",
     },
 
     "en": {
@@ -53,13 +52,12 @@ TRANSLATIONS = {
         "nav_sobre_mi": "About me",
         "nav_proyectos": "Projects",
         "nav_contacto": "Contact",
+        "nav_cv": "CV",
 
         # portada / Hero
         "hero_titulo": "Hi! I'm Alessandro Febbrai",
         "hero_subtitulo": "Python Developer",
         "hero_descripcion": "Studying programming",
-        "btn_proyectos": "View projects",
-        "btn_cv": "Download CV",
 
         # sobre_mi
         "sobre_mi_titulo": "About me",
@@ -104,13 +102,12 @@ TRANSLATIONS = {
         "nav_sobre_mi": "Chi sono",
         "nav_proyectos": "Progetti",
         "nav_contacto": "Contatti",
+        "nav_cv": "CV",
 
         # portada / Hero
         "hero_titulo": "Ciao! Sono Alessandro Febbrai",
         "hero_subtitulo": "Sviluppatore Python",
         "hero_descripcion": "Sto studiando programmazione",
-        "btn_proyectos": "Vedi progetti",
-        "btn_cv": "Scarica CV",
 
         # sobre_mi
         "sobre_mi_titulo": "Chi sono",
@@ -156,13 +153,13 @@ TRANSLATIONS = {
         "nav_sobre_mi": "Sobre mi",
         "nav_proyectos": "Projectes",
         "nav_contacto": "Contacte",
+        "nav_cv": "CV",
+
 
         # portada / Hero
         "hero_titulo": "Hola! Sóc Alessandro Febbrai",
         "hero_subtitulo": "Desenvolupador Python",
         "hero_descripcion": "Estudiant programació",
-        "btn_proyectos": "Veure projectes",
-        "btn_cv": "Descarregar CV",
 
         # sobre_mi
         "sobre_mi_titulo": "Sobre mi",
