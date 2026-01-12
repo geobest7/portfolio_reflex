@@ -256,13 +256,12 @@ port = 3000                        # Puerto donde corre la app
 **Layout:**
 ```
 ┌─────────────────────────────────────────────────────────┐
-│  AF    Inicio  Sobre mí  Proyectos  Contacto  [ES][EN] │  ← Navbar (horizontal)
+│  AF  Inicio  Sobre mí  Proyectos  Contacto  CV  [ES]  │  ← Navbar (horizontal)
 ├─────────────────────────────────────────────────────────┤
 │                    SECCIÓN HERO                         │
 │         ¡Hola! Soy Alessandro Febbrai                  │  ← Título
 │              Desarrollador Python                       │  ← Subtítulo
 │           Estudiando programación                       │  ← Descripción
-│      [Ver proyectos]  [Descargar CV]                   │  ← Botones
 ├─────────────────────────────────────────────────────────┤
 │                  SECCIÓN SOBRE MÍ                       │
 │                    Sobre mí                             │  ← Título
@@ -280,11 +279,20 @@ port = 3000                        # Puerto donde corre la app
 ├─────────────────────────────────────────────────────────┤
 │                 SECCIÓN CONTACTO                        │
 │                   Contacto                              │  ← Título
-│      ¿Tienes un proyecto en mente? ¡Hablemos!         │  ← Subtítulo
+│          Información de contacto                        │  ← Subtítulo
+│    📧 Email: alessandro.febbrai@ejemplo.com            │
+│    📱 Teléfono: +34 XXX XXX XXX                        │
+│    💼 LinkedIn: /alessandro-febbrai                     │
+│    🐙 GitHub: /geobest7                                │
+│      ¿Tienes un proyecto en mente? ¡Hablemos!         │  ← Subtítulo form
 │              [Input: Nombre]                            │
 │              [Input: Email]                             │
 │              [TextArea: Mensaje]                        │
 │              [Enviar mensaje]                           │  ← Botón
+├─────────────────────────────────────────────────────────┤
+│                     FOOTER                              │
+│          🐙 GitHub  💼 LinkedIn  📧 Email              │  ← Links sociales
+│         © 2026 Alessandro Febbrai                       │  ← Copyright
 └─────────────────────────────────────────────────────────┘
 ```
 
@@ -295,12 +303,13 @@ port = 3000                        # Puerto donde corre la app
    - Elementos de izquierda a derecha:
      - Logo "AF" (heading size 7)
      - Spacer (espacio flexible)
-     - Links: Inicio, Sobre mí, Proyectos, Contacto (horizontal)
+     - Links: Inicio, Sobre mí, Proyectos, Contacto, CV (horizontal)
      - Spacer (espacio flexible)
      - Selector de idioma (4 botones horizontales)
    - Fondo: Negro `#000000`
    - Padding: `1em 2em`
    - Ancho: 100%
+   - Posición: Fixed (sticky)
 
 2. **rx.vstack** - Contenido hero (vertical)
    - **rx.heading** - Título traducido (ej: "¡Hola! Soy Alessandro Febbrai")
@@ -315,12 +324,9 @@ port = 3000                        # Puerto donde corre la app
      - Tamaño: Normal
      - Color: Blanco (heredado)
    
-   - **rx.hstack** - Botones de acción (horizontal)
-     - Botón 1: "Ver proyectos" (traducido)
-     - Botón 2: "Descargar CV" (traducido)
-     - Fondo: Gris oscuro `#1a1a1a`
-     - Color texto: Blanco
-     - Spacing: `4` (espacio entre botones)
+   - Padding: `4em 2em`
+   - Padding-top: `6em` (compensar navbar sticky)
+   - ID: `"inicio"` (para smooth scroll)
 
 **Características:**
 - Fondo negro puro (`#000000`)
