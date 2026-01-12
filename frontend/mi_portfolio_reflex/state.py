@@ -81,6 +81,28 @@ class State(rx.State):
     def contacto_subtitulo(self) -> str:
         return TRANSLATIONS.get(self.idioma, {}).get("contacto_subtitulo", "")
     
+
+    @rx.var
+    def contacto_info_titulo(self) -> str:
+        return TRANSLATIONS.get(self.idioma, {}).get("contacto_info_titulo", "")
+    
+    @rx.var
+    def contacto_email(self) -> str:
+        return TRANSLATIONS.get(self.idioma, {}).get("contacto_email", "")
+    
+    @rx.var
+    def contacto_telefono(self) -> str:
+        return TRANSLATIONS.get(self.idioma, {}).get("contacto_telefono", "")
+    
+    @rx.var
+    def contacto_linkedin(self) -> str:
+        return TRANSLATIONS.get(self.idioma, {}).get("contacto_linkedin", "")
+    
+    @rx.var
+    def contacto_github(self) -> str:
+        return TRANSLATIONS.get(self.idioma, {}).get("contacto_github", "")
+
+        
     @rx.var
     def form_nombre(self) -> str:
         return TRANSLATIONS.get(self.idioma, {}).get("form_nombre", "")

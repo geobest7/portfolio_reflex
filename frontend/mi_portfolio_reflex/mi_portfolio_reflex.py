@@ -182,11 +182,65 @@ def seccion_proyectos() -> rx.Component:
 
 
 def seccion_contacto() -> rx.Component:
-    """Sección Contacto con formulario"""
+    """Sección Contacto con información y formulario"""
     return rx.box(
         rx.vstack(
             rx.heading(State.contacto_titulo, size="8", color="white"),
+
+            # Información de contacto
+            rx.vstack(
+                rx.heading(State.contacto_info_titulo, size="6", color="white", margin_bottom="1em"),
+                rx.hstack(
+                    rx.icon("mail", size=20, color="white"),
+                    rx.text(State.contacto_email + ":", color="#cccccc", weight="bold"),
+                    rx.link(
+                        "alessandro.febbrai@ejemplo.com",
+                        href="mailto:alessandro.febbrai@ejemplo.com",
+                        color="white",
+                        _hover={"color": "#808080"},
+                    ),
+                    spacing="2",
+                ),
+                rx.hstack(
+                    rx.icon("phone", size=20, color="white"),
+                    rx.text(State.contacto_telefono + ":", color="#cccccc", weight="bold"),
+                    rx.text("+34 XXX XXX XXX", color="white"),
+                    spacing="2",
+                ),
+                rx.hstack(
+                    rx.icon("linkedin", size=20, color="white"),
+                    rx.text(State.contacto_linkedin + ":", color="#cccccc", weight="bold"),
+                    rx.link(
+                        "/alessandro-febbrai",
+                        href="https://linkedin.com/in/alessandro-febbrai",
+                        is_external=True,
+                        color="white",
+                        _hover={"color": "#808080"},
+                    ),
+                    spacing="2",
+                ),
+                rx.hstack(
+                    rx.icon("github", size=20, color="white"),
+                    rx.text(State.contacto_github + ":", color="#cccccc", weight="bold"),
+                    rx.link(
+                        "/geobest7",
+                        href="https://github.com/geobest7",
+                        is_external=True,
+                        color="white",
+                        _hover={"color": "#808080"},
+                    ),
+                    spacing="2",
+                ),
+                spacing="3",
+                align="start",
+                margin_bottom="3em",
+            ),
+            
+            # Subtítulo antes del formulario
             rx.text(State.contacto_subtitulo, color="#cccccc", size="4", margin_bottom="2em"),
+
+            
+            # Formulario de contacto
             rx.vstack(
                 rx.input(
                     placeholder=State.form_nombre,
