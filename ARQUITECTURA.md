@@ -32,9 +32,15 @@ Portfolio personal full-stack con contenido dinámico, multi-idioma, y panel de 
 │     - Rol: Desarrollador Python                     │
 │     - Descripción breve                             │
 ├─────────────────────────────────────────────────────┤
-│  2. SOBRE MÍ                                        │
+│  2. SOBRE MÍ (expandida)                            │
 │     - Descripción personal                          │
 │     - Badges de habilidades técnicas                │
+│     - EXPERIENCIA ACTUAL (subsección)               │
+│       • Prácticas en desarrollo                     │
+│       • Empresa, rol, período                       │
+│       • Tecnologías utilizadas                      │
+│       • Descripción breve de tareas                 │
+│       • Solo mostrar experiencia actual o reciente  │
 ├─────────────────────────────────────────────────────┤
 │  3. PROYECTOS DESTACADOS (desde DB)                 │
 │     - 3-5 proyectos curados                         │
@@ -64,6 +70,12 @@ Portfolio personal full-stack con contenido dinámico, multi-idioma, y panel de 
 │  Links sociales | Copyright                         │
 └─────────────────────────────────────────────────────┘
 ```
+
+**Nota sobre Experiencia:**
+- Se incluye como subsección dentro de "Sobre mí" para mantener navbar limpia (6 links)
+- Solo se muestran experiencias actuales o las 2 más recientes
+- Escalable: si en el futuro hay 3+ experiencias, se puede migrar a sección independiente
+- El CV en PDF contiene el historial laboral completo
 
 ### Página CV (`/cv`):
 - Visor PDF a pantalla completa
@@ -107,7 +119,8 @@ Portfolio personal full-stack con contenido dinámico, multi-idioma, y panel de 
 │  SQLite (desarrollo) / PostgreSQL (producción)      │
 │  - Tabla: proyectos                                 │
 │  - Tabla: cursos                                    │
-│  - Tabla: certificaciones                           │
+│  - Tabla: experiencias                              │
+│  - Tabla: github_repos_cache                        │
 │  - Tabla: analytics                                 │
 │  - Tabla: users (admin)                             │
 └─────────────────────────────────────────────────────┘
@@ -160,7 +173,30 @@ class Curso(Base):
     activo: bool
 ```
 
-### 3. Tabla `github_repos_cache` (Cache de GitHub)
+### 3. Tabla `experiencias` (Experiencia Laboral)
+```python
+class Experiencia(Base):
+    id: int (PK)
+    tipo: str ("practica", "trabajo", "freelance")
+    empresa: str
+    cargo_es: str
+    cargo_en: str
+    cargo_it: str
+    cargo_ca: str
+    fecha_inicio: date
+    fecha_fin: date (opcional, si es actual)
+    actual: bool (si es la experiencia actual)
+    descripcion_es: text
+    descripcion_en: text
+    descripcion_it: text
+    descripcion_ca: text
+    tecnologias: str (JSON: ["Python", "FastAPI", ...])
+    orden: int
+    activo: bool
+    mostrar_en_web: bool (solo mostrar 1-2 más recientes)
+```
+
+### 4. Tabla `github_repos_cache` (Cache de GitHub)
 ```python
 class GitHubRepoCache(Base):
     id: int (PK)
@@ -174,7 +210,7 @@ class GitHubRepoCache(Base):
     ultimo_fetch: datetime
 ```
 
-### 4. Tabla `analytics` (Sistema de Analíticas)
+### 5. Tabla `analytics` (Sistema de Analíticas)
 ```python
 class Analytics(Base):
     id: int (PK)
@@ -189,7 +225,7 @@ class Analytics(Base):
     referrer: str (opcional)
 ```
 
-### 5. Tabla `users` (Admin)
+### 6. Tabla `users` (Admin)
 ```python
 class User(Base):
     id: int (PK)
@@ -212,6 +248,8 @@ GET  /api/proyectos              → Listar proyectos destacados activos
 GET  /api/proyectos/{id}         → Obtener proyecto por ID
 GET  /api/cursos                 → Listar cursos/certificaciones activos
 GET  /api/cursos/{id}            → Obtener curso por ID
+GET  /api/experiencias           → Listar experiencias actuales/recientes
+GET  /api/experiencias/{id}      → Obtener experiencia por ID
 GET  /api/github/repos           → Listar repos de GitHub (con cache)
 POST /api/contacto               → Enviar mensaje de contacto
 POST /api/analytics              → Registrar evento de analítica
@@ -229,6 +267,9 @@ DELETE /api/admin/proyectos/{id} → Eliminar proyecto
 POST   /api/admin/cursos         → Crear curso
 PUT    /api/admin/cursos/{id}    → Actualizar curso
 DELETE /api/admin/cursos/{id}    → Eliminar curso
+POST   /api/admin/experiencias    → Crear experiencia
+PUT    /api/admin/experiencias/{id} → Actualizar experiencia
+DELETE /api/admin/experiencias/{id} → Eliminar experiencia
 ```
 
 ---
