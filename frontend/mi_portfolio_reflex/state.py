@@ -83,6 +83,26 @@ class State(rx.State):
         self.form_email_value = ""
         self.form_mensaje_value = ""
 
+
+    def limpiar_mensaje_formulario(self):
+        """Limpiar mensaje de estado y campos del formulario al navegar"""
+        self.form_mensaje_estado = ""
+        self.form_mensaje_texto = ""
+        self.form_nombre_value = ""
+        self.form_email_value = ""
+        self.form_mensaje_value = ""
+
+
+
+    def cerrar_menu_y_limpiar(self):
+        """Cerrar menú móvil y limpiar mensaje y campos del formulario"""
+        self.menu_abierto = False
+        self.form_mensaje_estado = ""
+        self.form_mensaje_texto = ""
+        self.form_nombre_value = ""
+        self.form_email_value = ""
+        self.form_mensaje_value = ""
+
     # Propiedades computadas para cada traducción
     @rx.var
     def hero_titulo(self) -> str:

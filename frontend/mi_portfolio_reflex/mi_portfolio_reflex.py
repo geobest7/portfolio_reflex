@@ -81,11 +81,11 @@ def navbar() -> rx.Component:
             rx.spacer(),
             # Links desktop (ocultos en móvil)
             rx.hstack(
-                rx.link(State.nav_inicio, href="/home#inicio", color="white"),
-                rx.link(State.nav_sobre_mi, href="/home#sobre-mi", color="white"),
-                rx.link(State.nav_proyectos, href="/home#proyectos", color="white"),
-                rx.link(State.nav_contacto, href="/home#contacto", color="white"),
-                rx.link(State.nav_cv, href="/cv", color="white"),
+                rx.link(State.nav_inicio, href="/home#inicio", on_click=State.limpiar_mensaje_formulario, color="white"),
+                rx.link(State.nav_sobre_mi, href="/home#sobre-mi", on_click=State.limpiar_mensaje_formulario, color="white"),
+                rx.link(State.nav_proyectos, href="/home#proyectos", on_click=State.limpiar_mensaje_formulario, color="white"),
+                rx.link(State.nav_contacto, href="/home#contacto", on_click=State.limpiar_mensaje_formulario, color="white"),
+                rx.link(State.nav_cv, href="/cv", on_click=State.limpiar_mensaje_formulario, color="white"),
                 spacing="6",
                 class_name="navbar-links",
             ),
@@ -110,7 +110,7 @@ def navbar() -> rx.Component:
                 rx.link(
                     State.nav_inicio,
                     href="/home#inicio",
-                    on_click=State.cerrar_menu,
+                    on_click=State.cerrar_menu_y_limpiar,
                     color="white",
                     width="100%",
                     padding="1em",
@@ -119,7 +119,7 @@ def navbar() -> rx.Component:
                 rx.link(
                     State.nav_sobre_mi,
                     href="/home#sobre-mi",
-                    on_click=State.cerrar_menu,
+                    on_click=State.cerrar_menu_y_limpiar,
                     color="white",
                     width="100%",
                     padding="1em",
@@ -128,7 +128,7 @@ def navbar() -> rx.Component:
                 rx.link(
                     State.nav_proyectos,
                     href="/home#proyectos",
-                    on_click=State.cerrar_menu,
+                    on_click=State.cerrar_menu_y_limpiar,
                     color="white",
                     width="100%",
                     padding="1em",
@@ -137,7 +137,7 @@ def navbar() -> rx.Component:
                 rx.link(
                     State.nav_contacto,
                     href="/home#contacto",
-                    on_click=State.cerrar_menu,
+                    on_click=State.cerrar_menu_y_limpiar,
                     color="white",
                     width="100%",
                     padding="1em",
@@ -146,7 +146,7 @@ def navbar() -> rx.Component:
                 rx.link(
                     State.nav_cv,
                     href="/cv",
-                    on_click=State.cerrar_menu,
+                    on_click=State.cerrar_menu_y_limpiar,
                     color="white",
                     width="100%",
                     padding="1em",
