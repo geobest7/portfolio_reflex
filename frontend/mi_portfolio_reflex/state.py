@@ -212,3 +212,29 @@ class State(rx.State):
     @rx.var
     def nav_cv(self) -> str:
         return TRANSLATIONS.get(self.idioma, {}).get("nav_cv", "")
+
+
+    # Propiedades computadas para Experiencia
+    @rx.var
+    def experiencia_subtitulo(self) -> str:
+        return TRANSLATIONS.get(self.idioma, {}).get("experiencia_subtitulo", "")
+
+    @rx.var
+    def exp_cargo(self) -> str:
+        return TRANSLATIONS.get(self.idioma, {}).get("exp_cargo", "")
+
+    @rx.var
+    def exp_empresa(self) -> str:
+        return TRANSLATIONS.get(self.idioma, {}).get("exp_empresa", "")
+
+    @rx.var
+    def exp_periodo(self) -> str:
+        return TRANSLATIONS.get(self.idioma, {}).get("exp_periodo", "")
+
+    @rx.var
+    def exp_descripcion(self) -> str:
+        return TRANSLATIONS.get(self.idioma, {}).get("exp_descripcion", "")
+
+    @rx.var
+    def exp_tecnologias(self) -> str:
+        return TRANSLATIONS.get(self.idioma, {}).get("exp_tecnologias", "")

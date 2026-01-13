@@ -182,6 +182,55 @@ def seccion_sobre_mi() -> rx.Component:
                 line_height="1.8",
                 max_width="800px",
             ),
+            
+            # Subsección Experiencia Actual
+            rx.heading(State.experiencia_subtitulo, size="6", color="white", margin_top="2em", margin_bottom="1em"),
+            rx.box(
+                rx.vstack(
+                    # Cargo y empresa
+                    rx.hstack(
+                        rx.icon("briefcase", size=24, color="white"),
+                        rx.vstack(
+                            rx.text(State.exp_cargo, size="4", weight="bold", color="white"),
+                            rx.text(State.exp_empresa, size="3", color="#cccccc"),
+                            spacing="1",
+                            align="start",
+                        ),
+                        spacing="3",
+                        align="start",
+                    ),
+                    # Período
+                    rx.hstack(
+                        rx.icon("calendar", size=20, color="#cccccc"),
+                        rx.text(State.exp_periodo, size="3", color="#cccccc"),
+                        spacing="2",
+                    ),
+                    # Descripción
+                    rx.text(State.exp_descripcion, size="3", color="#cccccc", line_height="1.6"),
+                    # Tecnologías
+                    rx.vstack(
+                        rx.text(State.exp_tecnologias + ":", size="3", weight="bold", color="white"),
+                        rx.hstack(
+                            rx.badge("Python", variant="outline", color_scheme="gray"),
+                            rx.badge("FastAPI", variant="outline", color_scheme="gray"),
+                            rx.badge("PostgreSQL", variant="outline", color_scheme="gray"),
+                            spacing="2",
+                            wrap="wrap",
+                        ),
+                        spacing="2",
+                        align="start",
+                    ),
+                    spacing="4",
+                    align="start",
+                ),
+                padding="1.5em",
+                border_radius="8px",
+                border="1px solid #333333",
+                bg="#0a0a0a",
+                max_width="600px",
+            ),
+            
+            # Habilidades técnicas (ahora al final)
             rx.heading(State.habilidades_titulo, size="6", color="white", margin_top="2em"),
             rx.hstack(
                 rx.badge("Python", variant="outline", color_scheme="gray", style={"border_color": "white", "color": "white"}),
@@ -192,6 +241,7 @@ def seccion_sobre_mi() -> rx.Component:
                 spacing="3",
                 wrap="wrap",
             ),
+            
             spacing="4",
             align="center",
             text_align="center",
