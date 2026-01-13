@@ -509,12 +509,24 @@ def home() -> rx.Component:
     return rx.box(
         navbar(),
         rx.vstack(
+        # Foto de perfil circular
+            rx.image(
+                src="/foto_perfil.png",
+                width="150px",
+                height="150px",
+                border_radius="50%",
+                border="3px solid white",
+                object_fit="cover",
+                alt="Alessandro Febbrai",
+            ),
             rx.heading(State.hero_titulo, size="9"),
             rx.text(State.hero_subtitulo, size="5"),
             rx.text(State.hero_descripcion),
             padding="4em 2em",
             padding_top="6em",
             spacing="4",
+            align="center",
+            text_align="center",
             id="inicio"
         ),
         seccion_sobre_mi(),
