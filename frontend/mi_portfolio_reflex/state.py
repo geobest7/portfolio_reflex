@@ -4,10 +4,21 @@ from .translations import TRANSLATIONS
 class State(rx.State):
     # variable de estado para el idioma actual
     idioma: str = "es" # valor por defecto
+    
+    # variable de estado para el menú móvil
+    menu_abierto: bool = False
 
     # metodo para cambiar el idioma
     def cambiar_idioma(self, nuevo_idioma: str):
         self.idioma = nuevo_idioma
+    
+    # metodo para toggle del menú móvil
+    def toggle_menu(self):
+        self.menu_abierto = not self.menu_abierto
+    
+    # metodo para cerrar el menú
+    def cerrar_menu(self):
+        self.menu_abierto = False
     
 
     # Propiedades computadas para cada traducción
