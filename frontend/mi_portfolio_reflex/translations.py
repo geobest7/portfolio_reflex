@@ -44,6 +44,14 @@ TRANSLATIONS = {
 
         # footer
         "footer_derechos": "Todos los derechos reservados",
+
+
+        # Mensajes de validación del formulario
+        "form_error_nombre": "Por favor, ingresa tu nombre",
+        "form_error_email_vacio": "Por favor, ingresa tu email",
+        "form_error_email_invalido": "Por favor, ingresa un email válido",
+        "form_error_mensaje": "Por favor, escribe un mensaje",
+        "form_exito": "¡Mensaje enviado correctamente! Te contactaré pronto.",
     },
 
     "en": {
@@ -94,6 +102,14 @@ TRANSLATIONS = {
         
         # footer
         "footer_derechos": "All rights reserved",
+
+
+        # Mensajes de validación del formulario
+        "form_error_nombre": "Please enter your name",
+        "form_error_email_vacio": "Please enter your email",
+        "form_error_email_invalido": "Please enter a valid email",
+        "form_error_mensaje": "Please write a message",
+        "form_exito": "Message sent successfully! I'll contact you soon.",
     },
 
     "it": {
@@ -145,6 +161,13 @@ TRANSLATIONS = {
 
         # footer
         "footer_derechos": "Tutti i diritti riservati",
+
+        # Mensajes de validación del formulario
+        "form_error_nombre": "Per favore, inserisci il tuo nome",
+        "form_error_email_vacio": "Per favore, inserisci la tua email",
+        "form_error_email_invalido": "Per favore, inserisci un'email valida",
+        "form_error_mensaje": "Per favore, scrivi un messaggio",
+        "form_exito": "Messaggio inviato con successo! Ti contatterò presto.",
     },
 
     "ca": {
@@ -196,6 +219,14 @@ TRANSLATIONS = {
 
         # footer
         "footer_derechos": "Tots els drets reservats",
+
+
+        # Mensajes de validación del formulario
+        "form_error_nombre": "Si us plau, introdueix el teu nom",
+        "form_error_email_vacio": "Si us plau, introdueix el teu email",
+        "form_error_email_invalido": "Si us plau, introdueix un email vàlid",
+        "form_error_mensaje": "Si us plau, escriu un missatge",
+        "form_exito": "Missatge enviat correctament! Et contactaré aviat.",
     },
 }
 

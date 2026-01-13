@@ -8,6 +8,14 @@ class State(rx.State):
     # variable de estado para el menú móvil
     menu_abierto: bool = False
 
+    # Variables de estado para el formulario de contacto
+    form_nombre_value: str = ""
+    form_email_value: str = ""
+    form_mensaje_value: str = ""
+    form_enviando: bool = False
+    form_mensaje_estado: str = ""  # "exito", "error", o ""
+    form_mensaje_texto: str = ""
+
     # metodo para cambiar el idioma
     def cambiar_idioma(self, nuevo_idioma: str):
         self.idioma = nuevo_idioma
@@ -20,6 +28,60 @@ class State(rx.State):
     def cerrar_menu(self):
         self.menu_abierto = False
     
+
+    # Métodos para el formulario de contacto
+    def set_nombre(self, value: str):
+        self.form_nombre_value = value
+    
+    def set_email(self, value: str):
+        self.form_email_value = value
+    
+    def set_mensaje(self, value: str):
+        self.form_mensaje_value = value
+    
+    def validar_email(self, email: str) -> bool:
+        """Validación básica de email"""
+        import re
+        patron = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+        return re.match(patron, email) is not None
+    
+    def enviar_formulario(self):
+        """Enviar formulario de contacto"""
+        # Validaciones
+        if not self.form_nombre_value.strip():
+            self.form_mensaje_estado = "error"
+            self.form_mensaje_texto = TRANSLATIONS.get(self.idioma, {}).get("form_error_nombre", "")
+            return
+        
+        if not self.form_email_value.strip():
+            self.form_mensaje_estado = "error"
+            self.form_mensaje_texto = TRANSLATIONS.get(self.idioma, {}).get("form_error_email_vacio", "")
+            return
+        
+        if not self.validar_email(self.form_email_value):
+            self.form_mensaje_estado = "error"
+            self.form_mensaje_texto = TRANSLATIONS.get(self.idioma, {}).get("form_error_email_invalido", "")
+            return
+        
+        if not self.form_mensaje_value.strip():
+            self.form_mensaje_estado = "error"
+            self.form_mensaje_texto = TRANSLATIONS.get(self.idioma, {}).get("form_error_mensaje", "")
+            return
+        
+        # Simular envío (aquí irá la integración con EmailJS o backend)
+        self.form_enviando = True
+        
+        # TODO: Integrar con servicio de email
+        # Por ahora, solo mostramos mensaje de éxito
+        
+        self.form_mensaje_estado = "exito"
+        self.form_mensaje_texto = TRANSLATIONS.get(self.idioma, {}).get("form_exito", "")
+        self.form_enviando = False
+        
+        # Limpiar formulario
+        self.form_nombre_value = ""
+        self.form_email_value = ""
+        self.form_mensaje_value = ""
 
     # Propiedades computadas para cada traducción
     @rx.var

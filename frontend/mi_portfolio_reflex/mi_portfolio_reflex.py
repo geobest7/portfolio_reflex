@@ -310,17 +310,20 @@ def seccion_contacto() -> rx.Component:
             # Subtítulo antes del formulario
             rx.text(State.contacto_subtitulo, color="#cccccc", size="4", margin_bottom="2em"),
 
-
             # Formulario de contacto
             rx.vstack(
                 rx.input(
                     placeholder=State.form_nombre,
+                    value=State.form_nombre_value,
+                    on_change=State.set_nombre,
                     width="100%",
                     max_width="500px",
                     size="3",
                 ),
                 rx.input(
                     placeholder=State.form_email,
+                    value=State.form_email_value,
+                    on_change=State.set_email,
                     type="email",
                     width="100%",
                     max_width="500px",
@@ -328,6 +331,8 @@ def seccion_contacto() -> rx.Component:
                 ),
                 rx.text_area(
                     placeholder=State.form_mensaje,
+                    value=State.form_mensaje_value,
+                    on_change=State.set_mensaje,
                     width="100%",
                     max_width="500px",
                     min_height="150px",
@@ -335,10 +340,42 @@ def seccion_contacto() -> rx.Component:
                 ),
                 rx.button(
                     State.btn_enviar,
+                    on_click=State.enviar_formulario,
+                    loading=State.form_enviando,
                     size="3",
                     variant="solid",
                     color_scheme="gray",
                     style={"background": "white", "color": "black"},
+                ),
+                # Mensaje de éxito o error
+                rx.cond(
+                    State.form_mensaje_estado != "",
+                    rx.box(
+                        rx.text(
+                            State.form_mensaje_texto,
+                            color=rx.cond(
+                                State.form_mensaje_estado == "exito",
+                                "#00ff00",
+                                "#ff0000",
+                            ),
+                            weight="bold",
+                            size="3",
+                        ),
+                        padding="1em",
+                        border_radius="8px",
+                        bg=rx.cond(
+                            State.form_mensaje_estado == "exito",
+                            "#001a00",
+                            "#1a0000",
+                        ),
+                        border=rx.cond(
+                            State.form_mensaje_estado == "exito",
+                            "1px solid #00ff00",
+                            "1px solid #ff0000",
+                        ),
+                        max_width="500px",
+                        width="100%",
+                    ),
                 ),
                 spacing="4",
                 width="100%",
