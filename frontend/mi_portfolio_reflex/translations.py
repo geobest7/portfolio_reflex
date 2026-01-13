@@ -5,6 +5,7 @@ TRANSLATIONS = {
         "nav_sobre_mi": "Sobre mí",
         "nav_proyectos": "Proyectos",
         "nav_contacto": "Contacto",
+        "nav_formacion": "Formación",
         "nav_cv": "CV",
 
         # portada / Hero
@@ -61,6 +62,23 @@ TRANSLATIONS = {
         "exp_periodo": "Enero 2024 - Presente",
         "exp_descripcion": "Desarrollo de APIs REST con FastAPI y gestión de bases de datos PostgreSQL. Implementación de sistemas de autenticación y optimización de consultas.",
         "exp_tecnologias": "Tecnologías",
+
+
+        # Sección Formación
+        "formacion_titulo": "Formación",
+        "formacion_diploma_titulo": "Diploma Técnico Superior",
+        "formacion_diploma_institucion": "Instituto Técnico de Italia",
+        "formacion_diploma_periodo": "2020 - 2023",
+        "formacion_cursos_subtitulo": "Cursos y Certificaciones",
+        "curso1_titulo": "Python Profesional",
+        "curso1_institucion": "Platzi",
+        "curso1_periodo": "2023",
+        "curso2_titulo": "FastAPI: Desarrollo de APIs",
+        "curso2_institucion": "Udemy",
+        "curso2_periodo": "2024",
+        "curso3_titulo": "Git y GitHub",
+        "curso3_institucion": "Platzi",
+        "curso3_periodo": "2023",
     },
 
     "en": {
@@ -69,6 +87,7 @@ TRANSLATIONS = {
         "nav_sobre_mi": "About me",
         "nav_proyectos": "Projects",
         "nav_contacto": "Contact",
+        "nav_formacion": "Education",
         "nav_cv": "CV",
 
         # portada / Hero
@@ -128,6 +147,23 @@ TRANSLATIONS = {
         "exp_periodo": "January 2024 - Present",
         "exp_descripcion": "Development of REST APIs with FastAPI and PostgreSQL database management. Implementation of authentication systems and query optimization.",
         "exp_tecnologias": "Technologies",
+
+
+        # Sección Formación
+        "formacion_titulo": "Education",
+        "formacion_diploma_titulo": "Higher Technical Diploma",
+        "formacion_diploma_institucion": "Technical Institute of Italy",
+        "formacion_diploma_periodo": "2020 - 2023",
+        "formacion_cursos_subtitulo": "Courses and Certifications",
+        "curso1_titulo": "Professional Python",
+        "curso1_institucion": "Platzi",
+        "curso1_periodo": "2023",
+        "curso2_titulo": "FastAPI: API Development",
+        "curso2_institucion": "Udemy",
+        "curso2_periodo": "2024",
+        "curso3_titulo": "Git and GitHub",
+        "curso3_institucion": "Platzi",
+        "curso3_periodo": "2023",
     },
 
     "it": {
@@ -136,6 +172,7 @@ TRANSLATIONS = {
         "nav_sobre_mi": "Chi sono",
         "nav_proyectos": "Progetti",
         "nav_contacto": "Contatti",
+        "nav_formacion": "Formazione",
         "nav_cv": "CV",
 
         # portada / Hero
@@ -196,6 +233,23 @@ TRANSLATIONS = {
         "exp_periodo": "Gennaio 2024 - Presente",
         "exp_descripcion": "Sviluppo di API REST con FastAPI e gestione di database PostgreSQL. Implementazione di sistemi di autenticazione e ottimizzazione delle query.",
         "exp_tecnologias": "Tecnologie",
+
+
+        # Sección Formación
+        "formacion_titulo": "Formazione",
+        "formacion_diploma_titulo": "Diploma Tecnico Superiore",
+        "formacion_diploma_institucion": "Istituto Tecnico d'Italia",
+        "formacion_diploma_periodo": "2020 - 2023",
+        "formacion_cursos_subtitulo": "Corsi e Certificazioni",
+        "curso1_titulo": "Python Professionale",
+        "curso1_institucion": "Platzi",
+        "curso1_periodo": "2023",
+        "curso2_titulo": "FastAPI: Sviluppo di API",
+        "curso2_institucion": "Udemy",
+        "curso2_periodo": "2024",
+        "curso3_titulo": "Git e GitHub",
+        "curso3_institucion": "Platzi",
+        "curso3_periodo": "2023",
     },
 
     "ca": {
@@ -204,6 +258,7 @@ TRANSLATIONS = {
         "nav_sobre_mi": "Sobre mi",
         "nav_proyectos": "Projectes",
         "nav_contacto": "Contacte",
+        "nav_formacion": "Formació",
         "nav_cv": "CV",
 
 
@@ -264,6 +319,23 @@ TRANSLATIONS = {
         "exp_periodo": "Gener 2024 - Present",
         "exp_descripcion": "Desenvolupament d'APIs REST amb FastAPI i gestió de bases de dades PostgreSQL. Implementació de sistemes d'autenticació i optimització de consultes.",
         "exp_tecnologias": "Tecnologies",
+
+
+        # Sección Formación
+        "formacion_titulo": "Formació",
+        "formacion_diploma_titulo": "Diploma Tècnic Superior",
+        "formacion_diploma_institucion": "Institut Tècnic d'Itàlia",
+        "formacion_diploma_periodo": "2020 - 2023",
+        "formacion_cursos_subtitulo": "Cursos i Certificacions",
+        "curso1_titulo": "Python Professional",
+        "curso1_institucion": "Platzi",
+        "curso1_periodo": "2023",
+        "curso2_titulo": "FastAPI: Desenvolupament d'APIs",
+        "curso2_institucion": "Udemy",
+        "curso2_periodo": "2024",
+        "curso3_titulo": "Git i GitHub",
+        "curso3_institucion": "Platzi",
+        "curso3_periodo": "2023",
     },
 }
 

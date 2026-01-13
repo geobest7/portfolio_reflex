@@ -230,6 +230,10 @@ class State(rx.State):
         return TRANSLATIONS.get(self.idioma, {}).get("nav_contacto", "")
 
     @rx.var
+    def nav_formacion(self) -> str:
+        return TRANSLATIONS.get(self.idioma, {}).get("nav_formacion", "")
+
+    @rx.var
     def nav_cv(self) -> str:
         return TRANSLATIONS.get(self.idioma, {}).get("nav_cv", "")
 
@@ -258,3 +262,61 @@ class State(rx.State):
     @rx.var
     def exp_tecnologias(self) -> str:
         return TRANSLATIONS.get(self.idioma, {}).get("exp_tecnologias", "")
+
+
+    # Propiedades computadas para Formación
+    @rx.var
+    def formacion_titulo(self) -> str:
+        return TRANSLATIONS.get(self.idioma, {}).get("formacion_titulo", "")
+
+    @rx.var
+    def formacion_diploma_titulo(self) -> str:
+        return TRANSLATIONS.get(self.idioma, {}).get("formacion_diploma_titulo", "")
+
+    @rx.var
+    def formacion_diploma_institucion(self) -> str:
+        return TRANSLATIONS.get(self.idioma, {}).get("formacion_diploma_institucion", "")
+
+    @rx.var
+    def formacion_diploma_periodo(self) -> str:
+        return TRANSLATIONS.get(self.idioma, {}).get("formacion_diploma_periodo", "")
+
+    @rx.var
+    def formacion_cursos_subtitulo(self) -> str:
+        return TRANSLATIONS.get(self.idioma, {}).get("formacion_cursos_subtitulo", "")
+
+    @rx.var
+    def curso1_titulo(self) -> str:
+        return TRANSLATIONS.get(self.idioma, {}).get("curso1_titulo", "")
+
+    @rx.var
+    def curso1_institucion(self) -> str:
+        return TRANSLATIONS.get(self.idioma, {}).get("curso1_institucion", "")
+
+    @rx.var
+    def curso1_periodo(self) -> str:
+        return TRANSLATIONS.get(self.idioma, {}).get("curso1_periodo", "")
+
+    @rx.var
+    def curso2_titulo(self) -> str:
+        return TRANSLATIONS.get(self.idioma, {}).get("curso2_titulo", "")
+
+    @rx.var
+    def curso2_institucion(self) -> str:
+        return TRANSLATIONS.get(self.idioma, {}).get("curso2_institucion", "")
+
+    @rx.var
+    def curso2_periodo(self) -> str:
+        return TRANSLATIONS.get(self.idioma, {}).get("curso2_periodo", "")
+
+    @rx.var
+    def curso3_titulo(self) -> str:
+        return TRANSLATIONS.get(self.idioma, {}).get("curso3_titulo", "")
+
+    @rx.var
+    def curso3_institucion(self) -> str:
+        return TRANSLATIONS.get(self.idioma, {}).get("curso3_institucion", "")
+
+    @rx.var
+    def curso3_periodo(self) -> str:
+        return TRANSLATIONS.get(self.idioma, {}).get("curso3_periodo", "")

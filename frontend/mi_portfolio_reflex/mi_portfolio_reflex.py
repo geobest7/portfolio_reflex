@@ -77,13 +77,18 @@ def navbar() -> rx.Component:
     """Barra de navegación con links y selector de idioma"""
     return rx.box(
         rx.hstack(
-            rx.heading("AF", size="7", color="white"),
+            rx.image(
+                src="/logo.png",
+                height="40px",
+                alt="Alessandro Febbrai",
+            ),
             rx.spacer(),
             # Links desktop (ocultos en móvil)
             rx.hstack(
                 rx.link(State.nav_inicio, href="/home#inicio", on_click=State.limpiar_mensaje_formulario, color="white"),
                 rx.link(State.nav_sobre_mi, href="/home#sobre-mi", on_click=State.limpiar_mensaje_formulario, color="white"),
                 rx.link(State.nav_proyectos, href="/home#proyectos", on_click=State.limpiar_mensaje_formulario, color="white"),
+                rx.link(State.nav_formacion, href="/home#formacion", on_click=State.limpiar_mensaje_formulario, color="white"),
                 rx.link(State.nav_contacto, href="/home#contacto", on_click=State.limpiar_mensaje_formulario, color="white"),
                 rx.link(State.nav_cv, href="/cv", on_click=State.limpiar_mensaje_formulario, color="white"),
                 spacing="6",
@@ -253,6 +258,107 @@ def seccion_sobre_mi() -> rx.Component:
     )
 
 
+def seccion_formacion() -> rx.Component:
+    """Sección Formación con diploma y cursos"""
+    return rx.box(
+        rx.vstack(
+            rx.heading(State.formacion_titulo, size="8", color="white"),
+            
+            # Diploma
+            rx.box(
+                rx.vstack(
+                    rx.hstack(
+                        rx.icon("graduation-cap", size=24, color="white"),
+                        rx.vstack(
+                            rx.text(State.formacion_diploma_titulo, size="4", weight="bold", color="white"),
+                            rx.text(State.formacion_diploma_institucion, size="3", color="#cccccc"),
+                            spacing="1",
+                            align="start",
+                        ),
+                        spacing="3",
+                        align="start",
+                    ),
+                    rx.hstack(
+                        rx.icon("calendar", size=20, color="#cccccc"),
+                        rx.text(State.formacion_diploma_periodo, size="3", color="#cccccc"),
+                        spacing="2",
+                    ),
+                    spacing="3",
+                    align="start",
+                ),
+                padding="1.5em",
+                border_radius="8px",
+                border="1px solid #333333",
+                bg="#0a0a0a",
+                max_width="600px",
+                margin_bottom="2em",
+            ),
+            
+            # Cursos y Certificaciones
+            rx.heading(State.formacion_cursos_subtitulo, size="6", color="white", margin_bottom="1em"),
+            rx.hstack(
+                # Curso 1
+                rx.box(
+                    rx.vstack(
+                        rx.icon("book-open", size=20, color="white"),
+                        rx.text(State.curso1_titulo, size="3", weight="bold", color="white"),
+                        rx.text(State.curso1_institucion, size="2", color="#cccccc"),
+                        rx.text(State.curso1_periodo, size="2", color="#999999"),
+                        spacing="2",
+                        align="start",
+                    ),
+                    padding="1.5em",
+                    border_radius="8px",
+                    border="1px solid #333333",
+                    bg="#0a0a0a",
+                    width="250px",
+                ),
+                # Curso 2
+                rx.box(
+                    rx.vstack(
+                        rx.icon("book-open", size=20, color="white"),
+                        rx.text(State.curso2_titulo, size="3", weight="bold", color="white"),
+                        rx.text(State.curso2_institucion, size="2", color="#cccccc"),
+                        rx.text(State.curso2_periodo, size="2", color="#999999"),
+                        spacing="2",
+                        align="start",
+                    ),
+                    padding="1.5em",
+                    border_radius="8px",
+                    border="1px solid #333333",
+                    bg="#0a0a0a",
+                    width="250px",
+                ),
+                # Curso 3
+                rx.box(
+                    rx.vstack(
+                        rx.icon("book-open", size=20, color="white"),
+                        rx.text(State.curso3_titulo, size="3", weight="bold", color="white"),
+                        rx.text(State.curso3_institucion, size="2", color="#cccccc"),
+                        rx.text(State.curso3_periodo, size="2", color="#999999"),
+                        spacing="2",
+                        align="start",
+                    ),
+                    padding="1.5em",
+                    border_radius="8px",
+                    border="1px solid #333333",
+                    bg="#0a0a0a",
+                    width="250px",
+                ),
+                spacing="4",
+                wrap="wrap",
+                justify="center",
+            ),
+            
+            spacing="4",
+            align="center",
+            text_align="center",
+        ),
+        padding="6em 2em",
+        bg="#000000",
+        width="100%",
+        id="formacion",
+    )
 
 def card_proyecto(titulo: str, descripcion: str) -> rx.Component:
     """Card individual de proyecto"""
@@ -530,6 +636,7 @@ def home() -> rx.Component:
             id="inicio"
         ),
         seccion_sobre_mi(),
+        seccion_formacion(),
         seccion_proyectos(),
         seccion_contacto(),
         footer(),

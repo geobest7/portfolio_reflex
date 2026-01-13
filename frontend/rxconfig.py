@@ -7,6 +7,7 @@ import reflex as rx
 
 config = rx.Config(
     app_name="mi_portfolio_reflex",
+    favicon="favicon.ico",
     port=3000,
 )
 
