@@ -40,7 +40,7 @@ Portfolio personal desarrollado con **Reflex** (frontend) y **FastAPI** (backend
 
 ---
 
-## 📁 Estructura del Proyecto Explicada
+## Estructura del Proyecto Explicada
 
 ```
 mi_portfolio_reflex/
@@ -48,44 +48,66 @@ mi_portfolio_reflex/
 ├── 📂 frontend/                          # Aplicación Reflex (frontend)
 │   ├── mi_portfolio_reflex/             # Paquete principal Python
 │   │   ├── __init__.py                  # Convierte la carpeta en paquete Python
-│   │   ├── mi_portfolio_reflex.py       # 🔴 ARCHIVO PRINCIPAL - Define páginas y app
-│   │   ├── state.py                     # (futuro) Estado global: idiomas, datos compartidos
-│   │   ├── components/                  # Componentes reutilizables (navbar, cards, etc)
-│   │   ├── pages/                       # Páginas separadas (home, projects, admin)
-│   │   └── styles/                      # Archivos CSS personalizados
+│   │   ├── mi_portfolio_reflex.py       # ARCHIVO PRINCIPAL - Define páginas y app
+│   │   ├── state.py                     # Estado global: idiomas, formulario, menu
+│   │   ├── translations.py              # Diccionario de traducciones (ES, EN, IT, CA)
+│   │   ├── components/                  # Componentes reutilizables (vacio por ahora)
+│   │   ├── pages/                       # Páginas separadas (vacio por ahora)
+│   │   └── styles/                      # Archivos CSS personalizados (vacio)
 │   │
-│   ├── rxconfig.py                      # 🔴 CONFIGURACIÓN REFLEX - Puerto, nombre app
-│   └── requirements.txt                 # Dependencias Python del frontend
+│   ├── assets/                          # Archivos estáticos del frontend
+│   │   ├── CV.pdf                       # Curriculum Vitae en PDF
+│   │   ├── favicon.ico                  # Icono del navegador
+│   │   ├── foto_perfil.png              # Foto de perfil circular
+│   │   ├── logo.png                     # Logo personalizado
+│   │   └── styles/                      # Estilos CSS
+│   │       └── styles.css               # CSS personalizado (smooth scroll, responsive)
+│   │
+│   ├── rxconfig.py                      # CONFIGURACIÓN REFLEX - Puerto 3000, favicon
+│   ├── requirements.txt                 # Dependencias Python del frontend
+│   ├── .gitignore                       # Ignora .web, __pycache__, .states
+│   ├── .web/                            # Archivos generados por Reflex (NO subir a Git)
+│   └── .states/                         # Estados de Reflex (NO subir a Git)
 │
 ├── 📂 backend/                           # API FastAPI (backend)
-│   └── app/
-│       ├── __init__.py                  # Convierte carpeta en paquete Python
-│       ├── main.py                      # (futuro) Punto de entrada FastAPI
-│       ├── database.py                  # (futuro) Configuración de base de datos
-│       ├── auth.py                      # (futuro) Sistema de autenticación JWT
-│       ├── models/                      # Modelos de base de datos (tablas)
-│       │   └── __init__.py
-│       └── routers/                     # Endpoints API organizados por recurso
-│           └── __init__.py
+│   ├── app/
+│   │   ├── __init__.py                  # Convierte carpeta en paquete Python
+│   │   ├── main.py                      # Punto de entrada FastAPI con CORS
+│   │   ├── config.py                    # Configuración con pydantic-settings
+│   │   ├── database.py                  # Configuración SQLAlchemy + SQLite
+│   │   ├── models/                      # Modelos de base de datos
+│   │   │   ├── __init__.py
+│   │   │   ├── proyecto.py              # Modelo Proyecto (multi-idioma)
+│   │   │   ├── curso.py                 # Modelo Curso/Diploma
+│   │   │   └── experiencia.py           # Modelo Experiencia
+│   │   ├── schemas/                     # Schemas Pydantic para validación
+│   │   │   ├── __init__.py
+│   │   │   ├── proyecto.py              # Schemas Proyecto
+│   │   │   ├── curso.py                 # Schemas Curso
+│   │   │   └── experiencia.py           # Schemas Experiencia
+│   │   └── routers/                     # Endpoints API (CRUD completo)
+│   │       ├── __init__.py
+│   │       ├── proyectos.py             # Endpoints /api/proyectos
+│   │       ├── cursos.py                # Endpoints /api/cursos
+│   │       └── experiencias.py          # Endpoints /api/experiencias
+│   │
+│   ├── seed_data.py                     # Script para poblar la base de datos
+│   ├── portfolio.db                     # Base de datos SQLite (desarrollo)
 │   └── requirements.txt                 # Dependencias Python del backend
 │
-├── 📂 assets/                            # Archivos estáticos
-│   ├── images/                          # Fotos personales, logos, iconos
-│   ├── videos/                          # Videos demo de proyectos
-│   └── cv/                              # Archivos CV para descarga
+├── 📂 assets/                            # Archivos estáticos globales (vacio)
 │
 ├── 📂 venv/                              # Entorno virtual Python (NO se sube a Git)
 │
-├── .env                                  # 🔴 VARIABLES DE ENTORNO - Contraseñas, API keys
+├── .env                                  # VARIABLES DE ENTORNO - Contraseñas, API keys
 ├── .gitignore                           # Archivos que Git debe ignorar
-├── README.md                            # 📖 Este archivo - Documentación del proyecto
-└── PROGRESO_DIARIO.md                  # 📊 Tracking temporal del avance día a día
-
-```
+├── ARQUITECTURA.md                      # Documentación de arquitectura del proyecto
+├── README.md                            # Este archivo - Documentación del proyecto
+└── PROGRESO_DIARIO.md                  # Tracking del avance (solo Día 9)
 
 ---
 
-## 📄 Descripción de Archivos Clave
+## Descripción de Archivos Clave
 
 ### **Archivos de Configuración**
 
