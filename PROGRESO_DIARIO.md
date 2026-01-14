@@ -675,148 +675,136 @@ Implementar backend con FastAPI + SQLAlchemy + SQLite para gestionar contenido d
 - El formulario de contacto actualmente simula el envÃƒÂ­o (TODO: integrar con EmailJS o backend)
 - Los proyectos actuales estÃƒÂ¡n hardcodeados (se dinamizarÃƒÂ¡n con backend)
 - El CV estÃƒÂ¡ en `frontend/assets/CV.pdf`
-- Foto de perfil en `frontend/assets/foto_perfil.png`
-- Logo en `frontend/assets/logo.png`
-- Favicon en `frontend/assets/favicon.ico`
-- Responsive design implementado con breakpoints: mÃƒÂ³vil (< 768px), tablet (769-1024px), desktop (> 1024px)
-- Todas las traducciones estÃƒÂ¡n en `translations.py` para fÃƒÂ¡cil mantenimiento
-- Arquitectura completa documentada en `ARQUITECTURA.md`
+
+### Objetivo: Implementar backend completo con FastAPI
+
+**Logros de la sesion:**
+
+#### 1. Configuracion Base del Backend
+- Creado backend/app/config.py con pydantic-settings
+- Creado backend/app/database.py con SQLAlchemy + SQLite
+- Creado backend/app/main.py con FastAPI + CORS configurado
+- Variables de entorno para desarrollo y produccion
+- Dependency injection para sesiones de base de datos
+
+#### 2. Modelos de Base de Datos (SQLAlchemy)
+- backend/app/models/proyecto.py - Modelo Proyecto con multi-idioma
+  - Campos: titulo_*, descripcion_* (es, en, it, ca)
+  - Tecnologias (JSON), URLs (GitHub, demo), imagen
+  - Flags: destacado, activo, orden
+- backend/app/models/curso.py - Modelo Curso/Diploma
+  - Tipo: curso o diploma
+  - Campos multi-idioma, institucion, fechas
+  - Certificado URL, orden, activo
+- backend/app/models/experiencia.py - Modelo Experiencia
+  - Tipo, empresa, cargo multi-idioma
+  - Fechas (inicio, fin, actual)
+  - Tecnologias (JSON), mostrar_en_web, orden
+
+#### 3. Schemas Pydantic (Validacion)
+- backend/app/schemas/proyecto.py - ProyectoBase, Create, Update, Response
+- backend/app/schemas/curso.py - CursoBase, Create, Update, Response
+- backend/app/schemas/experiencia.py - ExperienciaBase, Create, Update, Response
+- Validacion automatica de tipos y campos requeridos
+- Serializacion con from_attributes = True
+
+#### 4. Routers con CRUD Completo
+
+**backend/app/routers/proyectos.py:**
+- GET /api/proyectos/ - Listar proyectos (con filtro destacados)
+- GET /api/proyectos/{id} - Obtener proyecto por ID
+- POST /api/proyectos/ - Crear proyecto
+- PUT /api/proyectos/{id} - Actualizar proyecto
+- DELETE /api/proyectos/{id} - Eliminar proyecto (soft delete)
+
+**backend/app/routers/cursos.py:**
+- GET /api/cursos/ - Listar cursos
+- GET /api/cursos/{id} - Obtener curso por ID
+- POST /api/cursos/ - Crear curso
+- PUT /api/cursos/{id} - Actualizar curso
+- DELETE /api/cursos/{id} - Eliminar curso (soft delete)
+
+**backend/app/routers/experiencias.py:**
+- GET /api/experiencias/ - Listar experiencias (con filtro mostrar_en_web)
+- GET /api/experiencias/{id} - Obtener experiencia por ID
+- POST /api/experiencias/ - Crear experiencia
+- PUT /api/experiencias/{id} - Actualizar experiencia
+- DELETE /api/experiencias/{id} - Eliminar experiencia (soft delete)
+
+#### 5. Seed Data y Base de Datos
+- Creado backend/seed_data.py para poblar la base de datos
+- 3 proyectos de ejemplo (Portfolio, Task Manager, E-commerce API)
+- 4 cursos/diplomas (Python, FastAPI, Git, Diploma Tecnico)
+- 1 experiencia (Practicas en Tech Solutions)
+- Todos los datos en 4 idiomas (ES, EN, IT, CA)
+- Base de datos SQLite creada: backend/portfolio.db
+
+#### 6. Funcionalidades Implementadas
+- Soft Delete: Campo activo en todos los modelos
+- Ordenamiento: Campo orden para controlar visualizacion
+- Filtros: destacados, mostrar_en_web, activo
+- CORS: Configurado para frontend (localhost:3000)
+- Documentacion automatica: Swagger UI en /docs
+- Health check: Endpoint /health
+- Multi-idioma: Todos los textos en 4 idiomas
+
+#### 7. Dependencias Anadidas
+- pydantic-settings>=2.0.0 anadido a requirements.txt
+- FastAPI, SQLAlchemy, Uvicorn ya estaban instalados
+
+### API Funcionando
+- URL: http://localhost:8000
+- Docs: http://localhost:8000/docs
+- Health: http://localhost:8000/health
+- Puerto: 8000 (backend) | 3000 (frontend)
+
+### Estructura Final del Backend
+```
+backend/
+â”œâ”€â”€ app/
+â”‚   â”œâ”€â”€ __init__.py
+â”‚   â”œâ”€â”€ main.py              # FastAPI app principal
+â”‚   â”œâ”€â”€ config.py            # Settings y configuracion
+â”‚   â”œâ”€â”€ database.py          # SQLAlchemy setup
+â”‚   â”œâ”€â”€ models/
+â”‚   â”‚   â”œâ”€â”€ __init__.py
+â”‚   â”‚   â”œâ”€â”€ proyecto.py      # Modelo Proyecto
+â”‚   â”‚   â”œâ”€â”€ curso.py         # Modelo Curso
+â”‚   â”‚   â””â”€â”€ experiencia.py   # Modelo Experiencia
+â”‚   â”œâ”€â”€ schemas/
+â”‚   â”‚   â”œâ”€â”€ __init__.py
+â”‚   â”‚   â”œâ”€â”€ proyecto.py      # Schemas Proyecto
+â”‚   â”‚   â”œâ”€â”€ curso.py         # Schemas Curso
+â”‚   â”‚   â””â”€â”€ experiencia.py   # Schemas Experiencia
+â”‚   â””â”€â”€ routers/
+â”‚       â”œâ”€â”€ __init__.py
+â”‚       â”œâ”€â”€ proyectos.py     # Endpoints Proyectos
+â”‚       â”œâ”€â”€ cursos.py        # Endpoints Cursos
+â”‚       â””â”€â”€ experiencias.py  # Endpoints Experiencias
+â”œâ”€â”€ seed_data.py             # Script para poblar DB
+â”œâ”€â”€ requirements.txt         # Dependencias
+â””â”€â”€ portfolio.db             # Base de datos SQLite
+```
+
+### Proximos Pasos (Sesion 10)
+1. Integrar frontend con backend (fetch data desde API)
+2. Reemplazar datos hardcoded por llamadas a la API
+3. Loading states en frontend
+4. Error handling
+5. Opcional: GitHub API integration para repos dinamicos
+
+### Commits de la Sesion
+1. Implementar backend FastAPI con CRUD completo
+2. Actualizar README.md con Fase 4 backend completada
+
+### Notas Tecnicas
+- Soft delete: Los registros no se eliminan fisicamente, solo se marca activo=False
+- Multi-idioma: Cada modelo tiene campos *_es, *_en, *_it, *_ca
+- JSON fields: Tecnologias se guardan como JSON array
+- Fechas: Usando date de Python para fecha_inicio/fecha_fin
+- Validacion: Pydantic valida automaticamente tipos y campos requeridos
+- CORS: Configurado para permitir requests desde localhost:3000
 
 ---
 
-**ÃƒÅ¡ltima actualizaciÃƒÂ³n:** 14 Enero 2026
-#   D Ã ­ a   9   ( 1 4   E n e r o   2 0 2 6 )   -   B a c k e n d   F a s t A P I   I m p l e m e n t a d o  
-  
- # #   O b j e t i v o :   I m p l e m e n t a r   b a c k e n d   c o m p l e t o   c o n   F a s t A P I  
-  
- # # #   L o g r o s   d e   l a   s e s i Ã ³ n :  
-  
- # # # #   1 .   C o n f i g u r a c i Ã ³ n   B a s e   d e l   B a c k e n d  
- -   C r e a d o   ` b a c k e n d / a p p / c o n f i g . p y `   c o n   p y d a n t i c - s e t t i n g s  
- -   C r e a d o   ` b a c k e n d / a p p / d a t a b a s e . p y `   c o n   S Q L A l c h e m y   +   S Q L i t e  
- -   C r e a d o   ` b a c k e n d / a p p / m a i n . p y `   c o n   F a s t A P I   +   C O R S   c o n f i g u r a d o  
- -   V a r i a b l e s   d e   e n t o r n o   p a r a   d e s a r r o l l o   y   p r o d u c c i Ã ³ n  
- -   D e p e n d e n c y   i n j e c t i o n   p a r a   s e s i o n e s   d e   b a s e   d e   d a t o s  
-  
- # # # #   2 .   M o d e l o s   d e   B a s e   d e   D a t o s   ( S Q L A l c h e m y )  
- -   ` b a c k e n d / a p p / m o d e l s / p r o y e c t o . p y `   -   M o d e l o   P r o y e c t o   c o n   m u l t i - i d i o m a  
-     -   C a m p o s :   t i t u l o _ * ,   d e s c r i p c i o n _ *   ( e s ,   e n ,   i t ,   c a )  
-     -   T e c n o l o g Ã ­ a s   ( J S O N ) ,   U R L s   ( G i t H u b ,   d e m o ) ,   i m a g e n  
-     -   F l a g s :   d e s t a c a d o ,   a c t i v o ,   o r d e n  
- -   ` b a c k e n d / a p p / m o d e l s / c u r s o . p y `   -   M o d e l o   C u r s o / D i p l o m a  
-     -   T i p o :   c u r s o   o   d i p l o m a  
-     -   C a m p o s   m u l t i - i d i o m a ,   i n s t i t u c i Ã ³ n ,   f e c h a s  
-     -   C e r t i f i c a d o   U R L ,   o r d e n ,   a c t i v o  
- -   ` b a c k e n d / a p p / m o d e l s / e x p e r i e n c i a . p y `   -   M o d e l o   E x p e r i e n c i a  
-     -   T i p o ,   e m p r e s a ,   c a r g o   m u l t i - i d i o m a  
-     -   F e c h a s   ( i n i c i o ,   f i n ,   a c t u a l )  
-     -   T e c n o l o g Ã ­ a s   ( J S O N ) ,   m o s t r a r _ e n _ w e b ,   o r d e n  
-  
- # # # #   3 .   S c h e m a s   P y d a n t i c   ( V a l i d a c i Ã ³ n )  
- -   ` b a c k e n d / a p p / s c h e m a s / p r o y e c t o . p y `   -   P r o y e c t o B a s e ,   C r e a t e ,   U p d a t e ,   R e s p o n s e  
- -   ` b a c k e n d / a p p / s c h e m a s / c u r s o . p y `   -   C u r s o B a s e ,   C r e a t e ,   U p d a t e ,   R e s p o n s e  
- -   ` b a c k e n d / a p p / s c h e m a s / e x p e r i e n c i a . p y `   -   E x p e r i e n c i a B a s e ,   C r e a t e ,   U p d a t e ,   R e s p o n s e  
- -   V a l i d a c i Ã ³ n   a u t o m Ã ¡ t i c a   d e   t i p o s   y   c a m p o s   r e q u e r i d o s  
- -   S e r i a l i z a c i Ã ³ n   c o n   ` f r o m _ a t t r i b u t e s   =   T r u e `  
-  
- # # # #   4 .   R o u t e r s   c o n   C R U D   C o m p l e t o  
-  
- * * b a c k e n d / a p p / r o u t e r s / p r o y e c t o s . p y : * *  
- -   G E T   ` / a p i / p r o y e c t o s / `   -   L i s t a r   p r o y e c t o s   ( c o n   f i l t r o   d e s t a c a d o s )  
- -   G E T   ` / a p i / p r o y e c t o s / { i d } `   -   O b t e n e r   p r o y e c t o   p o r   I D  
- -   P O S T   ` / a p i / p r o y e c t o s / `   -   C r e a r   p r o y e c t o  
- -   P U T   ` / a p i / p r o y e c t o s / { i d } `   -   A c t u a l i z a r   p r o y e c t o  
- -   D E L E T E   ` / a p i / p r o y e c t o s / { i d } `   -   E l i m i n a r   p r o y e c t o   ( s o f t   d e l e t e )  
-  
- * * b a c k e n d / a p p / r o u t e r s / c u r s o s . p y : * *  
- -   G E T   ` / a p i / c u r s o s / `   -   L i s t a r   c u r s o s  
- -   G E T   ` / a p i / c u r s o s / { i d } `   -   O b t e n e r   c u r s o   p o r   I D  
- -   P O S T   ` / a p i / c u r s o s / `   -   C r e a r   c u r s o  
- -   P U T   ` / a p i / c u r s o s / { i d } `   -   A c t u a l i z a r   c u r s o  
- -   D E L E T E   ` / a p i / c u r s o s / { i d } `   -   E l i m i n a r   c u r s o   ( s o f t   d e l e t e )  
-  
- * * b a c k e n d / a p p / r o u t e r s / e x p e r i e n c i a s . p y : * *  
- -   G E T   ` / a p i / e x p e r i e n c i a s / `   -   L i s t a r   e x p e r i e n c i a s   ( c o n   f i l t r o   m o s t r a r _ e n _ w e b )  
- -   G E T   ` / a p i / e x p e r i e n c i a s / { i d } `   -   O b t e n e r   e x p e r i e n c i a   p o r   I D  
- -   P O S T   ` / a p i / e x p e r i e n c i a s / `   -   C r e a r   e x p e r i e n c i a  
- -   P U T   ` / a p i / e x p e r i e n c i a s / { i d } `   -   A c t u a l i z a r   e x p e r i e n c i a  
- -   D E L E T E   ` / a p i / e x p e r i e n c i a s / { i d } `   -   E l i m i n a r   e x p e r i e n c i a   ( s o f t   d e l e t e )  
-  
- # # # #   5 .   S e e d   D a t a   y   B a s e   d e   D a t o s  
- -   C r e a d o   ` b a c k e n d / s e e d _ d a t a . p y `   p a r a   p o b l a r   l a   b a s e   d e   d a t o s  
- -   3   p r o y e c t o s   d e   e j e m p l o   ( P o r t f o l i o ,   T a s k   M a n a g e r ,   E - c o m m e r c e   A P I )  
- -   4   c u r s o s / d i p l o m a s   ( P y t h o n ,   F a s t A P I ,   G i t ,   D i p l o m a   T Ã © c n i c o )  
- -   1   e x p e r i e n c i a   ( P r Ã ¡ c t i c a s   e n   T e c h   S o l u t i o n s )  
- -   T o d o s   l o s   d a t o s   e n   4   i d i o m a s   ( E S ,   E N ,   I T ,   C A )  
- -   B a s e   d e   d a t o s   S Q L i t e   c r e a d a :   ` b a c k e n d / p o r t f o l i o . d b `  
-  
- # # # #   6 .   F u n c i o n a l i d a d e s   I m p l e m e n t a d a s  
- -   * * S o f t   D e l e t e : * *   C a m p o   ` a c t i v o `   e n   t o d o s   l o s   m o d e l o s  
- -   * * O r d e n a m i e n t o : * *   C a m p o   ` o r d e n `   p a r a   c o n t r o l a r   v i s u a l i z a c i Ã ³ n  
- -   * * F i l t r o s : * *   d e s t a c a d o s ,   m o s t r a r _ e n _ w e b ,   a c t i v o  
- -   * * C O R S : * *   C o n f i g u r a d o   p a r a   f r o n t e n d   ( l o c a l h o s t : 3 0 0 0 )  
- -   * * D o c u m e n t a c i Ã ³ n   a u t o m Ã ¡ t i c a : * *   S w a g g e r   U I   e n   ` / d o c s `  
- -   * * H e a l t h   c h e c k : * *   E n d p o i n t   ` / h e a l t h `  
- -   * * M u l t i - i d i o m a : * *   T o d o s   l o s   t e x t o s   e n   4   i d i o m a s  
-  
- # # # #   7 .   D e p e n d e n c i a s   A Ã ± a d i d a s  
- -   ` p y d a n t i c - s e t t i n g s > = 2 . 0 . 0 `   a Ã ± a d i d o   a   r e q u i r e m e n t s . t x t  
- -   F a s t A P I ,   S Q L A l c h e m y ,   U v i c o r n   y a   e s t a b a n   i n s t a l a d o s  
-  
- # # #   A P I   F u n c i o n a n d o  
- -   * * U R L : * *   h t t p : / / l o c a l h o s t : 8 0 0 0  
- -   * * D o c s : * *   h t t p : / / l o c a l h o s t : 8 0 0 0 / d o c s  
- -   * * H e a l t h : * *   h t t p : / / l o c a l h o s t : 8 0 0 0 / h e a l t h  
- -   * * P u e r t o : * *   8 0 0 0   ( b a c k e n d )   |   3 0 0 0   ( f r o n t e n d )  
-  
- # # #   E s t r u c t u r a   F i n a l   d e l   B a c k e n d  
- ` ` `  
- b a c k e n d /  
- â  Sâ  ¬ â  ¬   a p p /  
- â         â  Sâ  ¬ â  ¬   _ _ i n i t _ _ . p y  
- â         â  Sâ  ¬ â  ¬   m a i n . p y                             #   F a s t A P I   a p p   p r i n c i p a l  
- â         â  Sâ  ¬ â  ¬   c o n f i g . p y                         #   S e t t i n g s   y   c o n f i g u r a c i Ã ³ n  
- â         â  Sâ  ¬ â  ¬   d a t a b a s e . p y                     #   S Q L A l c h e m y   s e t u p  
- â         â  Sâ  ¬ â  ¬   m o d e l s /  
- â         â         â  Sâ  ¬ â  ¬   _ _ i n i t _ _ . p y  
- â         â         â  Sâ  ¬ â  ¬   p r o y e c t o . p y             #   M o d e l o   P r o y e c t o  
- â         â         â  Sâ  ¬ â  ¬   c u r s o . p y                   #   M o d e l o   C u r s o  
- â         â         â   â  ¬ â  ¬   e x p e r i e n c i a . p y       #   M o d e l o   E x p e r i e n c i a  
- â         â  Sâ  ¬ â  ¬   s c h e m a s /  
- â         â         â  Sâ  ¬ â  ¬   _ _ i n i t _ _ . p y  
- â         â         â  Sâ  ¬ â  ¬   p r o y e c t o . p y             #   S c h e m a s   P r o y e c t o  
- â         â         â  Sâ  ¬ â  ¬   c u r s o . p y                   #   S c h e m a s   C u r s o  
- â         â         â   â  ¬ â  ¬   e x p e r i e n c i a . p y       #   S c h e m a s   E x p e r i e n c i a  
- â         â   â  ¬ â  ¬   r o u t e r s /  
- â                 â  Sâ  ¬ â  ¬   _ _ i n i t _ _ . p y  
- â                 â  Sâ  ¬ â  ¬   p r o y e c t o s . p y           #   E n d p o i n t s   P r o y e c t o s  
- â                 â  Sâ  ¬ â  ¬   c u r s o s . p y                 #   E n d p o i n t s   C u r s o s  
- â                 â   â  ¬ â  ¬   e x p e r i e n c i a s . p y     #   E n d p o i n t s   E x p e r i e n c i a s  
- â  Sâ  ¬ â  ¬   s e e d _ d a t a . p y                           #   S c r i p t   p a r a   p o b l a r   D B  
- â  Sâ  ¬ â  ¬   r e q u i r e m e n t s . t x t                   #   D e p e n d e n c i a s  
- â   â  ¬ â  ¬   p o r t f o l i o . d b                           #   B a s e   d e   d a t o s   S Q L i t e  
- ` ` `  
-  
- # # #   P r Ã ³ x i m o s   P a s o s   ( S e s i Ã ³ n   1 0 )  
- 1 .   I n t e g r a r   f r o n t e n d   c o n   b a c k e n d   ( f e t c h   d a t a   d e s d e   A P I )  
- 2 .   R e e m p l a z a r   d a t o s   h a r d c o d e d   p o r   l l a m a d a s   a   l a   A P I  
- 3 .   L o a d i n g   s t a t e s   e n   f r o n t e n d  
- 4 .   E r r o r   h a n d l i n g  
- 5 .   O p c i o n a l :   G i t H u b   A P I   i n t e g r a t i o n   p a r a   r e p o s   d i n Ã ¡ m i c o s  
-  
- # # #   C o m m i t s   d e   l a   S e s i Ã ³ n  
- 1 .   " I m p l e m e n t a r   b a c k e n d   F a s t A P I   c o n   C R U D   c o m p l e t o "  
- 2 .   " A c t u a l i z a r   R E A D M E . m d   c o n   F a s e   4   b a c k e n d   c o m p l e t a d a "  
-  
- # # #   N o t a s   T Ã © c n i c a s  
- -   * * S o f t   d e l e t e : * *   L o s   r e g i s t r o s   n o   s e   e l i m i n a n   f Ã ­ s i c a m e n t e ,   s o l o   s e   m a r c a   ` a c t i v o = F a l s e `  
- -   * * M u l t i - i d i o m a : * *   C a d a   m o d e l o   t i e n e   c a m p o s   ` * _ e s ` ,   ` * _ e n ` ,   ` * _ i t ` ,   ` * _ c a `  
- -   * * J S O N   f i e l d s : * *   T e c n o l o g Ã ­ a s   s e   g u a r d a n   c o m o   J S O N   a r r a y  
- -   * * F e c h a s : * *   U s a n d o   ` d a t e `   d e   P y t h o n   p a r a   f e c h a _ i n i c i o / f e c h a _ f i n  
- -   * * V a l i d a c i Ã ³ n : * *   P y d a n t i c   v a l i d a   a u t o m Ã ¡ t i c a m e n t e   t i p o s   y   c a m p o s   r e q u e r i d o s  
- -   * * C O R S : * *   C o n f i g u r a d o   p a r a   p e r m i t i r   r e q u e s t s   d e s d e   l o c a l h o s t : 3 0 0 0  
-  
- - - -  
-  
- * * Ã al t i m a   a c t u a l i z a c i Ã ³ n : * *   1 4   E n e r o   2 0 2 6  
- 
+**Ultima actualizacion:** 14 Enero 2026
