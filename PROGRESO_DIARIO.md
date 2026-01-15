@@ -138,4 +138,93 @@ backend/
 
 ---
 
-**Ultima actualizacion:** 14 Enero 2026
+## Dia 10 (15 Enero 2026) - Integracion Frontend-Backend Completada
+
+### Objetivo: Conectar frontend Reflex con backend FastAPI
+
+**Logros de la sesion:**
+
+#### 1. Configuracion de Dependencias
+- Instalado httpx>=0.24.0 en frontend/requirements.txt
+- Configurado backend para correr en puerto 8001
+- Frontend en puerto 3000, backend en puerto 8001
+
+#### 2. Clases Pydantic en Frontend
+- Creadas clases Proyecto y Curso en state.py
+- Campos multi-idioma: titulo_*, descripcion_* (es, en, it, ca)
+- Manejo de campos opcionales (github_url, demo_url, certificado_url)
+- Validacion automatica con Pydantic
+
+#### 3. Funciones de Carga de Datos
+- cargar_proyectos() - Fetch desde http://localhost:8001/api/proyectos/
+- cargar_cursos() - Fetch desde http://localhost:8001/api/cursos/
+- Conversion de None a string vacio para campos opcionales
+- Manejo de errores con try/except
+- Loading states (cargando_proyectos, cargando_cursos)
+- Mensajes de error descriptivos
+
+#### 4. Dinamizacion de Secciones
+- Seccion Proyectos: Datos dinamicos desde API
+  - rx.foreach para iterar sobre State.proyectos
+  - Acceso a atributos con notacion de punto (proyecto.titulo_es)
+  - Multi-idioma con rx.cond anidados
+  - Links condicionales (github_url, demo_url)
+- Seccion Formacion: Datos dinamicos desde API
+  - rx.foreach para iterar sobre State.cursos
+  - Diferenciacion visual diploma vs curso (colores)
+  - Link condicional a certificado
+  - Fechas con formato "inicio - fin" o "inicio - Actualidad"
+
+#### 5. Solucion de Problemas Tecnicos
+- Error de tipos con Optional[str] en Pydantic
+- Solucion: Cambiar a str = "" sin Optional
+- Error con rx.link y href con valores None
+- Solucion: Convertir None a "" antes de crear objetos Pydantic
+- Error con notacion de diccionario en rx.foreach
+- Solucion: Usar notacion de atributos (objeto.campo)
+
+### Funcionalidades Implementadas
+- Carga dinamica de 3 proyectos desde API
+- Carga dinamica de 4 cursos/diplomas desde API
+- Multi-idioma funcionando con datos de la API
+- Spinners de carga mientras se obtienen datos
+- Mensajes de error si falla la conexion
+- Links externos a GitHub, demos y certificados
+
+### Estructura de Integracion
+```
+Frontend (Reflex - Puerto 3000)
+    |
+    | HTTP GET requests (httpx)
+    |
+    v
+Backend (FastAPI - Puerto 8001)
+    |
+    | SQLAlchemy queries
+    |
+    v
+Base de Datos (SQLite - portfolio.db)
+```
+
+### Proximos Pasos (Sesion 11)
+1. Auto-carga de datos al entrar a la pagina (sin botones)
+2. Seccion Experiencia laboral dinamizada
+3. Cache de datos para evitar recargas
+4. Skeleton loaders en lugar de spinners
+5. Integracion GitHub API para repos dinamicos
+
+### Commits de la Sesion
+1. Integrar frontend con backend FastAPI - Secciones dinamicas
+2. Actualizar documentacion - Sesion 10 completada
+
+### Notas Tecnicas
+- httpx para requests HTTP asincronos
+- Pydantic para validacion de datos del API
+- rx.foreach para renderizado dinamico de listas
+- rx.cond para condicionales en UI
+- Manejo de None: if valor is None: valor = ""
+- Backend y frontend en puertos diferentes para evitar conflictos
+
+---
+
+**Ultima actualizacion:** 15 Enero 2026
