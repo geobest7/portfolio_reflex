@@ -2,6 +2,7 @@ import reflex as rx
 from .state import State
 
 
+
 def selector_idioma_portada() -> rx.Component:
     """Selector de idioma para la portada con redirección"""
     return rx.hstack(
@@ -259,105 +260,109 @@ def seccion_sobre_mi() -> rx.Component:
 
 
 def seccion_formacion() -> rx.Component:
-    """Sección Formación con diploma y cursos"""
+    """Seccion Formacion con datos dinamicos desde la API"""
     return rx.box(
         rx.vstack(
             rx.heading(State.formacion_titulo, size="8", color="white"),
             
-            # Diploma
-            rx.box(
-                rx.vstack(
-                    rx.hstack(
-                        rx.icon("graduation-cap", size=24, color="white"),
-                        rx.vstack(
-                            rx.text(State.formacion_diploma_titulo, size="4", weight="bold", color="white"),
-                            rx.text(State.formacion_diploma_institucion, size="3", color="#cccccc"),
-                            spacing="1",
-                            align="start",
-                        ),
-                        spacing="3",
-                        align="start",
-                    ),
-                    rx.hstack(
-                        rx.icon("calendar", size=20, color="#cccccc"),
-                        rx.text(State.formacion_diploma_periodo, size="3", color="#cccccc"),
-                        spacing="2",
-                    ),
-                    spacing="3",
-                    align="start",
-                ),
-                padding="1.5em",
-                border_radius="8px",
-                border="1px solid #333333",
-                bg="#0a0a0a",
-                max_width="600px",
+            rx.button(
+                "Cargar Formacion",
+                on_click=State.cargar_cursos,
+                display=rx.cond(State.cursos.length() == 0, "block", "none"),
                 margin_bottom="2em",
             ),
             
-            # Cursos y Certificaciones
-            rx.heading(State.formacion_cursos_subtitulo, size="6", color="white", margin_bottom="1em"),
-            rx.hstack(
-                # Curso 1
-                rx.box(
-                    rx.vstack(
-                        rx.icon("book-open", size=20, color="white"),
-                        rx.text(State.curso1_titulo, size="3", weight="bold", color="white"),
-                        rx.text(State.curso1_institucion, size="2", color="#cccccc"),
-                        rx.text(State.curso1_periodo, size="2", color="#999999"),
-                        spacing="2",
-                        align="start",
-                    ),
-                    padding="1.5em",
-                    border_radius="8px",
-                    border="1px solid #333333",
-                    bg="#0a0a0a",
-                    width="250px",
-                ),
-                # Curso 2
-                rx.box(
-                    rx.vstack(
-                        rx.icon("book-open", size=20, color="white"),
-                        rx.text(State.curso2_titulo, size="3", weight="bold", color="white"),
-                        rx.text(State.curso2_institucion, size="2", color="#cccccc"),
-                        rx.text(State.curso2_periodo, size="2", color="#999999"),
-                        spacing="2",
-                        align="start",
-                    ),
-                    padding="1.5em",
-                    border_radius="8px",
-                    border="1px solid #333333",
-                    bg="#0a0a0a",
-                    width="250px",
-                ),
-                # Curso 3
-                rx.box(
-                    rx.vstack(
-                        rx.icon("book-open", size=20, color="white"),
-                        rx.text(State.curso3_titulo, size="3", weight="bold", color="white"),
-                        rx.text(State.curso3_institucion, size="2", color="#cccccc"),
-                        rx.text(State.curso3_periodo, size="2", color="#999999"),
-                        spacing="2",
-                        align="start",
-                    ),
-                    padding="1.5em",
-                    border_radius="8px",
-                    border="1px solid #333333",
-                    bg="#0a0a0a",
-                    width="250px",
-                ),
-                spacing="4",
-                wrap="wrap",
-                justify="center",
+            rx.cond(
+                State.cargando_cursos,
+                rx.spinner(size="3"),
             ),
             
-            spacing="4",
-            align="center",
-            text_align="center",
+            rx.cond(
+                State.error_cursos != "",
+                rx.text(State.error_cursos, color="red"),
+            ),
+            
+            rx.vstack(
+                rx.foreach(
+                    State.cursos,
+                    lambda curso: rx.box(
+                        rx.vstack(
+                            rx.hstack(
+                                rx.text(
+                                    curso.tipo.upper(),
+                                    color=rx.cond(
+                                        curso.tipo == "diploma",
+                                        "#FFD700",
+                                        "#00CED1"
+                                    ),
+                                    font_weight="bold",
+                                    size="2",
+                                ),
+                                rx.text(
+                                    rx.cond(
+                                        State.idioma == "es",
+                                        curso.titulo_es,
+                                        rx.cond(
+                                            State.idioma == "en",
+                                            curso.titulo_en,
+                                            rx.cond(
+                                                State.idioma == "it",
+                                                curso.titulo_it,
+                                                curso.titulo_ca
+                                            )
+                                        )
+                                    ),
+                                    color="white",
+                                    font_weight="bold",
+                                    size="4",
+                                ),
+                                spacing="3",
+                                align_items="center",
+                            ),
+                            rx.text(
+                                curso.institucion,
+                                color="#CCCCCC",
+                                size="2",
+                            ),
+                            rx.text(
+                                rx.cond(
+                                    curso.fecha_fin != "",
+                                    f"{curso.fecha_inicio} - {curso.fecha_fin}",
+                                    f"{curso.fecha_inicio} - Actualidad"
+                                ),
+                                color="#999999",
+                                size="1",
+                            ),
+                            rx.cond(
+                                curso.certificado_url != "",
+                                rx.link(
+                                    rx.button("Ver certificado", size="1", variant="outline"),
+                                    href=curso.certificado_url,
+                                    is_external=True,
+                                ),
+                            ),
+                            spacing="2",
+                            align_items="start",
+                        ),
+                        padding="1.5em",
+                        border_radius="8px",
+                        border="1px solid #333333",
+                        background_color="#0A0A0A",
+                        width="100%",
+                    )
+                ),
+                spacing="3",
+                width="100%",
+                max_width="800px",
+            ),
+            
+            spacing="5",
+            align_items="center",
+            width="100%",
         ),
-        padding="6em 2em",
-        bg="#000000",
-        width="100%",
         id="formacion",
+        padding="4em 2em",
+        background_color="#000000",
     )
 
 def card_proyecto(titulo: str, descripcion: str) -> rx.Component:
@@ -385,26 +390,114 @@ def card_proyecto(titulo: str, descripcion: str) -> rx.Component:
 
 
 def seccion_proyectos() -> rx.Component:
-    """Sección Proyectos con grid de cards"""
+    """Seccion Proyectos con datos dinamicos desde la API"""
     return rx.box(
         rx.vstack(
-            rx.heading(State.proyectos_titulo, size="8", color="white", margin_bottom="2em"),
-            rx.flex(
-                card_proyecto(State.proyecto_1_titulo, State.proyecto_1_desc),
-                card_proyecto(State.proyecto_2_titulo, State.proyecto_2_desc),
-                card_proyecto(State.proyecto_3_titulo, State.proyecto_3_desc),
-                spacing="4",
-                wrap="wrap",
-                justify="center",
-                class_name="proyectos-grid",
+            rx.heading(State.proyectos_titulo, size="8", color="white"),
+            
+            rx.button(
+                "Cargar Proyectos",
+                on_click=State.cargar_proyectos,
+                display=rx.cond(State.proyectos.length() == 0, "block", "none"),
+                margin_bottom="2em",
             ),
-            spacing="4",
-            align="center",
+            
+            rx.cond(
+                State.cargando_proyectos,
+                rx.spinner(size="3"),
+            ),
+            
+            rx.cond(
+                State.error_proyectos != "",
+                rx.text(State.error_proyectos, color="red"),
+            ),
+            
+            rx.box(
+                rx.foreach(
+                    State.proyectos,
+                    lambda proyecto: rx.box(
+                        rx.vstack(
+                            rx.heading(
+                                rx.cond(
+                                    State.idioma == "es",
+                                    proyecto.titulo_es,
+                                    rx.cond(
+                                        State.idioma == "en",
+                                        proyecto.titulo_en,
+                                        rx.cond(
+                                            State.idioma == "it",
+                                            proyecto.titulo_it,
+                                            proyecto.titulo_ca
+                                        )
+                                    )
+                                ),
+                                size="5",
+                                color="white",
+                            ),
+                            rx.text(
+                                rx.cond(
+                                    State.idioma == "es",
+                                    proyecto.descripcion_es,
+                                    rx.cond(
+                                        State.idioma == "en",
+                                        proyecto.descripcion_en,
+                                        rx.cond(
+                                            State.idioma == "it",
+                                            proyecto.descripcion_it,
+                                            proyecto.descripcion_ca
+                                        )
+                                    )
+                                ),
+                                color="#CCCCCC",
+                                size="2",
+                            ),
+                            rx.hstack(
+                                rx.foreach(
+                                    proyecto.tecnologias,
+                                    lambda tech: rx.badge(tech, color_scheme="gray"),
+                                ),
+                                wrap="wrap",
+                                spacing="2",
+                            ),
+                            rx.hstack(
+                                rx.cond(
+                                    proyecto.github_url != "",
+                                    rx.link(
+                                        rx.button("Ver codigo", variant="outline"),
+                                        href=proyecto.github_url,
+                                        is_external=True,
+                                    ),
+                                ),
+                                rx.cond(
+                                    proyecto.demo_url != "",
+                                    rx.link(
+                                        rx.button("Ver demo", variant="solid"),
+                                        href=proyecto.demo_url,
+                                        is_external=True,
+                                    ),
+                                ),
+                                spacing="3",
+                            ),
+                            spacing="3",
+                            align_items="start",
+                        ),
+                        padding="2em",
+                        border_radius="8px",
+                        border="1px solid #333333",
+                        background_color="#0A0A0A",
+                    )
+                ),
+                class_name="proyectos-grid",
+                width="100%",
+            ),
+            
+            spacing="5",
+            align_items="center",
+            width="100%",
         ),
-        padding="6em 2em",
-        bg="#000000",
-        width="100%",
         id="proyectos",
+        padding="4em 2em",
+        background_color="#000000",
     )
 
 

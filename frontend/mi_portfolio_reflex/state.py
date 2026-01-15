@@ -1,5 +1,42 @@
 import reflex as rx 
 from .translations import TRANSLATIONS
+import httpx
+from typing import List, Dict, Any, Optional
+from pydantic import BaseModel
+
+
+class Proyecto(BaseModel):
+    id: int
+    titulo_es: str
+    titulo_en: str
+    titulo_it: str
+    titulo_ca: str
+    descripcion_es: str
+    descripcion_en: str
+    descripcion_it: str
+    descripcion_ca: str
+    tecnologias: List[str]
+    github_url: str = ""  
+    demo_url: str = "" 
+    imagen_url: str = ""     
+    destacado: bool
+    activo: bool
+    orden: int
+
+class Curso(BaseModel):
+    id: int
+    tipo: str
+    titulo_es: str
+    titulo_en: str
+    titulo_it: str
+    titulo_ca: str
+    institucion: str
+    fecha_inicio: str
+    fecha_fin: str = ""  
+    certificado_url: str = ""  
+    activo: bool
+    orden: int
+
 
 class State(rx.State):
     # variable de estado para el idioma actual
@@ -15,6 +52,14 @@ class State(rx.State):
     form_enviando: bool = False
     form_mensaje_estado: str = ""  # "exito", "error", o ""
     form_mensaje_texto: str = ""
+
+    # Variables para datos de la API
+    proyectos: List[Proyecto] = []
+    cursos: List[Curso] = []
+    cargando_proyectos: bool = False
+    cargando_cursos: bool = False
+    error_proyectos: str = ""
+    error_cursos: str = ""
 
     # metodo para cambiar el idioma
     def cambiar_idioma(self, nuevo_idioma: str):
@@ -320,3 +365,53 @@ class State(rx.State):
     @rx.var
     def curso3_periodo(self) -> str:
         return TRANSLATIONS.get(self.idioma, {}).get("curso3_periodo", "")
+
+
+    def cargar_proyectos(self):
+        """Cargar proyectos desde la API"""
+        self.cargando_proyectos = True
+        self.error_proyectos = ""
+        
+        try:
+            response = httpx.get("http://localhost:8001/api/proyectos/", params={"destacados": True})
+            if response.status_code == 200:
+                data = response.json()
+                # Convertir None a string vacío
+                # Convertir None a string vacío
+                for proyecto in data:
+                    if proyecto.get("github_url") is None:
+                        proyecto["github_url"] = ""
+                    if proyecto.get("demo_url") is None:
+                        proyecto["demo_url"] = ""
+                    if proyecto.get("imagen_url") is None:
+                        proyecto["imagen_url"] = ""
+                self.proyectos = [Proyecto(**proyecto) for proyecto in data]
+            else:
+                self.error_proyectos = f"Error {response.status_code}"
+        except Exception as e:
+            self.error_proyectos = f"Error de conexion: {str(e)}"
+        finally:
+            self.cargando_proyectos = False
+
+    def cargar_cursos(self):
+        """Cargar cursos desde la API"""
+        self.cargando_cursos = True
+        self.error_cursos = ""
+        
+        try:
+            response = httpx.get("http://localhost:8001/api/cursos/")
+            if response.status_code == 200:
+                data = response.json()
+                # Convertir None a string vacio
+                for curso in data:
+                    if curso.get("fecha_fin") is None:
+                        curso["fecha_fin"] = ""
+                    if curso.get("certificado_url") is None:
+                        curso["certificado_url"] = ""
+                self.cursos = [Curso(**curso) for curso in data]
+            else:
+                self.error_cursos = f"Error {response.status_code}"
+        except Exception as e:
+            self.error_cursos = f"Error de conexion: {str(e)}"
+        finally:
+            self.cargando_cursos = False
