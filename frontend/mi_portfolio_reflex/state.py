@@ -458,3 +458,59 @@ class State(rx.State):
             self.error_repos = f"Error de conexión: {str(e)}"
         finally:
             self.cargando_repos = False
+
+    # ==================== AUTENTICACIÓN ====================
+    # Token y usuario autenticado
+    token: str = ""
+    usuario_autenticado: dict = {}
+    esta_autenticado: bool = False
+    error_login: str = ""
+    cargando_login: bool = False
+
+    def login(self, form_data: dict):
+        """Login de usuario admin"""
+        self.cargando_login = True
+        self.error_login = ""
+        
+        try:
+            # Preparar datos para OAuth2
+            data = {
+                "username": form_data["username"],
+                "password": form_data["password"],
+            }
+            
+            response = httpx.post(
+                "http://localhost:8001/api/auth/login",
+                data=data,
+                headers={"Content-Type": "application/x-www-form-urlencoded"}
+            )
+            
+            if response.status_code == 200:
+                result = response.json()
+                self.token = result["access_token"]
+                self.esta_autenticado = True
+                
+                # Obtener info del usuario
+                user_response = httpx.get(
+                    "http://localhost:8001/api/auth/me",
+                    headers={"Authorization": f"Bearer {self.token}"}
+                )
+                
+                if user_response.status_code == 200:
+                    self.usuario_autenticado = user_response.json()
+                    return rx.redirect("/admin")
+                
+            else:
+                self.error_login = "Usuario o contraseña incorrectos"
+                
+        except Exception as e:
+            self.error_login = f"Error de conexión: {str(e)}"
+        finally:
+            self.cargando_login = False
+
+    def logout(self):
+        """Cerrar sesión"""
+        self.token = ""
+        self.usuario_autenticado = {}
+        self.esta_autenticado = False
+        return rx.redirect("/login")
