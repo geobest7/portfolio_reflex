@@ -2,7 +2,9 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from .config import settings
 from .database import engine, Base
-from .routers import proyectos, cursos, experiencias
+from .routers import proyectos, cursos, experiencias, github
+from .models import proyecto, curso, experiencia, github_repo
+
 
 Base.metadata.create_all(bind=engine)
 
@@ -22,6 +24,7 @@ app.add_middleware(
 app.include_router(proyectos.router, prefix="/api/proyectos", tags=["proyectos"])
 app.include_router(cursos.router, prefix="/api/cursos", tags=["cursos"])
 app.include_router(experiencias.router, prefix="/api/experiencias", tags=["experiencias"])
+app.include_router(github.router, prefix="/api/github", tags=["github"])
 
 
 @app.get("/")
