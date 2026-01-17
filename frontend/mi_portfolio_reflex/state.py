@@ -38,6 +38,27 @@ class Curso(BaseModel):
     orden: int
 
 
+class Experiencia(BaseModel):
+    id: int
+    tipo: str
+    empresa: str
+    cargo_es: str
+    cargo_en: str
+    cargo_it: str
+    cargo_ca: str
+    fecha_inicio: str
+    fecha_fin: str = ""
+    actual: bool
+    descripcion_es: str = ""
+    descripcion_en: str = ""
+    descripcion_it: str = ""
+    descripcion_ca: str = ""
+    tecnologias: List[str]
+    orden: int
+    activo: bool
+    mostrar_en_web: bool
+
+
 class State(rx.State):
     # variable de estado para el idioma actual
     idioma: str = "es" # valor por defecto
@@ -60,6 +81,13 @@ class State(rx.State):
     cargando_cursos: bool = False
     error_proyectos: str = ""
     error_cursos: str = ""
+
+
+    # Variables para experiencias
+    experiencias: List[Experiencia] = []
+    cargando_experiencias: bool = False
+    error_experiencias: str = ""
+
 
     # metodo para cambiar el idioma
     def cambiar_idioma(self, nuevo_idioma: str):
@@ -265,7 +293,11 @@ class State(rx.State):
     @rx.var
     def nav_sobre_mi(self) -> str:
         return TRANSLATIONS.get(self.idioma, {}).get("nav_sobre_mi", "")
-    
+
+    @rx.var
+    def nav_experiencia(self) -> str:
+        return TRANSLATIONS.get(self.idioma, {}).get("nav_experiencia", "")
+        
     @rx.var
     def nav_proyectos(self) -> str:
         return TRANSLATIONS.get(self.idioma, {}).get("nav_proyectos", "")
@@ -373,6 +405,8 @@ class State(rx.State):
             self.cargar_proyectos()
         if len(self.cursos) == 0:
             self.cargar_cursos()
+        if len(self.experiencias) == 0:
+            self.cargar_experiencias()
 
     def cargar_proyectos(self):
         """Cargar proyectos desde la API"""
@@ -421,3 +455,33 @@ class State(rx.State):
             self.error_cursos = f"Error de conexion: {str(e)}"
         finally:
             self.cargando_cursos = False
+
+    
+    def cargar_experiencias(self):
+        """Cargar experiencias desde la API"""
+        self.cargando_experiencias = True
+        self.error_experiencias = ""
+        
+        try:
+            response = httpx.get("http://localhost:8001/api/experiencias/", params={"mostrar_en_web": True})
+            if response.status_code == 200:
+                data = response.json()
+                # Convertir None a string vacío
+                for exp in data:
+                    if exp.get("fecha_fin") is None:
+                        exp["fecha_fin"] = ""
+                    if exp.get("descripcion_es") is None:
+                        exp["descripcion_es"] = ""
+                    if exp.get("descripcion_en") is None:
+                        exp["descripcion_en"] = ""
+                    if exp.get("descripcion_it") is None:
+                        exp["descripcion_it"] = ""
+                    if exp.get("descripcion_ca") is None:
+                        exp["descripcion_ca"] = ""
+                self.experiencias = [Experiencia(**exp) for exp in data]
+            else:
+                self.error_experiencias = f"Error {response.status_code}"
+        except Exception as e:
+            self.error_experiencias = f"Error de conexion: {str(e)}"
+        finally:
+            self.cargando_experiencias = False

@@ -3,6 +3,7 @@ TRANSLATIONS = {
         # navbar
         "nav_inicio": "Inicio",
         "nav_sobre_mi": "Sobre mí",
+        "nav_experiencia": "Experiencia",
         "nav_proyectos": "Proyectos",
         "nav_contacto": "Contacto",
         "nav_formacion": "Formación",
@@ -85,6 +86,7 @@ TRANSLATIONS = {
         # navbar
         "nav_inicio": "Home",
         "nav_sobre_mi": "About me",
+        "nav_experiencia": "Experience",
         "nav_proyectos": "Projects",
         "nav_contacto": "Contact",
         "nav_formacion": "Education",
@@ -170,6 +172,7 @@ TRANSLATIONS = {
         # navbar
         "nav_inicio": "Home",
         "nav_sobre_mi": "Chi sono",
+        "nav_experiencia": "Esperienza",
         "nav_proyectos": "Progetti",
         "nav_contacto": "Contatti",
         "nav_formacion": "Formazione",
@@ -256,6 +259,7 @@ TRANSLATIONS = {
         # navbar
         "nav_inicio": "Inici",
         "nav_sobre_mi": "Sobre mi",
+        "nav_experiencia": "Experiència",
         "nav_proyectos": "Projectes",
         "nav_contacto": "Contacte",
         "nav_formacion": "Formació",

@@ -88,6 +88,7 @@ def navbar() -> rx.Component:
             rx.hstack(
                 rx.link(State.nav_inicio, href="/home#inicio", on_click=State.limpiar_mensaje_formulario, color="white"),
                 rx.link(State.nav_sobre_mi, href="/home#sobre-mi", on_click=State.limpiar_mensaje_formulario, color="white"),
+                rx.link(State.nav_experiencia, href="/home#experiencia", on_click=State.limpiar_mensaje_formulario, color="white"),
                 rx.link(State.nav_proyectos, href="/home#proyectos", on_click=State.limpiar_mensaje_formulario, color="white"),
                 rx.link(State.nav_formacion, href="/home#formacion", on_click=State.limpiar_mensaje_formulario, color="white"),
                 rx.link(State.nav_contacto, href="/home#contacto", on_click=State.limpiar_mensaje_formulario, color="white"),
@@ -125,6 +126,15 @@ def navbar() -> rx.Component:
                 rx.link(
                     State.nav_sobre_mi,
                     href="/home#sobre-mi",
+                    on_click=State.cerrar_menu_y_limpiar,
+                    color="white",
+                    width="100%",
+                    padding="1em",
+                    _hover={"background": "#1a1a1a"},
+                ),
+                rx.link(
+                    State.nav_experiencia,
+                    href="/home#experiencia",
                     on_click=State.cerrar_menu_y_limpiar,
                     color="white",
                     width="100%",
@@ -188,54 +198,6 @@ def seccion_sobre_mi() -> rx.Component:
                 line_height="1.8",
                 max_width="800px",
             ),
-            
-            # Subsección Experiencia Actual
-            rx.heading(State.experiencia_subtitulo, size="6", color="white", margin_top="2em", margin_bottom="1em"),
-            rx.box(
-                rx.vstack(
-                    # Cargo y empresa
-                    rx.hstack(
-                        rx.icon("briefcase", size=24, color="white"),
-                        rx.vstack(
-                            rx.text(State.exp_cargo, size="4", weight="bold", color="white"),
-                            rx.text(State.exp_empresa, size="3", color="#cccccc"),
-                            spacing="1",
-                            align="start",
-                        ),
-                        spacing="3",
-                        align="start",
-                    ),
-                    # Período
-                    rx.hstack(
-                        rx.icon("calendar", size=20, color="#cccccc"),
-                        rx.text(State.exp_periodo, size="3", color="#cccccc"),
-                        spacing="2",
-                    ),
-                    # Descripción
-                    rx.text(State.exp_descripcion, size="3", color="#cccccc", line_height="1.6"),
-                    # Tecnologías
-                    rx.vstack(
-                        rx.text(State.exp_tecnologias + ":", size="3", weight="bold", color="white"),
-                        rx.hstack(
-                            rx.badge("Python", variant="outline", color_scheme="gray"),
-                            rx.badge("FastAPI", variant="outline", color_scheme="gray"),
-                            rx.badge("PostgreSQL", variant="outline", color_scheme="gray"),
-                            spacing="2",
-                            wrap="wrap",
-                        ),
-                        spacing="2",
-                        align="start",
-                    ),
-                    spacing="4",
-                    align="start",
-                ),
-                padding="1.5em",
-                border_radius="8px",
-                border="1px solid #333333",
-                bg="#0a0a0a",
-                max_width="600px",
-            ),
-            
             # Habilidades técnicas (ahora al final)
             rx.heading(State.habilidades_titulo, size="6", color="white", margin_top="2em"),
             rx.hstack(
@@ -257,6 +219,138 @@ def seccion_sobre_mi() -> rx.Component:
         width="100%",
         id="sobre-mi",
     )
+
+def seccion_experiencia() -> rx.Component:
+    """Seccion Experiencia con datos dinamicos desde la API"""
+    return rx.box(
+        rx.vstack(
+            rx.heading("Experiencia", size="8", color="white"),
+            
+            rx.cond(
+                State.cargando_experiencias,
+                rx.spinner(size="3"),
+            ),
+            
+            rx.cond(
+                State.error_experiencias != "",
+                rx.text(State.error_experiencias, color="red"),
+            ),
+            
+            rx.vstack(
+                rx.foreach(
+                    State.experiencias,
+                    lambda exp: rx.box(
+                        rx.vstack(
+                            # Tipo y empresa
+                            rx.hstack(
+                                rx.icon("briefcase", size=24, color="white"),
+                                rx.vstack(
+                                    rx.text(
+                                        rx.cond(
+                                            State.idioma == "es",
+                                            exp.cargo_es,
+                                            rx.cond(
+                                                State.idioma == "en",
+                                                exp.cargo_en,
+                                                rx.cond(
+                                                    State.idioma == "it",
+                                                    exp.cargo_it,
+                                                    exp.cargo_ca
+                                                )
+                                            )
+                                        ),
+                                        size="4",
+                                        weight="bold",
+                                        color="white",
+                                    ),
+                                    rx.text(exp.empresa, size="3", color="#CCCCCC"),
+                                    spacing="1",
+                                    align="start",
+                                ),
+                                spacing="3",
+                                align="start",
+                            ),
+                            # Fechas
+                            rx.hstack(
+                                rx.icon("calendar", size=20, color="#CCCCCC"),
+                                rx.text(
+                                    rx.cond(
+                                        exp.actual,
+                                        f"{exp.fecha_inicio} - Actualidad",
+                                        f"{exp.fecha_inicio} - {exp.fecha_fin}"
+                                    ),
+                                    size="3",
+                                    color="#CCCCCC",
+                                ),
+                                spacing="2",
+                            ),
+                            # Descripción
+                            rx.cond(
+                                rx.cond(
+                                    State.idioma == "es",
+                                    exp.descripcion_es,
+                                    rx.cond(
+                                        State.idioma == "en",
+                                        exp.descripcion_en,
+                                        rx.cond(
+                                            State.idioma == "it",
+                                            exp.descripcion_it,
+                                            exp.descripcion_ca
+                                        )
+                                    )
+                                ) != "",
+                                rx.text(
+                                    rx.cond(
+                                        State.idioma == "es",
+                                        exp.descripcion_es,
+                                        rx.cond(
+                                            State.idioma == "en",
+                                            exp.descripcion_en,
+                                            rx.cond(
+                                                State.idioma == "it",
+                                                exp.descripcion_it,
+                                                exp.descripcion_ca
+                                            )
+                                        )
+                                    ),
+                                    size="3",
+                                    color="#CCCCCC",
+                                    line_height="1.6",
+                                ),
+                            ),
+                            # Tecnologías
+                            rx.hstack(
+                                rx.foreach(
+                                    exp.tecnologias,
+                                    lambda tech: rx.badge(tech, variant="outline", color_scheme="gray"),
+                                ),
+                                wrap="wrap",
+                                spacing="2",
+                            ),
+                            spacing="4",
+                            align="start",
+                        ),
+                        padding="1.5em",
+                        border_radius="8px",
+                        border="1px solid #333333",
+                        bg="#0a0a0a",
+                        width="100%",
+                    )
+                ),
+                spacing="3",
+                width="100%",
+                max_width="800px",
+            ),
+            
+            spacing="5",
+            align_items="center",
+            width="100%",
+        ),
+        id="experiencia",
+        padding="4em 2em",
+        background_color="#000000",
+    )
+
 
 
 def seccion_formacion() -> rx.Component:
@@ -712,6 +806,7 @@ def home() -> rx.Component:
             id="inicio"
         ),
         seccion_sobre_mi(),
+        seccion_experiencia(),
         seccion_formacion(),
         seccion_proyectos(),
         seccion_contacto(),
