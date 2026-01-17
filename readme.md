@@ -496,18 +496,28 @@ La API estará en: `http://localhost:8000/docs`
 - ✅ Endpoints CRUD completos (GET, POST, PUT, DELETE)
 - ✅ Soft delete implementado
 - ✅ Seed data con 3 proyectos, 4 cursos, 1 experiencia
-- ✅ API funcionando en http://localhost:8000
+- ✅ API funcionando en http://localhost:8001
 - ✅ Documentación Swagger UI en /docs
 - ✅ Base de datos SQLite creada y poblada
 
+**Fase 5 - Integración Frontend-Backend** ✅ (15 Enero 2026)
+- ✅ Instalado httpx>=0.24.0 en frontend
+- ✅ Clases Pydantic (Proyecto, Curso) en state.py
+- ✅ Funciones cargar_proyectos() y cargar_cursos() con HTTP requests
+- ✅ Sección Proyectos dinamizada (datos desde API)
+- ✅ Sección Formación dinamizada (datos desde API)
+- ✅ Multi-idioma funcionando con datos dinámicos
+- ✅ Loading states y error handling implementados
+- ✅ Manejo de valores None de la API
+- ✅ Backend en puerto 8001, Frontend en puerto 3000
+
 ### 🔄 En Progreso:
 
-**Fase 5 - Integración Frontend-Backend** (Próxima sesión)
-- Conectar Reflex con FastAPI
-- Dinamizar sección Proyectos (fetch desde API)
-- Dinamizar sección Formación (fetch desde API)
-- Loading states y error handling
-- Integración GitHub API para repos
+**Fase 6 - Optimizaciones y Mejoras** (Próxima sesión)
+- Auto-carga de datos al entrar a la página
+- Sección Experiencia laboral (fetch desde API)
+- Integración GitHub API para repos dinámicos
+- Skeleton loaders y animaciones
 
 ### ⏳ Pendiente:
 

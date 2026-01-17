@@ -265,13 +265,6 @@ def seccion_formacion() -> rx.Component:
         rx.vstack(
             rx.heading(State.formacion_titulo, size="8", color="white"),
             
-            rx.button(
-                "Cargar Formacion",
-                on_click=State.cargar_cursos,
-                display=rx.cond(State.cursos.length() == 0, "block", "none"),
-                margin_bottom="2em",
-            ),
-            
             rx.cond(
                 State.cargando_cursos,
                 rx.spinner(size="3"),
@@ -394,13 +387,6 @@ def seccion_proyectos() -> rx.Component:
     return rx.box(
         rx.vstack(
             rx.heading(State.proyectos_titulo, size="8", color="white"),
-            
-            rx.button(
-                "Cargar Proyectos",
-                on_click=State.cargar_proyectos,
-                display=rx.cond(State.proyectos.length() == 0, "block", "none"),
-                margin_bottom="2em",
-            ),
             
             rx.cond(
                 State.cargando_proyectos,
@@ -704,19 +690,16 @@ def portada() -> rx.Component:
 
 
 def home() -> rx.Component:
-    """Página home - Con navbar y contenido"""
+    """Página Home - Contenido principal del portfolio"""
     return rx.box(
         navbar(),
         rx.vstack(
-        # Foto de perfil circular
             rx.image(
                 src="/foto_perfil.png",
                 width="150px",
                 height="150px",
                 border_radius="50%",
-                border="3px solid white",
-                object_fit="cover",
-                alt="Alessandro Febbrai",
+                margin_bottom="1em",
             ),
             rx.heading(State.hero_titulo, size="9"),
             rx.text(State.hero_subtitulo, size="5"),
@@ -736,6 +719,7 @@ def home() -> rx.Component:
         bg="#000000",
         color="white",
         min_height="100vh",
+        on_mount=State.cargar_datos_iniciales,
     )
 
 

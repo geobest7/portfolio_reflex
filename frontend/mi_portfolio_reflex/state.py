@@ -367,6 +367,13 @@ class State(rx.State):
         return TRANSLATIONS.get(self.idioma, {}).get("curso3_periodo", "")
 
 
+    def cargar_datos_iniciales(self):
+        """Cargar proyectos y cursos automáticamente al montar la página"""
+        if len(self.proyectos) == 0:
+            self.cargar_proyectos()
+        if len(self.cursos) == 0:
+            self.cargar_cursos()
+
     def cargar_proyectos(self):
         """Cargar proyectos desde la API"""
         self.cargando_proyectos = True
@@ -376,7 +383,6 @@ class State(rx.State):
             response = httpx.get("http://localhost:8001/api/proyectos/", params={"destacados": True})
             if response.status_code == 200:
                 data = response.json()
-                # Convertir None a string vacío
                 # Convertir None a string vacío
                 for proyecto in data:
                     if proyecto.get("github_url") is None:
