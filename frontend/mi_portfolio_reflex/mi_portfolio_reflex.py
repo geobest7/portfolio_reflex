@@ -1469,6 +1469,131 @@ def dashboard_admin() -> rx.Component:
         ),
     )
 
+def admin_proyectos() -> rx.Component:
+    """Página de administración de proyectos"""
+    return rx.cond(
+        State.esta_autenticado,
+        # Usuario autenticado
+        rx.box(
+            # Header
+            rx.box(
+                rx.hstack(
+                    rx.heading("Gestión de Proyectos", size="7", color="white"),
+                    rx.spacer(),
+                    rx.hstack(
+                        rx.button(
+                            rx.hstack(
+                                rx.icon("arrow-left", size=20),
+                                rx.text("Volver"),
+                                spacing="2",
+                            ),
+                            on_click=rx.redirect("/admin"),
+                            variant="outline",
+                            size="2",
+                        ),
+                        rx.button(
+                            rx.hstack(
+                                rx.icon("plus", size=20),
+                                rx.text("Nuevo Proyecto"),
+                                spacing="2",
+                            ),
+                            on_click=lambda: State.abrir_formulario_proyecto(0),
+                            color_scheme="cyan",
+                            size="2",
+                        ),
+                        spacing="3",
+                    ),
+                    width="100%",
+                    align="center",
+                ),
+                padding="1.5em 2em",
+                bg="#1a1a1a",
+                border_bottom="1px solid #333",
+            ),
+            
+            # Contenido
+            rx.box(
+                rx.cond(
+                    State.cargando_proyectos_admin,
+                    rx.center(
+                        rx.spinner(size="3"),
+                        padding="4em",
+                    ),
+                    rx.cond(
+                        State.error_proyectos_admin != "",
+                        rx.text(State.error_proyectos_admin, color="red"),
+                        # Tabla de proyectos
+                        rx.table.root(
+                            rx.table.header(
+                                rx.table.row(
+                                    rx.table.column_header_cell("ID"),
+                                    rx.table.column_header_cell("Título (ES)"),
+                                    rx.table.column_header_cell("Destacado"),
+                                    rx.table.column_header_cell("Activo"),
+                                    rx.table.column_header_cell("Orden"),
+                                    rx.table.column_header_cell("Acciones"),
+                                ),
+                            ),
+                            rx.table.body(
+                                rx.foreach(
+                                    State.proyectos_admin,
+                                    lambda proyecto: rx.table.row(
+                                        rx.table.cell(proyecto.id),
+                                        rx.table.cell(proyecto.titulo_es),
+                                        rx.table.cell(
+                                            rx.cond(
+                                                proyecto.destacado,
+                                                rx.badge("Sí", color_scheme="green"),
+                                                rx.badge("No", color_scheme="gray"),
+                                            ),
+                                        ),
+                                        rx.table.cell(
+                                            rx.cond(
+                                                proyecto.activo,
+                                                rx.badge("Activo", color_scheme="blue"),
+                                                rx.badge("Inactivo", color_scheme="red"),
+                                            ),
+                                        ),
+                                        rx.table.cell(proyecto.orden),
+                                        rx.table.cell(
+                                            rx.hstack(
+                                                rx.button(
+                                                    rx.icon("pencil", size=16),
+                                                    on_click=lambda p=proyecto: State.abrir_formulario_proyecto(p),
+                                                    variant="soft",
+                                                    size="1",
+                                                    color_scheme="blue",
+                                                ),
+                                                rx.button(
+                                                    rx.icon("trash-2", size=16),
+                                                    on_click=lambda pid=proyecto.id: State.eliminar_proyecto(pid),
+                                                    variant="soft",
+                                                    size="1",
+                                                    color_scheme="red",
+                                                ),
+                                                spacing="2",
+                                            ),
+                                        ),
+                                    ),
+                                ),
+                            ),
+                            variant="surface",
+                            size="3",
+                        ),
+                    ),
+                ),
+                padding="2em",
+                on_mount=State.cargar_proyectos_admin,
+            ),
+            
+            bg="#000000",
+            min_height="100vh",
+        ),
+        # No autenticado
+        rx.fragment(
+            rx.script("window.location.href = '/login'"),
+        ),
+    )
 
 def home() -> rx.Component:
     """Página Home - Contenido principal del portfolio"""
@@ -1530,3 +1655,4 @@ app.add_page(home, route="/home")
 app.add_page(pagina_cv, route="/cv")
 app.add_page(pagina_login, route="/login")
 app.add_page(dashboard_admin, route="/admin")
+app.add_page(admin_proyectos, route="/admin/proyectos")

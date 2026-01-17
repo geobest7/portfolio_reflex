@@ -514,3 +514,122 @@ class State(rx.State):
         self.usuario_autenticado = {}
         self.esta_autenticado = False
         return rx.redirect("/login")
+
+
+
+    # ==================== CRUD PROYECTOS ====================
+    proyectos_admin: List[Proyecto] = []
+    cargando_proyectos_admin: bool = False
+    error_proyectos_admin: str = ""
+    proyecto_editando: Optional[Proyecto] = None
+    modo_edicion: bool = False
+
+    def cargar_proyectos_admin(self):
+        """Cargar todos los proyectos para admin (incluye inactivos)"""
+        self.cargando_proyectos_admin = True
+        self.error_proyectos_admin = ""
+        
+        try:
+            response = httpx.get(
+                "http://localhost:8001/api/proyectos/",
+                params={"limit": 100},
+                headers={"Authorization": f"Bearer {self.token}"}
+            )
+            if response.status_code == 200:
+                data = response.json()
+                for proyecto in data:
+                    if proyecto.get("github_url") is None:
+                        proyecto["github_url"] = ""
+                    if proyecto.get("demo_url") is None:
+                        proyecto["demo_url"] = ""
+                    if proyecto.get("imagen_url") is None:
+                        proyecto["imagen_url"] = ""
+                self.proyectos_admin = [Proyecto(**proyecto) for proyecto in data]
+            else:
+                self.error_proyectos_admin = f"Error {response.status_code}"
+        except Exception as e:
+            self.error_proyectos_admin = f"Error: {str(e)}"
+        finally:
+            self.cargando_proyectos_admin = False
+
+    def eliminar_proyecto(self, proyecto_id: int):
+        """Eliminar proyecto (soft delete)"""
+        try:
+            response = httpx.delete(
+                f"http://localhost:8001/api/proyectos/{proyecto_id}",
+                headers={"Authorization": f"Bearer {self.token}"}
+            )
+            if response.status_code == 200:
+                self.cargar_proyectos_admin()
+                return rx.toast.success("Proyecto eliminado correctamente")
+            else:
+                return rx.toast.error("Error al eliminar proyecto")
+        except Exception as e:
+            return rx.toast.error(f"Error: {str(e)}")
+
+    def abrir_formulario_proyecto(self, proyecto_id: int = 0):
+        """Abrir formulario para crear o editar proyecto"""
+        if proyecto_id > 0:
+            # Buscar el proyecto
+            proyecto = next((p for p in self.proyectos_admin if p.id == proyecto_id), None)
+            if proyecto:
+                self.proyecto_editando = proyecto
+                self.modo_edicion = True
+        else:
+            self.proyecto_editando = None
+            self.modo_edicion = False
+        return rx.redirect("/admin/proyectos/form")
+
+    def cancelar_edicion_proyecto(self):
+        """Cancelar edición y volver a la lista"""
+        self.proyecto_editando = None
+        self.modo_edicion = False
+        return rx.redirect("/admin/proyectos")
+
+    def guardar_proyecto(self, form_data: dict):
+        """Crear o actualizar proyecto"""
+        try:
+            # Preparar datos
+            proyecto_data = {
+                "titulo_es": form_data["titulo_es"],
+                "titulo_en": form_data["titulo_en"],
+                "titulo_it": form_data["titulo_it"],
+                "titulo_ca": form_data["titulo_ca"],
+                "descripcion_es": form_data["descripcion_es"],
+                "descripcion_en": form_data["descripcion_en"],
+                "descripcion_it": form_data["descripcion_it"],
+                "descripcion_ca": form_data["descripcion_ca"],
+                "tecnologias": form_data.get("tecnologias", "").split(",") if form_data.get("tecnologias") else [],
+                "github_url": form_data.get("github_url", ""),
+                "demo_url": form_data.get("demo_url", ""),
+                "imagen_url": form_data.get("imagen_url", ""),
+                "destacado": form_data.get("destacado", False),
+                "orden": int(form_data.get("orden", 0)),
+                "activo": True,
+            }
+            
+            if self.modo_edicion and self.proyecto_editando:
+                # Actualizar
+                response = httpx.put(
+                    f"http://localhost:8001/api/proyectos/{self.proyecto_editando.id}",
+                    json=proyecto_data,
+                    headers={"Authorization": f"Bearer {self.token}"}
+                )
+            else:
+                # Crear
+                response = httpx.post(
+                    "http://localhost:8001/api/proyectos/",
+                    json=proyecto_data,
+                    headers={"Authorization": f"Bearer {self.token}"}
+                )
+            
+            if response.status_code in [200, 201]:
+                self.proyecto_editando = None
+                self.modo_edicion = False
+                self.cargar_proyectos_admin()
+                return rx.redirect("/admin/proyectos")
+            else:
+                return rx.toast.error(f"Error al guardar: {response.status_code}")
+                
+        except Exception as e:
+            return rx.toast.error(f"Error: {str(e)}")
