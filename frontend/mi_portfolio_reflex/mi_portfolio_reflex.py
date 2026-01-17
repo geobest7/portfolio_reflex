@@ -90,6 +90,7 @@ def navbar() -> rx.Component:
                 rx.link(State.nav_sobre_mi, href="/home#sobre-mi", on_click=State.limpiar_mensaje_formulario, color="white"),
                 rx.link(State.nav_experiencia, href="/home#experiencia", on_click=State.limpiar_mensaje_formulario, color="white"),
                 rx.link(State.nav_proyectos, href="/home#proyectos", on_click=State.limpiar_mensaje_formulario, color="white"),
+                rx.link(State.nav_github, href="/home#github", on_click=State.limpiar_mensaje_formulario, color="white"), 
                 rx.link(State.nav_formacion, href="/home#formacion", on_click=State.limpiar_mensaje_formulario, color="white"),
                 rx.link(State.nav_contacto, href="/home#contacto", on_click=State.limpiar_mensaje_formulario, color="white"),
                 rx.link(State.nav_cv, href="/cv", on_click=State.limpiar_mensaje_formulario, color="white"),
@@ -144,6 +145,15 @@ def navbar() -> rx.Component:
                 rx.link(
                     State.nav_proyectos,
                     href="/home#proyectos",
+                    on_click=State.cerrar_menu_y_limpiar,
+                    color="white",
+                    width="100%",
+                    padding="1em",
+                    _hover={"background": "#1a1a1a"},
+                ),
+                rx.link(
+                    State.nav_github,  # ← AÑADIR ESTE BLOQUE COMPLETO
+                    href="/home#github",
                     on_click=State.cerrar_menu_y_limpiar,
                     color="white",
                     width="100%",
@@ -509,6 +519,71 @@ def skeleton_experiencia() -> rx.Component:
         bg="#0a0a0a",
         width="100%",
     )
+def skeleton_repo_github() -> rx.Component:
+    """Skeleton loader para repo de GitHub mientras carga"""
+    return rx.box(
+        rx.vstack(
+            # Nombre del repo skeleton
+            rx.box(
+                height="24px",
+                width="60%",
+                bg="#1a1a1a",
+                border_radius="4px",
+                class_name="skeleton-pulse",
+            ),
+            # Descripción skeleton (2 líneas)
+            rx.box(
+                height="16px",
+                width="100%",
+                bg="#1a1a1a",
+                border_radius="4px",
+                margin_top="0.5em",
+                class_name="skeleton-pulse",
+            ),
+            rx.box(
+                height="16px",
+                width="80%",
+                bg="#1a1a1a",
+                border_radius="4px",
+                margin_top="0.3em",
+                class_name="skeleton-pulse",
+            ),
+            # Stats skeleton (lenguaje, stars, forks)
+            rx.hstack(
+                rx.box(
+                    height="20px",
+                    width="80px",
+                    bg="#1a1a1a",
+                    border_radius="4px",
+                    class_name="skeleton-pulse",
+                ),
+                rx.box(
+                    height="20px",
+                    width="60px",
+                    bg="#1a1a1a",
+                    border_radius="4px",
+                    class_name="skeleton-pulse",
+                ),
+                rx.box(
+                    height="20px",
+                    width="60px",
+                    bg="#1a1a1a",
+                    border_radius="4px",
+                    class_name="skeleton-pulse",
+                ),
+                spacing="3",
+                margin_top="1em",
+            ),
+            spacing="3",
+            align_items="start",
+        ),
+        padding="1.5em",
+        border_radius="8px",
+        border="1px solid #333333",
+        background_color="#0A0A0A",
+        width="100%",
+    )
+
 
 def seccion_formacion() -> rx.Component:
     """Seccion Formacion con datos dinamicos desde la API"""
@@ -816,6 +891,142 @@ def seccion_proyectos() -> rx.Component:
         background_color="#000000",
     )
 
+def seccion_github_repos() -> rx.Component:
+    """Sección de repositorios de GitHub con datos dinámicos desde la API"""
+    return rx.box(
+        rx.vstack(
+            rx.heading(State.github_titulo, size="8", color="white"),
+            rx.text(
+                State.github_subtitulo,
+                color="#CCCCCC",
+                size="4",
+                text_align="center",
+                max_width="600px",
+            ),
+            
+            # Skeleton loaders mientras carga
+            rx.cond(
+                State.cargando_repos,
+                rx.vstack(
+                    skeleton_repo_github(),
+                    skeleton_repo_github(),
+                    skeleton_repo_github(),
+                    spacing="3",
+                    width="100%",
+                    max_width="900px",
+                ),
+            ),
+            
+            # Mensaje de error
+            rx.cond(
+                State.error_repos != "",
+                rx.text(State.error_repos, color="red"),
+            ),
+            
+            # Lista de repos
+            rx.vstack(
+                rx.foreach(
+                    State.repos_github,
+                    lambda repo: rx.box(
+                        rx.vstack(
+                            # Nombre del repo
+                            rx.heading(
+                                repo.name,
+                                size="5",
+                                color="white",
+                            ),
+                            # Descripción
+                            rx.cond(
+                                repo.description != "",
+                                rx.text(
+                                    repo.description,
+                                    color="#CCCCCC",
+                                    size="2",
+                                ),
+                            ),
+                            # Stats: lenguaje, stars, forks
+                            rx.hstack(
+                                # Lenguaje
+                                rx.cond(
+                                    repo.language != "",
+                                    rx.hstack(
+                                        rx.icon("code", size=16, color="#00CED1"),
+                                        rx.text(repo.language, color="#CCCCCC", size="1"),
+                                        spacing="1",
+                                    ),
+                                ),
+                                # Stars
+                                rx.hstack(
+                                    rx.icon("star", size=16, color="#FFD700"),
+                                    rx.text(repo.stargazers_count, color="#CCCCCC", size="1"),
+                                    spacing="1",
+                                ),
+                                # Forks
+                                rx.hstack(
+                                    rx.icon("git-fork", size=16, color="#CCCCCC"),
+                                    rx.text(repo.forks_count, color="#CCCCCC", size="1"),
+                                    spacing="1",
+                                ),
+                                spacing="4",
+                                wrap="wrap",
+                            ),
+                            # Topics/Tags
+                            rx.cond(
+                                repo.topics.length() > 0,
+                                rx.hstack(
+                                    rx.foreach(
+                                        repo.topics,
+                                        lambda topic: rx.badge(
+                                            topic,
+                                            variant="outline",
+                                            color_scheme="blue",
+                                            size="1",
+                                        ),
+                                    ),
+                                    wrap="wrap",
+                                    spacing="2",
+                                ),
+                            ),
+                            # Link al repo
+                            rx.link(
+                                rx.button(
+                                    rx.hstack(
+                                        rx.icon("github", size=16),
+                                        rx.text(State.github_ver_repo),
+                                        spacing="2",
+                                    ),
+                                    variant="outline",
+                                    size="2",
+                                ),
+                                href=repo.html_url,
+                                is_external=True,
+                            ),
+                            spacing="3",
+                            align_items="start",
+                        ),
+                        padding="1.5em",
+                        border_radius="8px",
+                        border="1px solid #333333",
+                        background_color="#0A0A0A",
+                        width="100%",
+                        class_name="fade-in-up",
+                    )
+                ),
+                spacing="3",
+                width="100%",
+                max_width="900px",
+            ),
+            
+            spacing="5",
+            align_items="center",
+            width="100%",
+        ),
+        id="github",
+        padding="4em 2em",
+        background_color="#0A0A0A",
+    )
+
+
 
 def seccion_contacto() -> rx.Component:
     """Sección Contacto con información y formulario"""
@@ -1045,6 +1256,7 @@ def home() -> rx.Component:
         seccion_experiencia(),
         seccion_formacion(),
         seccion_proyectos(),
+        seccion_github_repos(),
         seccion_contacto(),
         footer(),
         bg="#000000",

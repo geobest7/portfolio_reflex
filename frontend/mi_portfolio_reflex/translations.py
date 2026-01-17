@@ -8,10 +8,11 @@ TRANSLATIONS = {
         "nav_contacto": "Contacto",
         "nav_formacion": "Formación",
         "nav_cv": "CV",
+        "nav_github": "GitHub",
 
         # portada / Hero
         "hero_titulo": "¡Hola! Soy Alessandro Febbrai",
-        "hero_subtitulo": "Desarrollador Python",
+        "hero_subtitulo": "Desarrollador Python Junior",
         "hero_descripcion": "Estudiando programación",
 
         # sobre_mi  
@@ -52,6 +53,12 @@ TRANSLATIONS = {
 
         # Sección Formación
         "formacion_titulo": "Formación",
+
+
+        # GitHub
+        "github_titulo": "Repositorios GitHub",
+        "github_subtitulo": "Mis proyectos open source y contribuciones",
+        "github_ver_repo": "Ver repositorio",
         
     },
 
@@ -64,10 +71,11 @@ TRANSLATIONS = {
         "nav_contacto": "Contact",
         "nav_formacion": "Education",
         "nav_cv": "CV",
+        "nav_github": "GitHub",
 
         # portada / Hero
         "hero_titulo": "Hi! I'm Alessandro Febbrai",
-        "hero_subtitulo": "Python Developer",
+        "hero_subtitulo": "Junior Python Developer",
         "hero_descripcion": "Studying programming",
 
         # sobre_mi
@@ -112,6 +120,12 @@ TRANSLATIONS = {
 
         # Sección Formación
         "formacion_titulo": "Education",
+
+
+        # GitHub
+        "github_titulo": "GitHub Repositories",
+        "github_subtitulo": "My open source projects and contributions",
+        "github_ver_repo": "View repository",
     },
 
     "it": {
@@ -123,10 +137,11 @@ TRANSLATIONS = {
         "nav_contacto": "Contatti",
         "nav_formacion": "Formazione",
         "nav_cv": "CV",
+        "nav_github": "GitHub",
 
         # portada / Hero
         "hero_titulo": "Ciao! Sono Alessandro Febbrai",
-        "hero_subtitulo": "Sviluppatore Python",
+        "hero_subtitulo": "Programmatore Python Junior",
         "hero_descripcion": "Sto studiando programmazione",
 
         # sobre_mi
@@ -170,6 +185,12 @@ TRANSLATIONS = {
 
         # Sección Formación
         "formacion_titulo": "Formazione",
+
+
+        # GitHub
+        "github_titulo": "Repository GitHub",
+        "github_subtitulo": "I miei progetti open source e contributi",
+        "github_ver_repo": "Vedi repository",
     },
 
     "ca": {
@@ -181,11 +202,12 @@ TRANSLATIONS = {
         "nav_contacto": "Contacte",
         "nav_formacion": "Formació",
         "nav_cv": "CV",
+        "nav_github": "GitHub",
 
 
         # portada / Hero
         "hero_titulo": "Hola! Sóc Alessandro Febbrai",
-        "hero_subtitulo": "Desenvolupador Python",
+        "hero_subtitulo": "Desenvolupador Python Junior",
         "hero_descripcion": "Estudiant programació",
 
         # sobre_mi
@@ -229,6 +251,12 @@ TRANSLATIONS = {
 
         # Sección Formación
         "formacion_titulo": "Formació",
+
+
+        # GitHub
+        "github_titulo": "Repositoris GitHub",
+        "github_subtitulo": "Els meus projectes open source i contribucions",
+        "github_ver_repo": "Veure repositori",
     },
 }
 

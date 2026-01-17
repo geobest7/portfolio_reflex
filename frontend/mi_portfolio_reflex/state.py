@@ -59,6 +59,24 @@ class Experiencia(BaseModel):
     mostrar_en_web: bool
 
 
+class GitHubRepo(BaseModel):
+    """Modelo para repositorio de GitHub"""
+    id: int
+    repo_id: int
+    name: str
+    full_name: str
+    description: str = ""
+    html_url: str
+    homepage: str = ""
+    language: str = ""
+    stargazers_count: int = 0
+    forks_count: int = 0
+    topics: list[str] = []
+    created_at: str = ""
+    updated_at: str = ""
+    pushed_at: str = ""
+
+
 class State(rx.State):
     # variable de estado para el idioma actual
     idioma: str = "es" # valor por defecto
@@ -87,6 +105,12 @@ class State(rx.State):
     experiencias: List[Experiencia] = []
     cargando_experiencias: bool = False
     error_experiencias: str = ""
+
+
+    # GitHub repos
+    repos_github: list[GitHubRepo] = []
+    cargando_repos: bool = False
+    error_repos: str = ""
 
 
     # metodo para cambiar el idioma
@@ -275,6 +299,23 @@ class State(rx.State):
     @rx.var
     def nav_experiencia(self) -> str:
         return TRANSLATIONS.get(self.idioma, {}).get("nav_experiencia", "")
+
+    @rx.var
+    def nav_github(self) -> str:
+        return TRANSLATIONS.get(self.idioma, {}).get("nav_github", "")
+
+
+    @rx.var
+    def github_titulo(self) -> str:
+        return TRANSLATIONS.get(self.idioma, {}).get("github_titulo", "")
+
+    @rx.var
+    def github_subtitulo(self) -> str:
+        return TRANSLATIONS.get(self.idioma, {}).get("github_subtitulo", "")
+
+    @rx.var
+    def github_ver_repo(self) -> str:
+        return TRANSLATIONS.get(self.idioma, {}).get("github_ver_repo", "")
         
     @rx.var
     def nav_proyectos(self) -> str:
@@ -308,6 +349,8 @@ class State(rx.State):
             self.cargar_cursos()
         if len(self.experiencias) == 0:
             self.cargar_experiencias()
+        if len(self.repos_github) == 0:
+            self.cargar_repos_github()
 
     def cargar_proyectos(self):
         """Cargar proyectos desde la API"""
@@ -386,3 +429,32 @@ class State(rx.State):
             self.error_experiencias = f"Error de conexion: {str(e)}"
         finally:
             self.cargando_experiencias = False
+
+    
+
+    def cargar_repos_github(self):
+        """Cargar repositorios de GitHub desde la API"""
+        self.cargando_repos = True
+        self.error_repos = ""
+        
+        try:
+            response = httpx.get("http://localhost:8001/api/github/repos")
+            if response.status_code == 200:
+                data = response.json()
+                # Convertir None a valores por defecto
+                for repo in data:
+                    if repo.get("description") is None:
+                        repo["description"] = ""
+                    if repo.get("homepage") is None:
+                        repo["homepage"] = ""
+                    if repo.get("language") is None:
+                        repo["language"] = ""
+                    if repo.get("topics") is None:
+                        repo["topics"] = []
+                self.repos_github = [GitHubRepo(**repo) for repo in data]
+            else:
+                self.error_repos = f"Error {response.status_code}"
+        except Exception as e:
+            self.error_repos = f"Error de conexión: {str(e)}"
+        finally:
+            self.cargando_repos = False
