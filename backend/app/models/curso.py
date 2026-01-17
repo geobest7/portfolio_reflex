@@ -13,7 +13,10 @@ class Curso(Base):
     titulo_it = Column(String(200), nullable=False)
     titulo_ca = Column(String(200), nullable=False)
     
-    institucion = Column(String(200), nullable=False)
+    institucion_es = Column(String(200), nullable=False)
+    institucion_en = Column(String(200), nullable=False)
+    institucion_it = Column(String(200), nullable=False)
+    institucion_ca = Column(String(200), nullable=False)
     
     fecha_inicio = Column(Date)
     fecha_fin = Column(Date)

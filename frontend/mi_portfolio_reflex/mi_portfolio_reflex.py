@@ -646,7 +646,16 @@ def seccion_formacion() -> rx.Component:
                                 align_items="center",
                             ),
                             rx.text(
-                                curso.institucion,
+                                rx.cond(
+                                    State.idioma == "es", curso.institucion_es,
+                                    rx.cond(
+                                        State.idioma == "en", curso.institucion_en,
+                                        rx.cond(
+                                            State.idioma == "it", curso.institucion_it,
+                                            curso.institucion_ca
+                                        )
+                                    )
+                                ),
                                 color="#CCCCCC",
                                 size="2",
                             ),
@@ -1595,6 +1604,808 @@ def admin_proyectos() -> rx.Component:
         ),
     )
 
+
+def formulario_proyecto() -> rx.Component:
+    """Formulario para crear/editar proyecto"""
+    return rx.cond(
+        State.esta_autenticado,
+        # Usuario autenticado
+        rx.box(
+            # Header
+            rx.box(
+                rx.hstack(
+                    rx.heading(
+                        rx.cond(
+                            State.modo_edicion,
+                            "Editar Proyecto",
+                            "Nuevo Proyecto",
+                        ),
+                        size="7",
+                        color="white",
+                    ),
+                    rx.spacer(),
+                    rx.button(
+                        rx.hstack(
+                            rx.icon("x", size=20),
+                            rx.text("Cancelar"),
+                            spacing="2",
+                        ),
+                        on_click=State.cancelar_edicion_proyecto,
+                        variant="outline",
+                        size="2",
+                    ),
+                    width="100%",
+                    align="center",
+                ),
+                padding="1.5em 2em",
+                bg="#1a1a1a",
+                border_bottom="1px solid #333",
+            ),
+            
+            # Formulario
+            rx.box(
+                rx.form(
+                    rx.vstack(
+                        # Títulos en 4 idiomas
+                        rx.heading("Títulos", size="5", color="white", margin_bottom="0.5em"),
+                        rx.grid(
+                            rx.vstack(
+                                rx.text("Título (ES)", color="#CCC", size="2"),
+                                rx.input(
+                                    name="titulo_es",
+                                    placeholder="Título en español",
+                                    default_value=rx.cond(State.modo_edicion, State.proyecto_editando.titulo_es, ""),
+                                    required=True,
+                                    width="100%",
+                                ),
+                                spacing="1",
+                                width="100%",
+                            ),
+                            rx.vstack(
+                                rx.text("Título (EN)", color="#CCC", size="2"),
+                                rx.input(
+                                    name="titulo_en",
+                                    placeholder="Title in English",
+                                    default_value=rx.cond(State.modo_edicion, State.proyecto_editando.titulo_en, ""),
+                                    required=True,
+                                    width="100%",
+                                ),
+                                spacing="1",
+                                width="100%",
+                            ),
+                            rx.vstack(
+                                rx.text("Título (IT)", color="#CCC", size="2"),
+                                rx.input(
+                                    name="titulo_it",
+                                    placeholder="Titolo in italiano",
+                                    default_value=rx.cond(State.modo_edicion, State.proyecto_editando.titulo_it, ""),
+                                    required=True,
+                                    width="100%",
+                                ),
+                                spacing="1",
+                                width="100%",
+                            ),
+                            rx.vstack(
+                                rx.text("Título (CA)", color="#CCC", size="2"),
+                                rx.input(
+                                    name="titulo_ca",
+                                    placeholder="Títol en català",
+                                    default_value=rx.cond(State.modo_edicion, State.proyecto_editando.titulo_ca, ""),
+                                    required=True,
+                                    width="100%",
+                                ),
+                                spacing="1",
+                                width="100%",
+                            ),
+                            columns="2",
+                            spacing="4",
+                            width="100%",
+                        ),
+                        
+                        # Descripciones en 4 idiomas
+                        rx.heading("Descripciones", size="5", color="white", margin_top="1em", margin_bottom="0.5em"),
+                        rx.grid(
+                            rx.vstack(
+                                rx.text("Descripción (ES)", color="#CCC", size="2"),
+                                rx.text_area(
+                                    name="descripcion_es",
+                                    placeholder="Descripción en español",
+                                    default_value=rx.cond(State.modo_edicion, State.proyecto_editando.descripcion_es, ""),
+                                    required=True,
+                                    width="100%",
+                                    rows="4",
+                                ),
+                                spacing="1",
+                                width="100%",
+                            ),
+                            rx.vstack(
+                                rx.text("Descripción (EN)", color="#CCC", size="2"),
+                                rx.text_area(
+                                    name="descripcion_en",
+                                    placeholder="Description in English",
+                                    default_value=rx.cond(State.modo_edicion, State.proyecto_editando.descripcion_en, ""),
+                                    required=True,
+                                    width="100%",
+                                    rows="4",
+                                ),
+                                spacing="1",
+                                width="100%",
+                            ),
+                            rx.vstack(
+                                rx.text("Descripción (IT)", color="#CCC", size="2"),
+                                rx.text_area(
+                                    name="descripcion_it",
+                                    placeholder="Descrizione in italiano",
+                                    default_value=rx.cond(State.modo_edicion, State.proyecto_editando.descripcion_it, ""),
+                                    required=True,
+                                    width="100%",
+                                    rows="4",
+                                ),
+                                spacing="1",
+                                width="100%",
+                            ),
+                            rx.vstack(
+                                rx.text("Descripción (CA)", color="#CCC", size="2"),
+                                rx.text_area(
+                                    name="descripcion_ca",
+                                    placeholder="Descripció en català",
+                                    default_value=rx.cond(State.modo_edicion, State.proyecto_editando.descripcion_ca, ""),
+                                    required=True,
+                                    width="100%",
+                                    rows="4",
+                                ),
+                                spacing="1",
+                                width="100%",
+                            ),
+                            columns="2",
+                            spacing="4",
+                            width="100%",
+                        ),
+                        
+                        # Tecnologías, URLs y configuración
+                        rx.heading("Detalles", size="5", color="white", margin_top="1em", margin_bottom="0.5em"),
+                        rx.grid(
+                            rx.vstack(
+                                rx.text("Tecnologías (separadas por coma)", color="#CCC", size="2"),
+                                rx.input(
+                                    name="tecnologias",
+                                    placeholder="Python,FastAPI,Reflex",
+                                    default_value=rx.cond(State.modo_edicion, State.proyecto_editando.tecnologias.join(","), ""),
+                                    width="100%",
+                                ),
+                                spacing="1",
+                                width="100%",
+                            ),
+                            rx.vstack(
+                                rx.text("URL GitHub", color="#CCC", size="2"),
+                                rx.input(
+                                    name="github_url",
+                                    placeholder="https://github.com/...",
+                                    default_value=rx.cond(State.modo_edicion, State.proyecto_editando.github_url, ""),
+                                    width="100%",
+                                ),
+                                spacing="1",
+                                width="100%",
+                            ),
+                            rx.vstack(
+                                rx.text("URL Demo", color="#CCC", size="2"),
+                                rx.input(
+                                    name="demo_url",
+                                    placeholder="https://...",
+                                    default_value=rx.cond(State.modo_edicion, State.proyecto_editando.demo_url, ""),
+                                    width="100%",
+                                ),
+                                spacing="1",
+                                width="100%",
+                            ),
+                            rx.vstack(
+                                rx.text("URL Imagen", color="#CCC", size="2"),
+                                rx.input(
+                                    name="imagen_url",
+                                    placeholder="https://...",
+                                    default_value=rx.cond(State.modo_edicion, State.proyecto_editando.imagen_url, ""),
+                                    width="100%",
+                                ),
+                                spacing="1",
+                                width="100%",
+                            ),
+                            rx.vstack(
+                                rx.text("Orden", color="#CCC", size="2"),
+                                rx.input(
+                                    name="orden",
+                                    type="number",
+                                    placeholder="0",
+                                    default_value=rx.cond(State.modo_edicion, State.proyecto_editando.orden.to_string(), "0"),
+                                    width="100%",
+                                ),
+                                spacing="1",
+                                width="100%",
+                            ),
+                            rx.vstack(
+                                rx.text("Destacado", color="#CCC", size="2"),
+                                rx.checkbox(
+                                    name="destacado",
+                                    default_checked=rx.cond(State.modo_edicion, State.proyecto_editando.destacado, False),
+                                ),
+                                spacing="1",
+                                width="100%",
+                            ),
+                            columns="3",
+                            spacing="4",
+                            width="100%",
+                        ),
+                        
+                        # Botón guardar
+                        rx.button(
+                            rx.cond(
+                                State.modo_edicion,
+                                "Actualizar Proyecto",
+                                "Crear Proyecto",
+                            ),
+                            type="submit",
+                            size="3",
+                            color_scheme="cyan",
+                            width="100%",
+                            margin_top="2em",
+                        ),
+                        
+                        spacing="4",
+                        width="100%",
+                        max_width="1200px",
+                    ),
+                    on_submit=State.guardar_proyecto,
+                    width="100%",
+                ),
+                padding="2em",
+            ),
+            
+            bg="#000000",
+            min_height="100vh",
+        ),
+        # No autenticado
+        rx.fragment(
+            rx.script("window.location.href = '/login'"),
+        ),
+    )
+
+
+
+def admin_cursos() -> rx.Component:
+    """Página de administración de cursos"""
+    return rx.cond(
+        State.esta_autenticado,
+        rx.box(
+            # Header
+            rx.box(
+                rx.hstack(
+                    rx.heading("Gestión de Cursos", size="7", color="white"),
+                    rx.spacer(),
+                    rx.hstack(
+                        rx.button(
+                            rx.hstack(
+                                rx.icon("arrow-left", size=20),
+                                rx.text("Volver"),
+                                spacing="2",
+                            ),
+                            on_click=rx.redirect("/admin"),
+                            variant="outline",
+                            size="2",
+                        ),
+                        rx.button(
+                            rx.hstack(
+                                rx.icon("plus", size=20),
+                                rx.text("Nuevo Curso"),
+                                spacing="2",
+                            ),
+                            on_click=lambda: State.abrir_formulario_curso(0),
+                            color_scheme="cyan",
+                            size="2",
+                        ),
+                        spacing="3",
+                    ),
+                    width="100%",
+                    align="center",
+                ),
+                padding="1.5em 2em",
+                bg="#1a1a1a",
+                border_bottom="1px solid #333",
+            ),
+            
+            # Contenido
+            rx.box(
+                rx.cond(
+                    State.cargando_cursos_admin,
+                    rx.center(rx.spinner(size="3"), padding="4em"),
+                    rx.cond(
+                        State.error_cursos_admin != "",
+                        rx.text(State.error_cursos_admin, color="red"),
+                        rx.table.root(
+                            rx.table.header(
+                                rx.table.row(
+                                    rx.table.column_header_cell("ID"),
+                                    rx.table.column_header_cell("Título (ES)"),
+                                    rx.table.column_header_cell("Institución (ES)"),
+                                    rx.table.column_header_cell("Fecha Inicio"),
+                                    rx.table.column_header_cell("Activo"),
+                                    rx.table.column_header_cell("Acciones"),
+                                ),
+                            ),
+                            rx.table.body(
+                                rx.foreach(
+                                    State.cursos_admin,
+                                    lambda curso: rx.table.row(
+                                        rx.table.cell(curso.id),
+                                        rx.table.cell(curso.titulo_es),
+                                        rx.table.cell(curso.institucion_es),
+                                        rx.table.cell(curso.fecha_inicio),
+                                        rx.table.cell(
+                                            rx.cond(
+                                                curso.activo,
+                                                rx.badge("Activo", color_scheme="blue"),
+                                                rx.badge("Inactivo", color_scheme="red"),
+                                            ),
+                                        ),
+                                        rx.table.cell(
+                                            rx.hstack(
+                                                rx.button(
+                                                    rx.icon("pencil", size=16),
+                                                    on_click=lambda cid=curso.id: State.abrir_formulario_curso(cid),
+                                                    variant="soft",
+                                                    size="1",
+                                                    color_scheme="blue",
+                                                ),
+                                                rx.button(
+                                                    rx.icon("trash-2", size=16),
+                                                    on_click=lambda cid=curso.id: State.eliminar_curso(cid),
+                                                    variant="soft",
+                                                    size="1",
+                                                    color_scheme="red",
+                                                ),
+                                                spacing="2",
+                                            ),
+                                        ),
+                                    ),
+                                ),
+                            ),
+                            variant="surface",
+                            size="3",
+                        ),
+                    ),
+                ),
+                padding="2em",
+                on_mount=State.cargar_cursos_admin,
+            ),
+            
+            bg="#000000",
+            min_height="100vh",
+        ),
+        rx.fragment(rx.script("window.location.href = '/login'")),
+    )
+
+
+
+def formulario_curso() -> rx.Component:
+    """Formulario para crear/editar curso"""
+    return rx.cond(
+        State.esta_autenticado,
+        rx.box(
+            # Header
+            rx.box(
+                rx.hstack(
+                    rx.heading(
+                        rx.cond(
+                            State.modo_edicion_curso,
+                            "Editar Curso",
+                            "Nuevo Curso",
+                        ),
+                        size="7",
+                        color="white",
+                    ),
+                    rx.spacer(),
+                    rx.button(
+                        rx.hstack(
+                            rx.icon("x", size=20),
+                            rx.text("Cancelar"),
+                            spacing="2",
+                        ),
+                        on_click=State.cancelar_edicion_curso,
+                        variant="outline",
+                        size="2",
+                    ),
+                    width="100%",
+                    align="center",
+                ),
+                padding="1.5em 2em",
+                bg="#1a1a1a",
+                border_bottom="1px solid #333",
+            ),
+            
+            # Formulario
+            rx.box(
+                rx.form(
+                    rx.vstack(
+                        # Títulos
+                        rx.heading("Títulos", size="5", color="white", margin_bottom="0.5em"),
+                        rx.grid(
+                            rx.vstack(
+                                rx.text("Título (ES)", color="#CCC", size="2"),
+                                rx.input(name="titulo_es", placeholder="Título en español", default_value=rx.cond(State.modo_edicion_curso, State.curso_editando.titulo_es, ""), required=True, width="100%"),
+                                spacing="1", width="100%",
+                            ),
+                            rx.vstack(
+                                rx.text("Título (EN)", color="#CCC", size="2"),
+                                rx.input(name="titulo_en", placeholder="Title in English", default_value=rx.cond(State.modo_edicion_curso, State.curso_editando.titulo_en, ""), required=True, width="100%"),
+                                spacing="1", width="100%",
+                            ),
+                            rx.vstack(
+                                rx.text("Título (IT)", color="#CCC", size="2"),
+                                rx.input(name="titulo_it", placeholder="Titolo in italiano", default_value=rx.cond(State.modo_edicion_curso, State.curso_editando.titulo_it, ""), required=True, width="100%"),
+                                spacing="1", width="100%",
+                            ),
+                            rx.vstack(
+                                rx.text("Título (CA)", color="#CCC", size="2"),
+                                rx.input(name="titulo_ca", placeholder="Títol en català", default_value=rx.cond(State.modo_edicion_curso, State.curso_editando.titulo_ca, ""), required=True, width="100%"),
+                                spacing="1", width="100%",
+                            ),
+                            columns="2", spacing="4", width="100%",
+                        ),
+                        
+                        # Instituciones
+                        rx.heading("Instituciones", size="5", color="white", margin_top="1em", margin_bottom="0.5em"),
+                        rx.grid(
+                            rx.vstack(
+                                rx.text("Institución (ES)", color="#CCC", size="2"),
+                                rx.input(name="institucion_es", placeholder="Institución en español", default_value=rx.cond(State.modo_edicion_curso, State.curso_editando.institucion_es, ""), required=True, width="100%"),
+                                spacing="1", width="100%",
+                            ),
+                            rx.vstack(
+                                rx.text("Institución (EN)", color="#CCC", size="2"),
+                                rx.input(name="institucion_en", placeholder="Institution in English", default_value=rx.cond(State.modo_edicion_curso, State.curso_editando.institucion_en, ""), required=True, width="100%"),
+                                spacing="1", width="100%",
+                            ),
+                            rx.vstack(
+                                rx.text("Institución (IT)", color="#CCC", size="2"),
+                                rx.input(name="institucion_it", placeholder="Istituzione in italiano", default_value=rx.cond(State.modo_edicion_curso, State.curso_editando.institucion_it, ""), required=True, width="100%"),
+                                spacing="1", width="100%",
+                            ),
+                            rx.vstack(
+                                rx.text("Institución (CA)", color="#CCC", size="2"),
+                                rx.input(name="institucion_ca", placeholder="Institució en català", default_value=rx.cond(State.modo_edicion_curso, State.curso_editando.institucion_ca, ""), required=True, width="100%"),
+                                spacing="1", width="100%",
+                            ),
+                            columns="2", spacing="4", width="100%",
+                        ),
+                        
+                        # Fechas y certificado
+                        rx.heading("Detalles", size="5", color="white", margin_top="1em", margin_bottom="0.5em"),
+                        rx.grid(
+                            rx.vstack(
+                                rx.text("Fecha Inicio", color="#CCC", size="2"),
+                                rx.input(name="fecha_inicio", type="date", default_value=rx.cond(State.modo_edicion_curso, State.curso_editando.fecha_inicio, ""), required=True, width="100%"),
+                                spacing="1", width="100%",
+                            ),
+                            rx.vstack(
+                                rx.text("Fecha Fin (opcional)", color="#CCC", size="2"),
+                                rx.input(name="fecha_fin", type="date", default_value=rx.cond(State.modo_edicion_curso, State.curso_editando.fecha_fin, ""), width="100%"),
+                                spacing="1", width="100%",
+                            ),
+                            rx.vstack(
+                                rx.text("URL Certificado (opcional)", color="#CCC", size="2"),
+                                rx.input(name="certificado_url", placeholder="https://...", default_value=rx.cond(State.modo_edicion_curso, State.curso_editando.certificado_url, ""), width="100%"),
+                                spacing="1", width="100%",
+                            ),
+                            columns="3", spacing="4", width="100%",
+                        ),
+                        
+                        # Botón guardar
+                        rx.button(
+                            rx.cond(State.modo_edicion_curso, "Actualizar Curso", "Crear Curso"),
+                            type="submit",
+                            size="3",
+                            color_scheme="cyan",
+                            width="100%",
+                            margin_top="2em",
+                        ),
+                        
+                        spacing="4", width="100%", max_width="1200px",
+                    ),
+                    on_submit=State.guardar_curso,
+                    width="100%",
+                ),
+                padding="2em",
+            ),
+            
+            bg="#000000",
+            min_height="100vh",
+        ),
+        rx.fragment(rx.script("window.location.href = '/login'")),
+    )
+
+def admin_experiencias() -> rx.Component:
+    """Página de administración de experiencias"""
+    return rx.cond(
+        State.esta_autenticado,
+        rx.box(
+            # Header
+            rx.box(
+                rx.hstack(
+                    rx.heading("Gestión de Experiencias", size="7", color="white"),
+                    rx.spacer(),
+                    rx.hstack(
+                        rx.button(
+                            rx.hstack(
+                                rx.icon("arrow-left", size=20),
+                                rx.text("Volver"),
+                                spacing="2",
+                            ),
+                            on_click=rx.redirect("/admin"),
+                            variant="outline",
+                            size="2",
+                        ),
+                        rx.button(
+                            rx.hstack(
+                                rx.icon("plus", size=20),
+                                rx.text("Nueva Experiencia"),
+                                spacing="2",
+                            ),
+                            on_click=lambda: State.abrir_formulario_experiencia(0),
+                            color_scheme="cyan",
+                            size="2",
+                        ),
+                        spacing="3",
+                    ),
+                    width="100%",
+                    align="center",
+                ),
+                padding="1.5em 2em",
+                bg="#1a1a1a",
+                border_bottom="1px solid #333",
+            ),
+            
+            # Contenido
+            rx.box(
+                rx.cond(
+                    State.cargando_experiencias_admin,
+                    rx.center(rx.spinner(size="3"), padding="4em"),
+                    rx.cond(
+                        State.error_experiencias_admin != "",
+                        rx.text(State.error_experiencias_admin, color="red"),
+                        rx.table.root(
+                            rx.table.header(
+                                rx.table.row(
+                                    rx.table.column_header_cell("ID"),
+                                    rx.table.column_header_cell("Tipo"),
+                                    rx.table.column_header_cell("Empresa"),
+                                    rx.table.column_header_cell("Cargo (ES)"),
+                                    rx.table.column_header_cell("Fecha Inicio"),
+                                    rx.table.column_header_cell("Mostrar Web"),
+                                    rx.table.column_header_cell("Acciones"),
+                                ),
+                            ),
+                            rx.table.body(
+                                rx.foreach(
+                                    State.experiencias_admin,
+                                    lambda exp: rx.table.row(
+                                        rx.table.cell(exp.id),
+                                        rx.table.cell(exp.tipo),
+                                        rx.table.cell(exp.empresa),
+                                        rx.table.cell(exp.cargo_es),
+                                        rx.table.cell(exp.fecha_inicio),
+                                        rx.table.cell(
+                                            rx.cond(
+                                                exp.mostrar_en_web,
+                                                rx.badge("Sí", color_scheme="green"),
+                                                rx.badge("No", color_scheme="gray"),
+                                            ),
+                                        ),
+                                        rx.table.cell(
+                                            rx.hstack(
+                                                rx.button(
+                                                    rx.icon("pencil", size=16),
+                                                    on_click=lambda eid=exp.id: State.abrir_formulario_experiencia(eid),
+                                                    variant="soft",
+                                                    size="1",
+                                                    color_scheme="blue",
+                                                ),
+                                                rx.button(
+                                                    rx.icon("trash-2", size=16),
+                                                    on_click=lambda eid=exp.id: State.eliminar_experiencia(eid),
+                                                    variant="soft",
+                                                    size="1",
+                                                    color_scheme="red",
+                                                ),
+                                                spacing="2",
+                                            ),
+                                        ),
+                                    ),
+                                ),
+                            ),
+                            variant="surface",
+                            size="3",
+                        ),
+                    ),
+                ),
+                padding="2em",
+                on_mount=State.cargar_experiencias_admin,
+            ),
+            
+            bg="#000000",
+            min_height="100vh",
+        ),
+        rx.fragment(rx.script("window.location.href = '/login'")),
+    )
+
+
+def formulario_experiencia() -> rx.Component:
+    """Formulario para crear/editar experiencia"""
+    return rx.cond(
+        State.esta_autenticado,
+        rx.box(
+            # Header
+            rx.box(
+                rx.hstack(
+                    rx.heading(
+                        rx.cond(
+                            State.modo_edicion_experiencia,
+                            "Editar Experiencia",
+                            "Nueva Experiencia",
+                        ),
+                        size="7",
+                        color="white",
+                    ),
+                    rx.spacer(),
+                    rx.button(
+                        rx.hstack(
+                            rx.icon("x", size=20),
+                            rx.text("Cancelar"),
+                            spacing="2",
+                        ),
+                        on_click=State.cancelar_edicion_experiencia,
+                        variant="outline",
+                        size="2",
+                    ),
+                    width="100%",
+                    align="center",
+                ),
+                padding="1.5em 2em",
+                bg="#1a1a1a",
+                border_bottom="1px solid #333",
+            ),
+            
+            # Formulario
+            rx.box(
+                rx.form(
+                    rx.vstack(
+                        # Tipo y Empresa
+                        rx.heading("Información General", size="5", color="white", margin_bottom="0.5em"),
+                        rx.grid(
+                            rx.vstack(
+                                rx.text("Tipo", color="#CCC", size="2"),
+                                rx.select(["practica", "trabajo"], name="tipo", default_value=rx.cond(State.modo_edicion_experiencia, State.experiencia_editando.tipo, "practica"), required=True, width="100%"),
+                                spacing="1", width="100%",
+                            ),
+                            rx.vstack(
+                                rx.text("Empresa", color="#CCC", size="2"),
+                                rx.input(name="empresa", placeholder="Nombre de la empresa", default_value=rx.cond(State.modo_edicion_experiencia, State.experiencia_editando.empresa, ""), required=True, width="100%"),
+                                spacing="1", width="100%",
+                            ),
+                            columns="2", spacing="4", width="100%",
+                        ),
+                        
+                        # Cargos en 4 idiomas
+                        rx.heading("Cargos", size="5", color="white", margin_top="1em", margin_bottom="0.5em"),
+                        rx.grid(
+                            rx.vstack(
+                                rx.text("Cargo (ES)", color="#CCC", size="2"),
+                                rx.input(name="cargo_es", placeholder="Cargo en español", default_value=rx.cond(State.modo_edicion_experiencia, State.experiencia_editando.cargo_es, ""), required=True, width="100%"),
+                                spacing="1", width="100%",
+                            ),
+                            rx.vstack(
+                                rx.text("Cargo (EN)", color="#CCC", size="2"),
+                                rx.input(name="cargo_en", placeholder="Position in English", default_value=rx.cond(State.modo_edicion_experiencia, State.experiencia_editando.cargo_en, ""), required=True, width="100%"),
+                                spacing="1", width="100%",
+                            ),
+                            rx.vstack(
+                                rx.text("Cargo (IT)", color="#CCC", size="2"),
+                                rx.input(name="cargo_it", placeholder="Posizione in italiano", default_value=rx.cond(State.modo_edicion_experiencia, State.experiencia_editando.cargo_it, ""), required=True, width="100%"),
+                                spacing="1", width="100%",
+                            ),
+                            rx.vstack(
+                                rx.text("Cargo (CA)", color="#CCC", size="2"),
+                                rx.input(name="cargo_ca", placeholder="Càrrec en català", default_value=rx.cond(State.modo_edicion_experiencia, State.experiencia_editando.cargo_ca, ""), required=True, width="100%"),
+                                spacing="1", width="100%",
+                            ),
+                            columns="2", spacing="4", width="100%",
+                        ),
+                        
+                        # Descripciones en 4 idiomas
+                        rx.heading("Descripciones (opcional)", size="5", color="white", margin_top="1em", margin_bottom="0.5em"),
+                        rx.grid(
+                            rx.vstack(
+                                rx.text("Descripción (ES)", color="#CCC", size="2"),
+                                rx.text_area(name="descripcion_es", placeholder="Descripción en español", default_value=rx.cond(State.modo_edicion_experiencia, State.experiencia_editando.descripcion_es, ""), width="100%", rows="3"),
+                                spacing="1", width="100%",
+                            ),
+                            rx.vstack(
+                                rx.text("Descripción (EN)", color="#CCC", size="2"),
+                                rx.text_area(name="descripcion_en", placeholder="Description in English", default_value=rx.cond(State.modo_edicion_experiencia, State.experiencia_editando.descripcion_en, ""), width="100%", rows="3"),
+                                spacing="1", width="100%",
+                            ),
+                            rx.vstack(
+                                rx.text("Descripción (IT)", color="#CCC", size="2"),
+                                rx.text_area(name="descripcion_it", placeholder="Descrizione in italiano", default_value=rx.cond(State.modo_edicion_experiencia, State.experiencia_editando.descripcion_it, ""), width="100%", rows="3"),
+                                spacing="1", width="100%",
+                            ),
+                            rx.vstack(
+                                rx.text("Descripción (CA)", color="#CCC", size="2"),
+                                rx.text_area(name="descripcion_ca", placeholder="Descripció en català", default_value=rx.cond(State.modo_edicion_experiencia, State.experiencia_editando.descripcion_ca, ""), width="100%", rows="3"),
+                                spacing="1", width="100%",
+                            ),
+                            columns="2", spacing="4", width="100%",
+                        ),
+                        
+                        # Fechas, tecnologías y opciones
+                        rx.heading("Detalles", size="5", color="white", margin_top="1em", margin_bottom="0.5em"),
+                        rx.grid(
+                            rx.vstack(
+                                rx.text("Fecha Inicio", color="#CCC", size="2"),
+                                rx.input(name="fecha_inicio", type="date", default_value=rx.cond(State.modo_edicion_experiencia, State.experiencia_editando.fecha_inicio, ""), required=True, width="100%"),
+                                spacing="1", width="100%",
+                            ),
+                            rx.vstack(
+                                rx.text("Fecha Fin (opcional)", color="#CCC", size="2"),
+                                rx.input(name="fecha_fin", type="date", default_value=rx.cond(State.modo_edicion_experiencia, State.experiencia_editando.fecha_fin, ""), width="100%"),
+                                spacing="1", width="100%",
+                            ),
+                            rx.vstack(
+                                rx.text("Tecnologías (separadas por coma)", color="#CCC", size="2"),
+                                rx.input(name="tecnologias", placeholder="Python,FastAPI,React", default_value=rx.cond(State.modo_edicion_experiencia, State.experiencia_editando.tecnologias.join(","), ""), width="100%"),
+                                spacing="1", width="100%",
+                            ),
+                            rx.vstack(
+                                rx.text("Orden", color="#CCC", size="2"),
+                                rx.input(name="orden", type="number", placeholder="0", default_value=rx.cond(State.modo_edicion_experiencia, State.experiencia_editando.orden.to_string(), "0"), width="100%"),
+                                spacing="1", width="100%",
+                            ),
+                            rx.vstack(
+                                rx.text("Trabajo Actual", color="#CCC", size="2"),
+                                rx.checkbox(name="actual", default_checked=rx.cond(State.modo_edicion_experiencia, State.experiencia_editando.actual, False)),
+                                spacing="1", width="100%",
+                            ),
+                            rx.vstack(
+                                rx.text("Mostrar en Web", color="#CCC", size="2"),
+                                rx.checkbox(name="mostrar_en_web", default_checked=rx.cond(State.modo_edicion_experiencia, State.experiencia_editando.mostrar_en_web, False)),
+                                spacing="1", width="100%",
+                            ),
+                            columns="3", spacing="4", width="100%",
+                        ),
+                        
+                        # Botón guardar
+                        rx.button(
+                            rx.cond(State.modo_edicion_experiencia, "Actualizar Experiencia", "Crear Experiencia"),
+                            type="submit",
+                            size="3",
+                            color_scheme="cyan",
+                            width="100%",
+                            margin_top="2em",
+                        ),
+                        
+                        spacing="4", width="100%", max_width="1200px",
+                    ),
+                    on_submit=State.guardar_experiencia,
+                    width="100%",
+                ),
+                padding="2em",
+            ),
+            
+            bg="#000000",
+            min_height="100vh",
+        ),
+        rx.fragment(rx.script("window.location.href = '/login'")),
+    )
+
+
+
 def home() -> rx.Component:
     """Página Home - Contenido principal del portfolio"""
     return rx.box(
@@ -1656,3 +2467,8 @@ app.add_page(pagina_cv, route="/cv")
 app.add_page(pagina_login, route="/login")
 app.add_page(dashboard_admin, route="/admin")
 app.add_page(admin_proyectos, route="/admin/proyectos")
+app.add_page(formulario_proyecto, route="/admin/proyectos/form")
+app.add_page(admin_cursos, route="/admin/cursos")
+app.add_page(formulario_curso, route="/admin/cursos/form")
+app.add_page(admin_experiencias, route="/admin/experiencias")
+app.add_page(formulario_experiencia, route="/admin/experiencias/form")

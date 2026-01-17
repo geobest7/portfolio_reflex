@@ -9,7 +9,10 @@ class CursoBase(BaseModel):
     titulo_en: str
     titulo_it: str
     titulo_ca: str
-    institucion: str
+    institucion_es: str
+    institucion_en: str
+    institucion_it: str
+    institucion_ca: str
     fecha_inicio: Optional[date] = None
     fecha_fin: Optional[date] = None
     descripcion_es: Optional[str] = None

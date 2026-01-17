@@ -49,7 +49,7 @@ mi_portfolio_reflex/
 │   ├── mi_portfolio_reflex/             # Paquete principal Python
 │   │   ├── __init__.py                  # Convierte la carpeta en paquete Python
 │   │   ├── mi_portfolio_reflex.py       # ARCHIVO PRINCIPAL - Define páginas y app
-│   │   ├── state.py                     # Estado global: idiomas, formulario, menu
+│   │   ├── state.py                     # Estado global: idiomas, auth, CRUD, datos dinámicos
 │   │   ├── translations.py              # Diccionario de traducciones (ES, EN, IT, CA)
 │   │   ├── components/                  # Componentes reutilizables (vacio por ahora)
 │   │   ├── pages/                       # Páginas separadas (vacio por ahora)
@@ -78,20 +78,28 @@ mi_portfolio_reflex/
 │   │   ├── models/                      # Modelos de base de datos
 │   │   │   ├── __init__.py
 │   │   │   ├── proyecto.py              # Modelo Proyecto (multi-idioma)
-│   │   │   ├── curso.py                 # Modelo Curso/Diploma
-│   │   │   └── experiencia.py           # Modelo Experiencia
+│   │   │   ├── curso.py                 # Modelo Curso/Diploma (multi-idioma)
+│   │   │   ├── experiencia.py           # Modelo Experiencia
+│   │   │   ├── user.py                  # Modelo User (autenticación)
+│   │   │   └── github_repo.py           # Modelo GitHubRepo (cache)
 │   │   ├── schemas/                     # Schemas Pydantic para validación
 │   │   │   ├── __init__.py
 │   │   │   ├── proyecto.py              # Schemas Proyecto
 │   │   │   ├── curso.py                 # Schemas Curso
-│   │   │   └── experiencia.py           # Schemas Experiencia
-│   │   └── routers/                     # Endpoints API (CRUD completo)
-│   │       ├── __init__.py
-│   │       ├── proyectos.py             # Endpoints /api/proyectos
-│   │       ├── cursos.py                # Endpoints /api/cursos
-│   │       └── experiencias.py          # Endpoints /api/experiencias
+│   │   │   ├── experiencia.py           # Schemas Experiencia
+│   │   │   └── auth.py                  # Schemas Auth (UserLogin, Token, etc)
+│   │   ├── routers/                     # Endpoints API (CRUD completo)
+│   │   │   ├── __init__.py
+│   │   │   ├── proyectos.py             # Endpoints /api/proyectos (protegidos)
+│   │   │   ├── cursos.py                # Endpoints /api/cursos (protegidos)
+│   │   │   ├── experiencias.py          # Endpoints /api/experiencias (protegidos)
+│   │   │   ├── auth.py                  # Endpoints /api/auth (login, me, register)
+│   │   │   └── github.py                # Endpoints /api/github (repos con cache)
+│   │   └── utils/                       # Utilidades
+│   │       └── auth.py                  # JWT, password hashing, dependencies
 │   │
 │   ├── seed_data.py                     # Script para poblar la base de datos
+│   ├── create_admin.py                  # Script para crear usuario admin
 │   ├── portfolio.db                     # Base de datos SQLite (desarrollo)
 │   └── requirements.txt                 # Dependencias Python del backend
 │
@@ -174,19 +182,43 @@ port = 3000                        # Puerto donde corre la app
 **Para qué sirve:** Define las páginas, componentes y rutas de tu portfolio.  
 
 **Contenido actual:**
+**Componentes Públicos:**
 - `selector_idioma_portada()` - Selector con redirección a /home
 - `selector_idioma()` - Selector sin redirección para navbar
-- `navbar()` - Barra de navegación sticky con links traducidos y link a CV
-- `seccion_sobre_mi()` - Sección "Sobre mí" con descripción y badges de habilidades
-- `card_proyecto()` - Componente reutilizable para cards de proyectos
-- `seccion_proyectos()` - Sección de proyectos con grid de 3 cards
-- `seccion_contacto()` - Sección de contacto con información y formulario traducido
-- `footer()` - Footer con links sociales y copyright
+- `navbar()` - Barra de navegación sticky con links traducidos
+- `seccion_sobre_mi()` - Sección "Sobre mí" con descripción y badges
+- `skeleton_proyecto/curso/experiencia()` - Skeleton loaders para carga
+- `card_proyecto/curso/experiencia()` - Cards dinámicas con animaciones
+- `seccion_proyectos()` - Proyectos dinámicos desde API
+- `seccion_formacion()` - Cursos dinámicos desde API
+- `seccion_experiencia()` - Experiencias dinámicas desde API
+- `seccion_github()` - Repositorios GitHub con cache
+- `seccion_contacto()` - Información + formulario traducido
+- `footer()` - Footer con links sociales
+
+**Páginas Públicas:**
 - `portada()` - Página inicial (ruta `/`)
-- `home()` - Página principal (ruta `/home`)
-- `pagina_cv()` - Página CV con visor PDF a pantalla completa (ruta `/cv`)
-- `app = rx.App()` - Inicialización de la aplicación con CSS personalizado
-- Registro de rutas con `app.add_page()`
+- `home()` - Página principal con todas las secciones (ruta `/home`)
+- `pagina_cv()` - Visor PDF a pantalla completa (ruta `/cv`)
+
+**Autenticación:**
+- `pagina_login()` - Formulario de login OAuth2 (ruta `/login`)
+- `dashboard_admin()` - Dashboard protegido con cards de navegación (ruta `/admin`)
+
+**Panel Admin - CRUD Proyectos:**
+- `admin_proyectos()` - Listado con tabla y botones de acción (ruta `/admin/proyectos`)
+- `formulario_proyecto()` - Crear/editar proyecto multi-idioma (ruta `/admin/proyectos/form`)
+
+**Panel Admin - CRUD Cursos:**
+- `admin_cursos()` - Listado con tabla y botones de acción (ruta `/admin/cursos`)
+- `formulario_curso()` - Crear/editar curso multi-idioma (ruta `/admin/cursos/form`)
+
+**Panel Admin - CRUD Experiencias:**
+- `admin_experiencias()` - Listado con tabla y botones de acción (ruta `/admin/experiencias`)
+- `formulario_experiencia()` - Crear/editar experiencia multi-idioma (ruta `/admin/experiencias/form`)
+
+- `app = rx.App()` - Inicialización con CSS personalizado
+- Registro de 11 rutas con `app.add_page()`
 
 ---
 
@@ -481,7 +513,7 @@ La API estará en: `http://localhost:8001/docs`
 - ✅ Sección Sobre mí (descripción, experiencia actual, badges de habilidades)
 - ✅ Sección Formación (diploma + 3 cursos)
 - ✅ Sección Proyectos (3 cards - pendiente dinamizar con DB)
-- ✅ Sección Contacto (información + formulario funcional con validación)
+- ✅ Sección Contacto (información + formulario traducido)
 - ✅ Footer con links sociales
 - ✅ Responsive design completo (móvil, tablet, desktop)
 - ✅ Smooth scroll entre secciones
@@ -519,18 +551,39 @@ La API estará en: `http://localhost:8001/docs`
 - ✅ Link "Experiencia" en navbar (desktop y móvil)
 - ✅ Eliminada subsección de experiencia estática duplicada
 - ✅ 3 secciones dinámicas funcionando: Proyectos, Formación, Experiencia
+- ✅ Skeleton loaders para proyectos, cursos y experiencias
+- ✅ Animaciones fade-in-up para cards dinámicas
+- ✅ Integración GitHub API con cache de 6 horas
+- ✅ Sección GitHub dinámica en /home con repositorios reales
+- ✅ Link "GitHub" en navbar
 
-### 🔄 En Progreso:
+**Fase 7 - Autenticación y Seguridad** ✅ (17 Enero 2026)
+- ✅ Sistema de autenticación JWT con python-jose
+- ✅ Modelo User con campos: username, email, hashed_password, is_admin
+- ✅ Hash de contraseñas con passlib[bcrypt]
+- ✅ Router /api/auth con endpoints: login, me, register
+- ✅ Script create_admin.py para crear usuario administrador inicial
+- ✅ Protección de endpoints CRUD (solo admin puede POST/PUT/DELETE)
+- ✅ Página /login con formulario OAuth2
+- ✅ Dashboard /admin con protección de ruta
+- ✅ Estado de autenticación en frontend (token, usuario, login/logout)
 
-**Fase 7 - Mejoras Avanzadas** (Próxima sesión)
-- Skeleton loaders en lugar de spinners
-- Animaciones de entrada para secciones dinámicas
-- Integración GitHub API para repos dinámicos
-- Panel Admin básico
+**Fase 8 - Panel Admin CRUD Completo** ✅ (17-18 Enero 2026)
+- ✅ **CRUD Proyectos:** State con funciones (cargar, crear, editar, eliminar)
+- ✅ Página /admin/proyectos con tabla y botones de acción
+- ✅ Formulario /admin/proyectos/form para crear/editar (multi-idioma)
+- ✅ **CRUD Cursos:** State, listado y formulario completos
+- ✅ Página /admin/cursos con gestión completa
+- ✅ Formulario /admin/cursos/form con campos multi-idioma
+- ✅ **CRUD Experiencias:** State, listado y formulario completos
+- ✅ Página /admin/experiencias con tabla de gestión
+- ✅ Formulario /admin/experiencias/form con todos los campos
+- ✅ Modelo Curso actualizado con institucion_es/en/it/ca
+- ✅ Base de datos recreada con estructura multi-idioma completa
+- ✅ Todas las operaciones CRUD funcionando correctamente
 
 ### ⏳ Pendiente:
 
-**Fase 8 - Panel Admin Completo**
 **Fase 9 - Sistema de Analíticas**
 **Fase 10 - SEO y Optimización**
 **Fase 11 - Despliegue en Producción**
@@ -582,4 +635,4 @@ Alessandro Febbrai
 
 ---
 
-**Última actualización:** 14 Enero 2026
+**Última actualización:** 18 Enero 2026

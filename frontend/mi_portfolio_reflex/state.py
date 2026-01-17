@@ -30,7 +30,10 @@ class Curso(BaseModel):
     titulo_en: str
     titulo_it: str
     titulo_ca: str
-    institucion: str
+    institucion_es: str
+    institucion_en: str
+    institucion_it: str
+    institucion_ca: str
     fecha_inicio: str
     fecha_fin: str = ""  
     certificado_url: str = ""  
@@ -628,6 +631,235 @@ class State(rx.State):
                 self.modo_edicion = False
                 self.cargar_proyectos_admin()
                 return rx.redirect("/admin/proyectos")
+            else:
+                return rx.toast.error(f"Error al guardar: {response.status_code}")
+                
+        except Exception as e:
+            return rx.toast.error(f"Error: {str(e)}")
+
+
+    # ==================== CRUD CURSOS ====================
+    cursos_admin: List[Curso] = []
+    cargando_cursos_admin: bool = False
+    error_cursos_admin: str = ""
+    curso_editando: Optional[Curso] = None
+    modo_edicion_curso: bool = False
+
+    def cargar_cursos_admin(self):
+        """Cargar todos los cursos para admin"""
+        self.cargando_cursos_admin = True
+        self.error_cursos_admin = ""
+        
+        try:
+            response = httpx.get(
+                "http://localhost:8001/api/cursos/",
+                params={"limit": 100},
+                headers={"Authorization": f"Bearer {self.token}"}
+            )
+            if response.status_code == 200:
+                data = response.json()
+                for curso in data:
+                    if curso.get("fecha_fin") is None:
+                        curso["fecha_fin"] = ""
+                    if curso.get("certificado_url") is None:
+                        curso["certificado_url"] = ""
+                self.cursos_admin = [Curso(**curso) for curso in data]
+            else:
+                self.error_cursos_admin = f"Error {response.status_code}"
+        except Exception as e:
+            self.error_cursos_admin = f"Error: {str(e)}"
+        finally:
+            self.cargando_cursos_admin = False
+
+    def eliminar_curso(self, curso_id: int):
+        """Eliminar curso (soft delete)"""
+        try:
+            response = httpx.delete(
+                f"http://localhost:8001/api/cursos/{curso_id}",
+                headers={"Authorization": f"Bearer {self.token}"}
+            )
+            if response.status_code == 200:
+                self.cargar_cursos_admin()
+                return rx.toast.success("Curso eliminado correctamente")
+            else:
+                return rx.toast.error("Error al eliminar curso")
+        except Exception as e:
+            return rx.toast.error(f"Error: {str(e)}")
+
+    def abrir_formulario_curso(self, curso_id: int = 0):
+        """Abrir formulario para crear o editar curso"""
+        if curso_id > 0:
+            curso = next((c for c in self.cursos_admin if c.id == curso_id), None)
+            if curso:
+                self.curso_editando = curso
+                self.modo_edicion_curso = True
+        else:
+            self.curso_editando = None
+            self.modo_edicion_curso = False
+        return rx.redirect("/admin/cursos/form")
+
+    def cancelar_edicion_curso(self):
+        """Cancelar edición y volver a la lista"""
+        self.curso_editando = None
+        self.modo_edicion_curso = False
+        return rx.redirect("/admin/cursos")
+
+    def guardar_curso(self, form_data: dict):
+        """Crear o actualizar curso"""
+        try:
+            curso_data = {
+                "titulo_es": form_data["titulo_es"],
+                "titulo_en": form_data["titulo_en"],
+                "titulo_it": form_data["titulo_it"],
+                "titulo_ca": form_data["titulo_ca"],
+                "institucion_es": form_data["institucion_es"],
+                "institucion_en": form_data["institucion_en"],
+                "institucion_it": form_data["institucion_it"],
+                "institucion_ca": form_data["institucion_ca"],
+                "fecha_inicio": form_data["fecha_inicio"],
+                "fecha_fin": form_data.get("fecha_fin", ""),
+                "certificado_url": form_data.get("certificado_url", ""),
+                "activo": True,
+            }
+            
+            if self.modo_edicion_curso and self.curso_editando:
+                response = httpx.put(
+                    f"http://localhost:8001/api/cursos/{self.curso_editando.id}",
+                    json=curso_data,
+                    headers={"Authorization": f"Bearer {self.token}"}
+                )
+            else:
+                response = httpx.post(
+                    "http://localhost:8001/api/cursos/",
+                    json=curso_data,
+                    headers={"Authorization": f"Bearer {self.token}"}
+                )
+            
+            if response.status_code in [200, 201]:
+                self.curso_editando = None
+                self.modo_edicion_curso = False
+                self.cargar_cursos_admin()
+                return rx.redirect("/admin/cursos")
+            else:
+                return rx.toast.error(f"Error al guardar: {response.status_code}")
+                
+        except Exception as e:
+            return rx.toast.error(f"Error: {str(e)}")
+
+
+    # ==================== CRUD EXPERIENCIAS ====================
+    experiencias_admin: List[Experiencia] = []
+    cargando_experiencias_admin: bool = False
+    error_experiencias_admin: str = ""
+    experiencia_editando: Optional[Experiencia] = None
+    modo_edicion_experiencia: bool = False
+
+    def cargar_experiencias_admin(self):
+        """Cargar todas las experiencias para admin"""
+        self.cargando_experiencias_admin = True
+        self.error_experiencias_admin = ""
+        
+        try:
+            response = httpx.get(
+                "http://localhost:8001/api/experiencias/",
+                params={"limit": 100},
+                headers={"Authorization": f"Bearer {self.token}"}
+            )
+            if response.status_code == 200:
+                data = response.json()
+                for exp in data:
+                    if exp.get("fecha_fin") is None:
+                        exp["fecha_fin"] = ""
+                    if exp.get("descripcion_es") is None:
+                        exp["descripcion_es"] = ""
+                    if exp.get("descripcion_en") is None:
+                        exp["descripcion_en"] = ""
+                    if exp.get("descripcion_it") is None:
+                        exp["descripcion_it"] = ""
+                    if exp.get("descripcion_ca") is None:
+                        exp["descripcion_ca"] = ""
+                self.experiencias_admin = [Experiencia(**exp) for exp in data]
+            else:
+                self.error_experiencias_admin = f"Error {response.status_code}"
+        except Exception as e:
+            self.error_experiencias_admin = f"Error: {str(e)}"
+        finally:
+            self.cargando_experiencias_admin = False
+
+    def eliminar_experiencia(self, experiencia_id: int):
+        """Eliminar experiencia (soft delete)"""
+        try:
+            response = httpx.delete(
+                f"http://localhost:8001/api/experiencias/{experiencia_id}",
+                headers={"Authorization": f"Bearer {self.token}"}
+            )
+            if response.status_code == 200:
+                self.cargar_experiencias_admin()
+                return rx.toast.success("Experiencia eliminada correctamente")
+            else:
+                return rx.toast.error("Error al eliminar experiencia")
+        except Exception as e:
+            return rx.toast.error(f"Error: {str(e)}")
+
+    def abrir_formulario_experiencia(self, experiencia_id: int = 0):
+        """Abrir formulario para crear o editar experiencia"""
+        if experiencia_id > 0:
+            exp = next((e for e in self.experiencias_admin if e.id == experiencia_id), None)
+            if exp:
+                self.experiencia_editando = exp
+                self.modo_edicion_experiencia = True
+        else:
+            self.experiencia_editando = None
+            self.modo_edicion_experiencia = False
+        return rx.redirect("/admin/experiencias/form")
+
+    def cancelar_edicion_experiencia(self):
+        """Cancelar edición y volver a la lista"""
+        self.experiencia_editando = None
+        self.modo_edicion_experiencia = False
+        return rx.redirect("/admin/experiencias")
+
+    def guardar_experiencia(self, form_data: dict):
+        """Crear o actualizar experiencia"""
+        try:
+            experiencia_data = {
+                "tipo": form_data["tipo"],
+                "empresa": form_data["empresa"],
+                "cargo_es": form_data["cargo_es"],
+                "cargo_en": form_data["cargo_en"],
+                "cargo_it": form_data["cargo_it"],
+                "cargo_ca": form_data["cargo_ca"],
+                "fecha_inicio": form_data["fecha_inicio"],
+                "fecha_fin": form_data.get("fecha_fin", ""),
+                "actual": form_data.get("actual", False),
+                "descripcion_es": form_data.get("descripcion_es", ""),
+                "descripcion_en": form_data.get("descripcion_en", ""),
+                "descripcion_it": form_data.get("descripcion_it", ""),
+                "descripcion_ca": form_data.get("descripcion_ca", ""),
+                "tecnologias": form_data.get("tecnologias", "").split(",") if form_data.get("tecnologias") else [],
+                "orden": int(form_data.get("orden", 0)),
+                "mostrar_en_web": form_data.get("mostrar_en_web", False),
+                "activo": True,
+            }
+            
+            if self.modo_edicion_experiencia and self.experiencia_editando:
+                response = httpx.put(
+                    f"http://localhost:8001/api/experiencias/{self.experiencia_editando.id}",
+                    json=experiencia_data,
+                    headers={"Authorization": f"Bearer {self.token}"}
+                )
+            else:
+                response = httpx.post(
+                    "http://localhost:8001/api/experiencias/",
+                    json=experiencia_data,
+                    headers={"Authorization": f"Bearer {self.token}"}
+                )
+            
+            if response.status_code in [200, 201]:
+                self.experiencia_editando = None
+                self.modo_edicion_experiencia = False
+                self.cargar_experiencias_admin()
+                return rx.redirect("/admin/experiencias")
             else:
                 return rx.toast.error(f"Error al guardar: {response.status_code}")
                 

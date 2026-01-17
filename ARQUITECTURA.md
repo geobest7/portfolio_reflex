@@ -1,6 +1,6 @@
 # 🏗️ ARQUITECTURA DEL PROYECTO PORTFOLIO
 
-**Última actualización:** 13 Enero 2026
+**Última actualización:** 18 Enero 2026
 
 ---
 
@@ -82,12 +82,14 @@ Portfolio personal full-stack con contenido dinámico, multi-idioma, y panel de 
 - Contiene experiencia laboral completa
 - No duplicar contenido en la web
 
-### Página Admin (`/admin`) - Futuro:
-- Login con JWT
-- CRUD de proyectos destacados
-- CRUD de cursos/certificaciones
-- Gestión de contenido
-- Visualización de analíticas
+### Página Admin (`/admin`) - ✅ IMPLEMENTADO:
+- Login con JWT (/login)
+- Dashboard protegido (/admin)
+- CRUD de proyectos destacados (/admin/proyectos)
+- CRUD de cursos/certificaciones (/admin/cursos)
+- CRUD de experiencias (/admin/experiencias)
+- Formularios multi-idioma para crear/editar
+- Protección de rutas con autenticación
 
 ---
 
@@ -158,8 +160,14 @@ class Proyecto(Base):
 class Curso(Base):
     id: int (PK)
     tipo: str ("diploma", "curso", "certificacion")
-    titulo: str
-    institucion: str
+    titulo_es: str
+    titulo_en: str
+    titulo_it: str
+    titulo_ca: str
+    institucion_es: str
+    institucion_en: str
+    institucion_it: str
+    institucion_ca: str
     fecha_inicio: date
     fecha_fin: date (opcional, si aún está en curso)
     descripcion_es: text
@@ -196,19 +204,22 @@ class Experiencia(Base):
     mostrar_en_web: bool (solo mostrar 1-2 más recientes)
 ```
 
-### 4. Tabla `github_repos_cache` (Cache de GitHub)
+### 4. Tabla `github_repos` (Cache de GitHub) - ✅ IMPLEMENTADO
 ```python
-class GitHubRepoCache(Base):
+class GitHubRepo(Base):
     id: int (PK)
-    repo_name: str
-    descripcion: str
-    url: str
-    lenguaje: str
-    estrellas: int
-    forks: int
-    fecha_actualizacion: datetime
-    ultimo_fetch: datetime
+    repo_id: int (unique, ID de GitHub)
+    name: str
+    description: str
+    html_url: str
+    language: str
+    stargazers_count: int
+    forks_count: int
+    topics: str (JSON: ["python", "fastapi", ...])
+    cached_at: datetime
+    activo: bool
 ```
+**Cache TTL:** 6 horas (21600 segundos)
 
 ### 5. Tabla `analytics` (Sistema de Analíticas)
 ```python
@@ -225,17 +236,20 @@ class Analytics(Base):
     referrer: str (opcional)
 ```
 
-### 6. Tabla `users` (Admin)
+### 6. Tabla `users` (Admin) - ✅ IMPLEMENTADO
 ```python
 class User(Base):
     id: int (PK)
     username: str (unique)
     email: str (unique)
-    hashed_password: str
+    hashed_password: str (bcrypt)
+    is_active: bool
     is_admin: bool
-    fecha_creacion: datetime
-    ultimo_login: datetime
 ```
+**Seguridad:**
+- Contraseñas hasheadas con bcrypt 4.0.1
+- JWT tokens con expiración de 30 minutos
+- SECRET_KEY en .env
 
 ---
 
@@ -244,32 +258,55 @@ class User(Base):
 ### Endpoints Públicos (sin autenticación):
 
 ```
-GET  /api/proyectos              → Listar proyectos destacados activos
+GET  /api/proyectos              → Listar proyectos (filtro: destacados)
 GET  /api/proyectos/{id}         → Obtener proyecto por ID
-GET  /api/cursos                 → Listar cursos/certificaciones activos
+GET  /api/cursos                 → Listar cursos activos
 GET  /api/cursos/{id}            → Obtener curso por ID
-GET  /api/experiencias           → Listar experiencias actuales/recientes
+GET  /api/experiencias           → Listar experiencias (filtro: mostrar_en_web)
 GET  /api/experiencias/{id}      → Obtener experiencia por ID
-GET  /api/github/repos           → Listar repos de GitHub (con cache)
-POST /api/contacto               → Enviar mensaje de contacto
-POST /api/analytics              → Registrar evento de analítica
+GET  /api/github/repos           → Listar repos de GitHub (con cache 6h) ✅
+POST /api/contacto               → Enviar mensaje de contacto (pendiente)
+POST /api/analytics              → Registrar evento de analítica (pendiente)
 ```
 
 ### Endpoints Protegidos (requieren JWT):
 
+**Autenticación:** ✅ IMPLEMENTADO
 ```
-POST   /api/auth/login           → Login admin
-POST   /api/auth/refresh         → Refresh token
+POST   /api/auth/login           → Login admin (OAuth2)
+GET    /api/auth/me              → Obtener usuario actual
+POST   /api/auth/register        → Registrar usuario (solo admin)
+```
+
+**CRUD Proyectos:** ✅ IMPLEMENTADO
+```
+POST   /api/proyectos            → Crear proyecto (solo admin)
+PUT    /api/proyectos/{id}       → Actualizar proyecto (solo admin)
+DELETE /api/proyectos/{id}       → Eliminar proyecto - soft delete (solo admin)
+```
+
+**CRUD Cursos:** ✅ IMPLEMENTADO
+```
+POST   /api/cursos               → Crear curso (solo admin)
+PUT    /api/cursos/{id}          → Actualizar curso (solo admin)
+DELETE /api/cursos/{id}          → Eliminar curso - soft delete (solo admin)
+```
+
+**CRUD Experiencias:** ✅ IMPLEMENTADO
+```
+POST   /api/experiencias         → Crear experiencia (solo admin)
+PUT    /api/experiencias/{id}    → Actualizar experiencia (solo admin)
+DELETE /api/experiencias/{id}    → Eliminar experiencia - soft delete (solo admin)
+```
+
+**GitHub API:** ✅ IMPLEMENTADO
+```
+DELETE /api/github/cache          → Limpiar cache de repositorios (solo admin)
+```
+
+**Analíticas:** (pendiente)
+```
 GET    /api/admin/analytics      → Obtener estadísticas
-POST   /api/admin/proyectos      → Crear proyecto
-PUT    /api/admin/proyectos/{id} → Actualizar proyecto
-DELETE /api/admin/proyectos/{id} → Eliminar proyecto
-POST   /api/admin/cursos         → Crear curso
-PUT    /api/admin/cursos/{id}    → Actualizar curso
-DELETE /api/admin/cursos/{id}    → Eliminar curso
-POST   /api/admin/experiencias    → Crear experiencia
-PUT    /api/admin/experiencias/{id} → Actualizar experiencia
-DELETE /api/admin/experiencias/{id} → Eliminar experiencia
 ```
 
 ---
@@ -355,27 +392,31 @@ Usuario llena formulario
     Frontend muestra mensaje traducido
 ```
 
-### 4. Panel Admin (Futuro):
+### 4. Panel Admin: ✅ IMPLEMENTADO
 ```
-Admin hace login
+Admin hace login en /login
          ↓
-    POST /api/auth/login
+    POST /api/auth/login (OAuth2)
          ↓
-    Backend valida credenciales
+    Backend valida credenciales (bcrypt)
          ↓
-    Retorna JWT token
+    Retorna JWT token (exp: 30min)
          ↓
-    Frontend guarda token
+    Frontend guarda token en State
          ↓
-    Admin crea/edita contenido
+    Admin accede a /admin (dashboard)
+         ↓
+    Admin navega a /admin/proyectos|cursos|experiencias
+         ↓
+    Admin crea/edita contenido en formularios multi-idioma
          ↓
     Requests con Authorization: Bearer {token}
          ↓
-    Backend valida JWT y procesa
+    Backend valida JWT con get_current_admin_user
          ↓
-    DB actualizada
+    DB actualizada (soft delete para eliminaciones)
          ↓
-    Frontend público muestra cambios
+    Frontend público muestra cambios inmediatamente
 ```
 
 ---
@@ -385,51 +426,59 @@ Admin hace login
 ### Medidas Implementadas:
 - ✅ Validación de formularios en frontend
 - ✅ CORS configurado correctamente
+- ✅ JWT para autenticación admin (python-jose)
+- ✅ Hashing de contraseñas con bcrypt 4.0.1
+- ✅ Variables de entorno para secrets (.env con SECRET_KEY, GITHUB_TOKEN)
+- ✅ Protección de endpoints CRUD (solo admin puede modificar)
+- ✅ Soft delete en lugar de borrado físico
 - 🔄 Sanitización de inputs en backend (pendiente)
 - 🔄 Rate limiting en endpoints (pendiente)
-- 🔄 JWT para autenticación admin (pendiente)
-- 🔄 Hashing de contraseñas con bcrypt (pendiente)
 - 🔄 HTTPS en producción (automático con Vercel/Fly.io)
-- 🔄 Variables de entorno para secrets (pendiente)
 - 🔄 IP anónima en analytics (solo 3 primeros octetos)
 
 ---
 
-## 📈 Próximos Pasos (Prioridad)
+## 📈 Estado Actual y Próximos Pasos
 
-### Fase 4 - Backend (Próxima sesión):
-1. Setup FastAPI inicial
-2. Configurar SQLAlchemy + SQLite
-3. Crear modelos (Proyecto, Curso, Certificacion)
-4. Endpoints CRUD básicos
-5. Integración GitHub API con cache
-6. Conectar frontend con backend
+### ✅ COMPLETADO:
 
-### Fase 5 - Integración:
-1. Fetch datos desde API en frontend
-2. Loading states
-3. Error handling
-4. Dinamizar sección Proyectos
-5. Crear sección Formación
-6. Crear sección GitHub Repos
+**Fase 1-3:** Setup, Multi-idioma, Frontend básico
+**Fase 4:** Backend FastAPI con SQLAlchemy + SQLite
+**Fase 5:** Integración Frontend-Backend completa
+**Fase 6:** Optimizaciones (skeleton loaders, animaciones, auto-carga)
+**Fase 7:** GitHub API con cache de 6 horas
+**Fase 8:** Autenticación JWT completa
+**Fase 9:** Panel Admin CRUD completo (Proyectos, Cursos, Experiencias)
 
-### Fase 6 - Admin Panel:
-1. Sistema de autenticación JWT
-2. Página login
-3. Dashboard admin
-4. CRUD proyectos
-5. CRUD cursos
+### 🔄 EN PROGRESO:
 
-### Fase 7 - Analíticas:
-1. Middleware para tracking
-2. Geolocalización de IPs
-3. Dashboard de visualización
-4. Exportación de datos
+**Fase 10 - Funcionalidades Adicionales:**
+1. Formulario de contacto funcional (backend)
+2. Envío de emails desde formulario
+3. Validación avanzada de inputs
 
-### Fase 8-10:
-- SEO y optimización
-- Testing
-- Despliegue en producción
+### ⏳ PENDIENTE:
+
+**Fase 11 - Sistema de Analíticas:**
+1. Middleware para tracking de visitas
+2. Geolocalización de IPs (anónimas)
+3. Tracking de clicks en proyectos
+4. Dashboard de visualización en /admin
+5. Exportación de datos (CSV/Excel)
+
+**Fase 12 - SEO y Optimización:**
+1. Metatags dinámicos
+2. OpenGraph y Twitter Cards
+3. Sitemap.xml
+4. Robots.txt
+5. Performance optimization
+
+**Fase 13 - Testing y Despliegue:**
+1. Testing end-to-end
+2. Deploy frontend en Vercel
+3. Deploy backend en Fly.io/Render
+4. PostgreSQL en producción
+5. Dominio personalizado
 
 ---
 

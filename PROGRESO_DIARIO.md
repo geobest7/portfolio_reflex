@@ -311,4 +311,164 @@ Frontend (on_mount) → cargar_datos_iniciales()
 
 ---
 
-**Ultima actualizacion:** 17 Enero 2026
+## Día 12 (17-18 Enero 2026) - GitHub API, Autenticación JWT y Panel Admin CRUD Completo
+
+### Objetivo: Completar integración GitHub API, sistema de autenticación y panel admin con CRUD completo
+
+**Logros de la sesión:**
+
+#### 1. Integración GitHub API con Cache
+- Creado backend/app/models/github_repo.py - Modelo para cache de repositorios
+  - Campos: repo_id, name, description, html_url, language, stars, forks, topics (JSON)
+  - Cache con TTL de 6 horas (cached_at)
+- Creado backend/app/routers/github.py
+  - GET /api/github/repos - Obtiene repos con cache automático
+  - DELETE /api/github/cache - Limpia cache manualmente
+- Frontend: Clase GitHubRepo en state.py
+- Frontend: Función cargar_repos_github() con manejo de cache
+- Frontend: Sección GitHub dinámica en /home con skeleton loaders
+- Traducciones multi-idioma para sección GitHub
+- Link "GitHub" añadido en navbar (desktop y móvil)
+
+#### 2. Sistema de Autenticación JWT
+**Backend:**
+- Creado backend/app/models/user.py - Modelo User
+  - Campos: username, email, hashed_password, is_active, is_admin
+- Creado backend/app/schemas/auth.py
+  - UserLogin, Token, TokenData, UserCreate, UserResponse
+- Creado backend/app/utils/auth.py
+  - Hash de contraseñas con passlib[bcrypt]
+  - Creación y verificación de tokens JWT con python-jose
+  - Dependencies: get_current_user, get_current_admin_user
+- Creado backend/app/routers/auth.py
+  - POST /api/auth/login - Login con OAuth2
+  - GET /api/auth/me - Obtener usuario actual
+  - POST /api/auth/register - Registro (solo admin)
+- Creado backend/create_admin.py - Script para crear usuario admin inicial
+- Protección de endpoints CRUD: POST, PUT, DELETE requieren autenticación admin
+- Dependencias añadidas: python-jose[cryptography], passlib[bcrypt], email-validator
+- Fix: bcrypt downgrade a 4.0.1 por compatibilidad
+
+**Frontend:**
+- State: Variables reactivas para token, usuario, flags de autenticación
+- State: Funciones login() y logout()
+- Página /login con formulario OAuth2
+- Dashboard /admin con protección de ruta
+- Cards de navegación a CRUD de proyectos, cursos, experiencias
+- Redirección automática a /login si no autenticado
+
+#### 3. Panel Admin - CRUD Proyectos
+**State (frontend/mi_portfolio_reflex/state.py):**
+- Variables: proyectos_admin, proyecto_editando, modo_edicion
+- Funciones: cargar_proyectos_admin(), eliminar_proyecto(), abrir_formulario_proyecto(), cancelar_edicion_proyecto(), guardar_proyecto()
+
+**Páginas:**
+- /admin/proyectos - Listado con tabla
+  - Columnas: ID, Título, Destacado, Activo, Orden, Acciones
+  - Botones: Editar, Eliminar
+  - Auto-carga con on_mount
+- /admin/proyectos/form - Formulario crear/editar
+  - Títulos en 4 idiomas (ES, EN, IT, CA)
+  - Descripciones en 4 idiomas
+  - Tecnologías, URLs (GitHub, Demo, Imagen)
+  - Orden, Destacado (checkbox)
+  - Validación y guardado con HTTP requests
+
+#### 4. Panel Admin - CRUD Cursos
+**Actualización del Modelo:**
+- Modelo Curso actualizado con institucion_es/en/it/ca (multi-idioma)
+- Schema actualizado en backend/app/schemas/curso.py
+- Seed data actualizado con instituciones multi-idioma
+- Base de datos recreada con nueva estructura
+
+**State:**
+- Variables: cursos_admin, curso_editando, modo_edicion_curso
+- Funciones: cargar_cursos_admin(), eliminar_curso(), abrir_formulario_curso(), cancelar_edicion_curso(), guardar_curso()
+
+**Páginas:**
+- /admin/cursos - Listado con tabla
+  - Columnas: ID, Título, Institución, Fecha Inicio, Activo, Acciones
+- /admin/cursos/form - Formulario crear/editar
+  - Títulos en 4 idiomas
+  - Instituciones en 4 idiomas
+  - Fechas (inicio, fin opcional)
+  - Certificado URL opcional
+
+#### 5. Panel Admin - CRUD Experiencias
+**State:**
+- Variables: experiencias_admin, experiencia_editando, modo_edicion_experiencia
+- Funciones: cargar_experiencias_admin(), eliminar_experiencia(), abrir_formulario_experiencia(), cancelar_edicion_experiencia(), guardar_experiencia()
+
+**Páginas:**
+- /admin/experiencias - Listado con tabla
+  - Columnas: ID, Tipo, Empresa, Cargo, Fecha Inicio, Mostrar Web, Acciones
+- /admin/experiencias/form - Formulario crear/editar
+  - Tipo (practica/trabajo) con select
+  - Empresa
+  - Cargos en 4 idiomas
+  - Descripciones en 4 idiomas (opcional)
+  - Fechas, Tecnologías, Orden
+  - Checkboxes: Actual, Mostrar en Web
+
+#### 6. Mejoras y Fixes
+- Skeleton loaders para proyectos, cursos, experiencias
+- Animaciones fade-in-up con CSS para cards dinámicas
+- Fix: rx.cond() para badges en tablas admin (no se puede usar if con Vars)
+- Fix: lambdas con captura de variables en rx.foreach
+- Fix: Clase Curso con campo tipo añadido
+- Fix: curso.institucion → curso.institucion_es/en/it/ca con rx.cond()
+- Frontend: Sección formación actualizada con campos multi-idioma
+
+### Rutas Implementadas
+**Públicas:**
+- / - Portada
+- /home - Home con todas las secciones
+- /cv - Visor PDF
+
+**Autenticación:**
+- /login - Login admin
+- /admin - Dashboard admin
+
+**CRUD Proyectos:**
+- /admin/proyectos - Listado
+- /admin/proyectos/form - Formulario
+
+**CRUD Cursos:**
+- /admin/cursos - Listado
+- /admin/cursos/form - Formulario
+
+**CRUD Experiencias:**
+- /admin/experiencias - Listado
+- /admin/experiencias/form - Formulario
+
+### Estructura Final del Proyecto
+- **11 rutas** registradas en total
+- **3 CRUD completos** funcionando (Proyectos, Cursos, Experiencias)
+- **Autenticación JWT** completa con protección de rutas
+- **GitHub API** integrada con cache de 6 horas
+- **Multi-idioma** en todos los componentes (ES, EN, IT, CA)
+
+### Commits de la Sesión
+1. "Implementar GitHub API con cache y sección dinámica en frontend"
+2. "Implementar autenticación JWT backend con User model y protección endpoints"
+3. "Implementar frontend login y dashboard admin con protección de rutas"
+4. "Implementar panel admin con CRUD de proyectos (listado)"
+5. "Implementar formulario crear/editar proyectos multi-idioma"
+6. "Actualizar modelo Curso con institucion multi-idioma y CRUD completo"
+7. "Implementar CRUD Experiencias completo con formulario multi-idioma"
+8. "Actualizar documentación completa - README, PROGRESO_DIARIO, ARQUITECTURA"
+
+### Notas Técnicas
+- JWT con SECRET_KEY en .env
+- Tokens con expiración de 30 minutos
+- Bcrypt 4.0.1 para compatibilidad con contraseñas
+- GitHub cache TTL: 6 horas (21600 segundos)
+- rx.cond() obligatorio para condicionales con Vars de Reflex
+- Lambdas con captura: `lambda p=proyecto: func(p)`
+- Formularios con rx.form y on_submit
+- Protección de rutas: rx.cond(State.esta_autenticado, ...)
+- Base de datos recreada con estructura multi-idioma completa
+
+---
+
+**Última actualización:** 18 Enero 2026
