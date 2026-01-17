@@ -20,13 +20,7 @@ TRANSLATIONS = {
         "habilidades_titulo": "Habilidades",
 
         # proyectos
-        "proyectos_titulo": "Proyectos",  
-        "proyecto_1_titulo": "Portfolio Multi-idioma",
-        "proyecto_1_desc": "Portfolio personal con sistema de traducción en 4 idiomas usando Reflex y Python.",
-        "proyecto_2_titulo": "API REST con FastAPI",
-        "proyecto_2_desc": "API completa con autenticación JWT y base de datos PostgreSQL.",
-        "proyecto_3_titulo": "Dashboard Analytics",
-        "proyecto_3_desc": "Sistema de analíticas con gráficos interactivos y exportación de datos.",
+        
         "btn_ver_codigo": "Ver código",
 
 
@@ -56,30 +50,9 @@ TRANSLATIONS = {
         "form_exito": "¡Mensaje enviado correctamente! Te contactaré pronto.",
 
 
-        # Subsección Experiencia en Sobre mí
-        "experiencia_subtitulo": "Experiencia Actual",
-        "exp_cargo": "Prácticas en Desarrollo Backend",
-        "exp_empresa": "Tech Solutions S.L.",
-        "exp_periodo": "Enero 2024 - Presente",
-        "exp_descripcion": "Desarrollo de APIs REST con FastAPI y gestión de bases de datos PostgreSQL. Implementación de sistemas de autenticación y optimización de consultas.",
-        "exp_tecnologias": "Tecnologías",
-
-
         # Sección Formación
         "formacion_titulo": "Formación",
-        "formacion_diploma_titulo": "Diploma Técnico Superior",
-        "formacion_diploma_institucion": "Instituto Técnico de Italia",
-        "formacion_diploma_periodo": "2020 - 2023",
-        "formacion_cursos_subtitulo": "Cursos y Certificaciones",
-        "curso1_titulo": "Python Profesional",
-        "curso1_institucion": "Platzi",
-        "curso1_periodo": "2023",
-        "curso2_titulo": "FastAPI: Desarrollo de APIs",
-        "curso2_institucion": "Udemy",
-        "curso2_periodo": "2024",
-        "curso3_titulo": "Git y GitHub",
-        "curso3_institucion": "Platzi",
-        "curso3_periodo": "2023",
+        
     },
 
     "en": {
@@ -106,13 +79,7 @@ TRANSLATIONS = {
         "habilidades_titulo": "Skills",
 
         # projects
-        "proyectos_titulo": "Projects",
-        "proyecto_1_titulo": "Multilingual Portfolio",
-        "proyecto_1_desc": "Personal portfolio with a 4-language translation system built using Reflex and Python.",
-        "proyecto_2_titulo": "REST API with FastAPI",
-        "proyecto_2_desc": "Complete API with JWT authentication and a PostgreSQL database.",
-        "proyecto_3_titulo": "Analytics Dashboard",
-        "proyecto_3_desc": "Analytics system with interactive charts and data export features.",
+        
         "btn_ver_codigo": "View code",
 
 
@@ -142,30 +109,9 @@ TRANSLATIONS = {
         "form_exito": "Message sent successfully! I'll contact you soon.",
 
 
-        # Subsección Experiencia en Sobre mí
-        "experiencia_subtitulo": "Current Experience",
-        "exp_cargo": "Backend Development Internship",
-        "exp_empresa": "Tech Solutions S.L.",
-        "exp_periodo": "January 2024 - Present",
-        "exp_descripcion": "Development of REST APIs with FastAPI and PostgreSQL database management. Implementation of authentication systems and query optimization.",
-        "exp_tecnologias": "Technologies",
-
 
         # Sección Formación
         "formacion_titulo": "Education",
-        "formacion_diploma_titulo": "Higher Technical Diploma",
-        "formacion_diploma_institucion": "Technical Institute of Italy",
-        "formacion_diploma_periodo": "2020 - 2023",
-        "formacion_cursos_subtitulo": "Courses and Certifications",
-        "curso1_titulo": "Professional Python",
-        "curso1_institucion": "Platzi",
-        "curso1_periodo": "2023",
-        "curso2_titulo": "FastAPI: API Development",
-        "curso2_institucion": "Udemy",
-        "curso2_periodo": "2024",
-        "curso3_titulo": "Git and GitHub",
-        "curso3_institucion": "Platzi",
-        "curso3_periodo": "2023",
     },
 
     "it": {
@@ -193,13 +139,7 @@ TRANSLATIONS = {
 
 
         # progetti
-        "proyectos_titulo": "Progetti",
-        "proyecto_1_titulo": "Portfolio Multilingua",
-        "proyecto_1_desc": "Portfolio personale con sistema di traduzione in 4 lingue sviluppato con Reflex e Python.",
-        "proyecto_2_titulo": "API REST con FastAPI",
-        "proyecto_2_desc": "API completa con autenticazione JWT e database PostgreSQL.",
-        "proyecto_3_titulo": "Dashboard Analytics",
-        "proyecto_3_desc": "Sistema di analisi con grafici interattivi ed esportazione dei dati.",
+        
         "btn_ver_codigo": "Vedi codice",
 
 
@@ -228,31 +168,8 @@ TRANSLATIONS = {
         "form_exito": "Messaggio inviato con successo! Ti contatterò presto.",
 
 
-
-        # Subsección Experiencia en Sobre mí
-        "experiencia_subtitulo": "Esperienza Attuale",
-        "exp_cargo": "Stage in Sviluppo Backend",
-        "exp_empresa": "Tech Solutions S.L.",
-        "exp_periodo": "Gennaio 2024 - Presente",
-        "exp_descripcion": "Sviluppo di API REST con FastAPI e gestione di database PostgreSQL. Implementazione di sistemi di autenticazione e ottimizzazione delle query.",
-        "exp_tecnologias": "Tecnologie",
-
-
         # Sección Formación
         "formacion_titulo": "Formazione",
-        "formacion_diploma_titulo": "Diploma Tecnico Superiore",
-        "formacion_diploma_institucion": "Istituto Tecnico d'Italia",
-        "formacion_diploma_periodo": "2020 - 2023",
-        "formacion_cursos_subtitulo": "Corsi e Certificazioni",
-        "curso1_titulo": "Python Professionale",
-        "curso1_institucion": "Platzi",
-        "curso1_periodo": "2023",
-        "curso2_titulo": "FastAPI: Sviluppo di API",
-        "curso2_institucion": "Udemy",
-        "curso2_periodo": "2024",
-        "curso3_titulo": "Git e GitHub",
-        "curso3_institucion": "Platzi",
-        "curso3_periodo": "2023",
     },
 
     "ca": {
@@ -280,13 +197,7 @@ TRANSLATIONS = {
         "habilidades_titulo": "Habilitats",
 
         # projectes
-        "proyectos_titulo": "Projectes",
-        "proyecto_1_titulo": "Portafoli Multilingüe",
-        "proyecto_1_desc": "Portafoli personal amb sistema de traducció en 4 idiomes desenvolupat amb Reflex i Python.",
-        "proyecto_2_titulo": "API REST amb FastAPI",
-        "proyecto_2_desc": "API completa amb autenticació JWT i base de dades PostgreSQL.",
-        "proyecto_3_titulo": "Panell d’Analítiques",
-        "proyecto_3_desc": "Sistema d’analítiques amb gràfics interactius i exportació de dades.",
+        
         "btn_ver_codigo": "Veure codi",
 
 
@@ -316,30 +227,8 @@ TRANSLATIONS = {
         "form_exito": "Missatge enviat correctament! Et contactaré aviat.",
 
 
-        # Subsección Experiencia en Sobre mí
-        "experiencia_subtitulo": "Experiència Actual",
-        "exp_cargo": "Pràctiques en Desenvolupament Backend",
-        "exp_empresa": "Tech Solutions S.L.",
-        "exp_periodo": "Gener 2024 - Present",
-        "exp_descripcion": "Desenvolupament d'APIs REST amb FastAPI i gestió de bases de dades PostgreSQL. Implementació de sistemes d'autenticació i optimització de consultes.",
-        "exp_tecnologias": "Tecnologies",
-
-
         # Sección Formación
         "formacion_titulo": "Formació",
-        "formacion_diploma_titulo": "Diploma Tècnic Superior",
-        "formacion_diploma_institucion": "Institut Tècnic d'Itàlia",
-        "formacion_diploma_periodo": "2020 - 2023",
-        "formacion_cursos_subtitulo": "Cursos i Certificacions",
-        "curso1_titulo": "Python Professional",
-        "curso1_institucion": "Platzi",
-        "curso1_periodo": "2023",
-        "curso2_titulo": "FastAPI: Desenvolupament d'APIs",
-        "curso2_institucion": "Udemy",
-        "curso2_periodo": "2024",
-        "curso3_titulo": "Git i GitHub",
-        "curso3_institucion": "Platzi",
-        "curso3_periodo": "2023",
     },
 }
 
