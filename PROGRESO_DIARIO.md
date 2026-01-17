@@ -227,4 +227,88 @@ Base de Datos (SQLite - portfolio.db)
 
 ---
 
-**Ultima actualizacion:** 15 Enero 2026
+## Dia 11 (17 Enero 2026) - Optimizaciones y Seccion Experiencia
+
+### Objetivo: Mejorar UX con auto-carga y añadir seccion Experiencia dinamica
+
+**Logros de la sesion:**
+
+#### 1. Auto-carga de Datos
+- Creada funcion cargar_datos_iniciales() en state.py
+- Añadido on_mount=State.cargar_datos_iniciales en pagina /home
+- Eliminados botones "Cargar Proyectos" y "Cargar Formacion"
+- Los datos se cargan automaticamente al entrar a la pagina
+- Cache simple: solo carga si las listas estan vacias
+
+#### 2. Seccion Experiencia Laboral Dinamica
+- Creada clase Pydantic Experiencia en state.py
+  - Campos multi-idioma: cargo_*, descripcion_* (es, en, it, ca)
+  - Empresa, tipo, fechas (inicio, fin, actual)
+  - Tecnologias (List[str])
+  - Flags: activo, mostrar_en_web, orden
+- Variables de estado: experiencias, cargando_experiencias, error_experiencias
+- Funcion cargar_experiencias() con HTTP request a /api/experiencias/
+- Conversion de None a string vacio para campos opcionales
+
+#### 3. Componente Visual seccion_experiencia()
+- Renderizado dinamico con rx.foreach
+- Icono briefcase para cada experiencia
+- Cargo y empresa con estilos diferenciados
+- Fechas con icono calendar
+- Descripcion condicional (solo si existe)
+- Badges de tecnologias
+- Multi-idioma con rx.cond anidados
+- Diseño consistente con otras secciones
+
+#### 4. Integracion en Home
+- Seccion añadida entre Sobre mi y Formacion
+- Eliminada subseccion de experiencia estatica duplicada de seccion_sobre_mi()
+- Orden final: Hero → Sobre mi → Experiencia → Formacion → Proyectos → Contacto
+
+#### 5. Traducciones Multi-idioma
+- Añadido "nav_experiencia" en translations.py:
+  - ES: "Experiencia"
+  - EN: "Experience"
+  - IT: "Esperienza"
+  - CA: "Experiència"
+- Propiedad computada nav_experiencia() en state.py
+- Link en navbar desktop con State.nav_experiencia
+- Link en menu movil con State.nav_experiencia
+
+### Funcionalidades Implementadas
+- Auto-carga de 3 proyectos, 4 cursos y 1 experiencia al entrar a /home
+- Seccion Experiencia completamente dinamica desde API
+- Multi-idioma funcionando en navbar y contenido
+- UX mejorada: sin botones manuales, carga automatica
+- Cache simple para evitar recargas innecesarias
+
+### Estructura de Datos
+```
+Frontend (on_mount) → cargar_datos_iniciales()
+    ├── cargar_proyectos() → GET /api/proyectos/?destacados=True
+    ├── cargar_cursos() → GET /api/cursos/
+    └── cargar_experiencias() → GET /api/experiencias/?mostrar_en_web=True
+```
+
+### Proximos Pasos (Sesion 12)
+1. Skeleton loaders en lugar de spinners
+2. Animaciones de entrada para secciones dinamicas
+3. Panel Admin para gestionar contenido
+4. Sistema de analiticas basico
+5. Integracion GitHub API para repos dinamicos
+
+### Commits de la Sesion
+1. "Implementar auto-carga de datos y eliminar botones manuales"
+2. "Añadir seccion Experiencia dinamica con traducciones multi-idioma"
+3. Actualizar documentacion - Sesion 11 completada
+
+### Notas Tecnicas
+- on_mount ejecuta funciones al montar el componente
+- Cache con if len(self.lista) == 0 antes de cargar
+- Experiencia usa campo "actual" para mostrar "Actualidad" en fechas
+- Filtro mostrar_en_web=True en API para experiencias publicas
+- Navbar ahora tiene 7 links: Inicio, Sobre mi, Experiencia, Proyectos, Formacion, Contacto, CV
+
+---
+
+**Ultima actualizacion:** 17 Enero 2026
