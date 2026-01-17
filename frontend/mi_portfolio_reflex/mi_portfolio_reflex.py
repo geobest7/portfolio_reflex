@@ -1568,14 +1568,14 @@ def admin_proyectos() -> rx.Component:
                                             rx.hstack(
                                                 rx.button(
                                                     rx.icon("pencil", size=16),
-                                                    on_click=lambda p=proyecto: State.abrir_formulario_proyecto(p),
+                                                    on_click=State.abrir_formulario_proyecto(proyecto.id),
                                                     variant="soft",
                                                     size="1",
                                                     color_scheme="blue",
                                                 ),
                                                 rx.button(
                                                     rx.icon("trash-2", size=16),
-                                                    on_click=lambda pid=proyecto.id: State.eliminar_proyecto(pid),
+                                                    on_click=State.eliminar_proyecto(proyecto.id),
                                                     variant="soft",
                                                     size="1",
                                                     color_scheme="red",
@@ -1949,14 +1949,14 @@ def admin_cursos() -> rx.Component:
                                             rx.hstack(
                                                 rx.button(
                                                     rx.icon("pencil", size=16),
-                                                    on_click=lambda cid=curso.id: State.abrir_formulario_curso(cid),
+                                                    on_click=State.abrir_formulario_curso(curso.id),
                                                     variant="soft",
                                                     size="1",
                                                     color_scheme="blue",
                                                 ),
                                                 rx.button(
                                                     rx.icon("trash-2", size=16),
-                                                    on_click=lambda cid=curso.id: State.eliminar_curso(cid),
+                                                    on_click=State.eliminar_curso(curso.id),
                                                     variant="soft",
                                                     size="1",
                                                     color_scheme="red",
@@ -1981,8 +1981,6 @@ def admin_cursos() -> rx.Component:
         ),
         rx.fragment(rx.script("window.location.href = '/login'")),
     )
-
-
 
 def formulario_curso() -> rx.Component:
     """Formulario para crear/editar curso"""
@@ -2202,14 +2200,14 @@ def admin_experiencias() -> rx.Component:
                                             rx.hstack(
                                                 rx.button(
                                                     rx.icon("pencil", size=16),
-                                                    on_click=lambda eid=exp.id: State.abrir_formulario_experiencia(eid),
+                                                    on_click=State.abrir_formulario_experiencia(exp.id),
                                                     variant="soft",
                                                     size="1",
                                                     color_scheme="blue",
                                                 ),
                                                 rx.button(
                                                     rx.icon("trash-2", size=16),
-                                                    on_click=lambda eid=exp.id: State.eliminar_experiencia(eid),
+                                                    on_click=State.eliminar_experiencia(exp.id),
                                                     variant="soft",
                                                     size="1",
                                                     color_scheme="red",
