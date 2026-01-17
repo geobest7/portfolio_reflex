@@ -448,12 +448,12 @@ reflex run
 ```
 La app estará en: `http://localhost:3000`
 
-**Backend (FastAPI) - Cuando esté implementado:**
+**Backend (FastAPI):**
 ```bash
 cd backend
-uvicorn app.main:app --reload --port 8000
+uvicorn app.main:app --reload --port 8001
 ```
-La API estará en: `http://localhost:8000/docs`
+La API estará en: `http://localhost:8001/docs`
 
 ---
 
@@ -511,20 +511,29 @@ La API estará en: `http://localhost:8000/docs`
 - ✅ Manejo de valores None de la API
 - ✅ Backend en puerto 8001, Frontend en puerto 3000
 
+**Fase 6 - Optimizaciones y Mejoras** ✅ (17 Enero 2026)
+- ✅ Auto-carga de datos al entrar a /home (sin botones manuales)
+- ✅ Sección Experiencia laboral dinámica desde API
+- ✅ Cache simple: solo carga datos si las listas están vacías
+- ✅ Traducciones multi-idioma para sección Experiencia
+- ✅ Link "Experiencia" en navbar (desktop y móvil)
+- ✅ Eliminada subsección de experiencia estática duplicada
+- ✅ 3 secciones dinámicas funcionando: Proyectos, Formación, Experiencia
+
 ### 🔄 En Progreso:
 
-**Fase 6 - Optimizaciones y Mejoras** (Próxima sesión)
-- Auto-carga de datos al entrar a la página
-- Sección Experiencia laboral (fetch desde API)
+**Fase 7 - Mejoras Avanzadas** (Próxima sesión)
+- Skeleton loaders en lugar de spinners
+- Animaciones de entrada para secciones dinámicas
 - Integración GitHub API para repos dinámicos
-- Skeleton loaders y animaciones
+- Panel Admin básico
 
 ### ⏳ Pendiente:
 
-**Fase 6 - Panel Admin**
-**Fase 7 - Sistema de Analíticas**
-**Fase 8 - SEO y Optimización**
-**Fase 9 - Despliegue en Producción**
+**Fase 8 - Panel Admin Completo**
+**Fase 9 - Sistema de Analíticas**
+**Fase 10 - SEO y Optimización**
+**Fase 11 - Despliegue en Producción**
 
 Ver `PROGRESO_DIARIO.md` y `ARQUITECTURA.md` para documentación completa.
 
