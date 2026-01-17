@@ -4,6 +4,8 @@ from typing import List
 from ..database import get_db
 from ..models.curso import Curso as CursoModel
 from ..schemas.curso import Curso, CursoCreate, CursoUpdate
+from ..utils.auth import get_current_admin_user
+from ..models.user import User
 
 router = APIRouter()
 
@@ -25,7 +27,7 @@ def get_curso(curso_id: int, db: Session = Depends(get_db)):
 
 
 @router.post("/", response_model=Curso)
-def create_curso(curso: CursoCreate, db: Session = Depends(get_db)):
+def create_curso(curso: CursoCreate, db: Session = Depends(get_db), current_admin: User = Depends(get_current_admin_user)):
     """Crear un nuevo curso"""
     db_curso = CursoModel(**curso.dict())
     db.add(db_curso)
@@ -38,7 +40,8 @@ def create_curso(curso: CursoCreate, db: Session = Depends(get_db)):
 def update_curso(
     curso_id: int,
     curso: CursoUpdate,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_admin: User = Depends(get_current_admin_user)
 ):
     """Actualizar un curso"""
     db_curso = db.query(CursoModel).filter(CursoModel.id == curso_id).first()
@@ -54,7 +57,7 @@ def update_curso(
 
 
 @router.delete("/{curso_id}")
-def delete_curso(curso_id: int, db: Session = Depends(get_db)):
+def delete_curso(curso_id: int, db: Session = Depends(get_db), current_admin: User = Depends(get_current_admin_user)):
     """Eliminar un curso (soft delete)"""
     db_curso = db.query(CursoModel).filter(CursoModel.id == curso_id).first()
     if not db_curso:

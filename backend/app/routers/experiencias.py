@@ -4,6 +4,8 @@ from typing import List
 from ..database import get_db
 from ..models.experiencia import Experiencia as ExperienciaModel
 from ..schemas.experiencia import Experiencia, ExperienciaCreate, ExperienciaUpdate
+from ..utils.auth import get_current_admin_user
+from ..models.user import User
 
 router = APIRouter()
 
@@ -35,7 +37,7 @@ def get_experiencia(experiencia_id: int, db: Session = Depends(get_db)):
 
 
 @router.post("/", response_model=Experiencia)
-def create_experiencia(experiencia: ExperienciaCreate, db: Session = Depends(get_db)):
+def create_experiencia(experiencia: ExperienciaCreate, db: Session = Depends(get_db), current_admin: User = Depends(get_current_admin_user)):
     """Crear una nueva experiencia"""
     db_experiencia = ExperienciaModel(**experiencia.dict())
     db.add(db_experiencia)
@@ -48,7 +50,8 @@ def create_experiencia(experiencia: ExperienciaCreate, db: Session = Depends(get
 def update_experiencia(
     experiencia_id: int,
     experiencia: ExperienciaUpdate,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_admin: User = Depends(get_current_admin_user)
 ):
     """Actualizar una experiencia"""
     db_experiencia = db.query(ExperienciaModel).filter(ExperienciaModel.id == experiencia_id).first()
@@ -64,7 +67,7 @@ def update_experiencia(
 
 
 @router.delete("/{experiencia_id}")
-def delete_experiencia(experiencia_id: int, db: Session = Depends(get_db)):
+def delete_experiencia(experiencia_id: int, db: Session = Depends(get_db), current_admin: User = Depends(get_current_admin_user)):
     """Eliminar una experiencia (soft delete)"""
     db_experiencia = db.query(ExperienciaModel).filter(ExperienciaModel.id == experiencia_id).first()
     if not db_experiencia:

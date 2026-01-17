@@ -4,6 +4,8 @@ from typing import List
 from ..database import get_db
 from ..models.proyecto import Proyecto as ProyectoModel
 from ..schemas.proyecto import Proyecto, ProyectoCreate, ProyectoUpdate
+from ..utils.auth import get_current_admin_user
+from ..models.user import User
 
 router = APIRouter()
 
@@ -35,7 +37,7 @@ def get_proyecto(proyecto_id: int, db: Session = Depends(get_db)):
 
 
 @router.post("/", response_model=Proyecto)
-def create_proyecto(proyecto: ProyectoCreate, db: Session = Depends(get_db)):
+def create_proyecto(proyecto: ProyectoCreate, db: Session = Depends(get_db), current_admin: User = Depends(get_current_admin_user)):
     """Crear un nuevo proyecto"""
     db_proyecto = ProyectoModel(**proyecto.dict())
     db.add(db_proyecto)
@@ -48,7 +50,8 @@ def create_proyecto(proyecto: ProyectoCreate, db: Session = Depends(get_db)):
 def update_proyecto(
     proyecto_id: int,
     proyecto: ProyectoUpdate,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_admin: User = Depends(get_current_admin_user)
 ):
     """Actualizar un proyecto"""
     db_proyecto = db.query(ProyectoModel).filter(ProyectoModel.id == proyecto_id).first()
@@ -64,7 +67,7 @@ def update_proyecto(
 
 
 @router.delete("/{proyecto_id}")
-def delete_proyecto(proyecto_id: int, db: Session = Depends(get_db)):
+def delete_proyecto(proyecto_id: int, db: Session = Depends(get_db), current_admin: User = Depends(get_current_admin_user)):
     """Eliminar un proyecto (soft delete)"""
     db_proyecto = db.query(ProyectoModel).filter(ProyectoModel.id == proyecto_id).first()
     if not db_proyecto:
