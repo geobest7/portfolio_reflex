@@ -340,6 +340,7 @@ def seccion_experiencia() -> rx.Component:
                         border="1px solid #333333",
                         bg="#0a0a0a",
                         width="100%",
+                        class_name="fade-in-up",
                     )
                 ),
                 spacing="3",
@@ -599,6 +600,7 @@ def seccion_formacion() -> rx.Component:
                         border="1px solid #333333",
                         background_color="#0A0A0A",
                         width="100%",
+                        class_name="fade-in-up",
                     )
                 ),
                 spacing="3",
@@ -613,29 +615,6 @@ def seccion_formacion() -> rx.Component:
         id="formacion",
         padding="4em 2em",
         background_color="#000000",
-    )
-
-def card_proyecto(titulo: str, descripcion: str) -> rx.Component:
-    """Card individual de proyecto"""
-    return rx.box(
-        rx.vstack(
-            rx.heading(titulo, size="5", color="white"),
-            rx.text(descripcion, color="#cccccc", size="3", line_height="1.6"),
-            rx.button(
-                State.btn_ver_codigo,
-                variant="outline",
-                color_scheme="gray",
-                style={"border_color": "white", "color": "white"},
-            ),
-            spacing="3",
-            align="start",
-        ),
-        padding="2em",
-        border="1px solid #333333",
-        border_radius="8px",
-        bg="#0a0a0a",
-        width="100%",
-        max_width="350px",
     )
 
 
@@ -821,6 +800,7 @@ def seccion_proyectos() -> rx.Component:
                         border_radius="8px",
                         border="1px solid #333333",
                         background_color="#0A0A0A",
+                        class_name="fade-in-up",
                     )
                 ),
                 class_name="proyectos-grid",
