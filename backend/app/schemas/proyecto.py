@@ -16,6 +16,7 @@ class ProyectoBase(BaseModel):
     url_github: Optional[str] = None
     url_demo: Optional[str] = None
     imagen_url: Optional[str] = None
+    video_url: Optional[str] = None
     destacado: bool = False
     orden: int = 0
     activo: bool = True

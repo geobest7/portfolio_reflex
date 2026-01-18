@@ -20,6 +20,7 @@ class CursoBase(BaseModel):
     descripcion_it: Optional[str] = None
     descripcion_ca: Optional[str] = None
     certificado_url: Optional[str] = None
+    diploma_pdf: Optional[str] = None
     orden: int = 0
     activo: bool = True
 

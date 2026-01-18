@@ -20,6 +20,7 @@ class Proyecto(Base):
     url_github = Column(String(500))
     url_demo = Column(String(500))
     imagen_url = Column(String(500))
+    video_url = Column(String(500))
     
     destacado = Column(Boolean, default=False)
     orden = Column(Integer, default=0)

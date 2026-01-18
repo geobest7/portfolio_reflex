@@ -19,6 +19,7 @@ class Proyecto(BaseModel):
     github_url: str = ""  
     demo_url: str = "" 
     imagen_url: str = ""     
+    video_url: str = ""
     destacado: bool
     activo: bool
     orden: int
@@ -37,6 +38,7 @@ class Curso(BaseModel):
     fecha_inicio: str
     fecha_fin: str = ""  
     certificado_url: str = ""  
+    diploma_pdf: str = ""
     activo: bool
     orden: int
 
@@ -372,6 +374,8 @@ class State(rx.State):
                         proyecto["demo_url"] = ""
                     if proyecto.get("imagen_url") is None:
                         proyecto["imagen_url"] = ""
+                    if proyecto.get("video_url") is None:
+                        proyecto["video_url"] = ""
                 self.proyectos = [Proyecto(**proyecto) for proyecto in data]
             else:
                 self.error_proyectos = f"Error {response.status_code}"
@@ -395,6 +399,8 @@ class State(rx.State):
                         curso["fecha_fin"] = ""
                     if curso.get("certificado_url") is None:
                         curso["certificado_url"] = ""
+                    if curso.get("diploma_pdf") is None:
+                        curso["diploma_pdf"] = ""
                 self.cursos = [Curso(**curso) for curso in data]
             else:
                 self.error_cursos = f"Error {response.status_code}"
@@ -606,6 +612,7 @@ class State(rx.State):
                 "github_url": form_data.get("github_url", ""),
                 "demo_url": form_data.get("demo_url", ""),
                 "imagen_url": form_data.get("imagen_url", ""),
+                "video_url": form_data.get("video_url", ""),
                 "destacado": form_data.get("destacado", False),
                 "orden": int(form_data.get("orden", 0)),
                 "activo": True,
@@ -663,6 +670,8 @@ class State(rx.State):
                         curso["fecha_fin"] = ""
                     if curso.get("certificado_url") is None:
                         curso["certificado_url"] = ""
+                    if curso.get("diploma_pdf") is None:
+                        curso["diploma_pdf"] = ""
                 self.cursos_admin = [Curso(**curso) for curso in data]
             else:
                 self.error_cursos_admin = f"Error {response.status_code}"
@@ -720,6 +729,7 @@ class State(rx.State):
                 "fecha_inicio": form_data["fecha_inicio"],
                 "fecha_fin": form_data.get("fecha_fin", ""),
                 "certificado_url": form_data.get("certificado_url", ""),
+                "diploma_pdf": form_data.get("diploma_pdf", ""),
                 "activo": True,
             }
             

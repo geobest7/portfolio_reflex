@@ -27,6 +27,7 @@ class Curso(Base):
     descripcion_ca = Column(Text)
     
     certificado_url = Column(String(500))
+    diploma_pdf = Column(String(500))
     
     orden = Column(Integer, default=0)
     activo = Column(Boolean, default=True)

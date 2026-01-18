@@ -31,6 +31,7 @@ def seed_database():
                 url_github="https://github.com/geobest7/portfolio_reflex",
                 url_demo=None,
                 imagen_url=None,
+                video_url=None,
                 destacado=True,
                 orden=1,
                 activo=True
@@ -48,6 +49,7 @@ def seed_database():
                 url_github="https://github.com/geobest7/task-manager",
                 url_demo=None,
                 imagen_url=None,
+                video_url=None,
                 destacado=True,
                 orden=2,
                 activo=True
@@ -65,6 +67,7 @@ def seed_database():
                 url_github="https://github.com/geobest7/ecommerce-api",
                 url_demo=None,
                 imagen_url=None,
+                video_url=None,
                 destacado=False,
                 orden=3,
                 activo=True
@@ -90,6 +93,7 @@ def seed_database():
                 descripcion_it="Corso avanzato di Python con focus su programmazione orientata agli oggetti, design pattern e best practices.",
                 descripcion_ca="Curs avançat de Python amb enfocament en programació orientada a objectes, patrons de disseny i bones pràctiques.",
                 certificado_url=None,
+                diploma_pdf=None,
                 orden=1,
                 activo=True
             ),
@@ -110,6 +114,7 @@ def seed_database():
                 descripcion_it="Sviluppo di API REST moderne con FastAPI, inclusa autenticazione, validazione e documentazione automatica.",
                 descripcion_ca="Desenvolupament d'APIs REST modernes amb FastAPI, incloent autenticació, validació i documentació automàtica.",
                 certificado_url=None,
+                diploma_pdf=None,
                 orden=2,
                 activo=True
             ),
@@ -130,6 +135,7 @@ def seed_database():
                 descripcion_it="Controllo versioni con Git e collaborazione su GitHub.",
                 descripcion_ca="Control de versions amb Git i col·laboració a GitHub.",
                 certificado_url=None,
+                diploma_pdf=None,
                 orden=3,
                 activo=True
             ),
@@ -150,6 +156,7 @@ def seed_database():
                 descripcion_it="Formazione tecnica superiore nello sviluppo di applicazioni informatiche.",
                 descripcion_ca="Formació tècnica superior en desenvolupament d'aplicacions informàtiques.",
                 certificado_url=None,
+                diploma_pdf=None,
                 orden=0,
                 activo=True
             )
