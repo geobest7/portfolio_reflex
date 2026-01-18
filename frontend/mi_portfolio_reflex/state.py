@@ -708,6 +708,7 @@ class State(rx.State):
         """Crear o actualizar curso"""
         try:
             curso_data = {
+                "tipo": form_data["tipo"],
                 "titulo_es": form_data["titulo_es"],
                 "titulo_en": form_data["titulo_en"],
                 "titulo_it": form_data["titulo_it"],

@@ -898,6 +898,7 @@ def seccion_proyectos() -> rx.Component:
         id="proyectos",
         padding="4em 2em",
         background_color="#000000",
+        on_mount=State.cargar_proyectos,
     )
 
 def seccion_github_repos() -> rx.Component:
@@ -2022,8 +2023,17 @@ def formulario_curso() -> rx.Component:
             rx.box(
                 rx.form(
                     rx.vstack(
+                        # Tipo de curso
+                        rx.heading("Tipo", size="5", color="white", margin_bottom="0.5em"),
+                        rx.select(
+                            ["diploma", "curso", "certificacion"],
+                            name="tipo",
+                            default_value=rx.cond(State.modo_edicion_curso, State.curso_editando.tipo, "curso"),
+                            required=True,
+                            width="300px",
+                        ),
                         # Títulos
-                        rx.heading("Títulos", size="5", color="white", margin_bottom="0.5em"),
+                        rx.heading("Títulos", size="5", color="white", margin_top="1em", margin_bottom="0.5em"),
                         rx.grid(
                             rx.vstack(
                                 rx.text("Título (ES)", color="#CCC", size="2"),

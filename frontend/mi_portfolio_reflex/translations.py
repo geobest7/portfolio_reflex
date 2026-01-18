@@ -59,6 +59,10 @@ TRANSLATIONS = {
         "github_titulo": "Repositorios GitHub",
         "github_subtitulo": "Mis proyectos open source y contribuciones",
         "github_ver_repo": "Ver repositorio",
+
+
+        # proyectos
+        "proyectos_titulo": "Proyectos Destacados",
         
     },
 
@@ -126,6 +130,12 @@ TRANSLATIONS = {
         "github_titulo": "GitHub Repositories",
         "github_subtitulo": "My open source projects and contributions",
         "github_ver_repo": "View repository",
+
+
+        # proyectos
+        "proyectos_titulo": "Featured Projects",
+
+
     },
 
     "it": {
@@ -191,6 +201,10 @@ TRANSLATIONS = {
         "github_titulo": "Repository GitHub",
         "github_subtitulo": "I miei progetti open source e contributi",
         "github_ver_repo": "Vedi repository",
+
+        # proyectos
+        "proyectos_titulo": "Progetti in Evidenza",
+
     },
 
     "ca": {
@@ -257,6 +271,9 @@ TRANSLATIONS = {
         "github_titulo": "Repositoris GitHub",
         "github_subtitulo": "Els meus projectes open source i contribucions",
         "github_ver_repo": "Veure repositori",
+
+        # proyectos
+        "proyectos_titulo": "Projectes Destacats",
     },
 }
 
