@@ -83,10 +83,10 @@
 - FastAPI, SQLAlchemy, Uvicorn ya estaban instalados
 
 ### API Funcionando
-- URL: http://localhost:8000
-- Docs: http://localhost:8000/docs
-- Health: http://localhost:8000/health
-- Puerto: 8000 (backend) | 3000 (frontend)
+- URL: http://localhost:8001
+- Docs: http://localhost:8001/docs
+- Health: http://localhost:8001/health
+- Puerto: 8001 (backend) | 3000 (frontend)
 
 ### Estructura Final del Backend
 ```
@@ -468,6 +468,47 @@ Frontend (on_mount) → cargar_datos_iniciales()
 - Formularios con rx.form y on_submit
 - Protección de rutas: rx.cond(State.esta_autenticado, ...)
 - Base de datos recreada con estructura multi-idioma completa
+
+---
+
+## Día 13 (18 Enero 2026) - Videos YouTube Embebidos
+
+### Objetivo: Implementar video_url para proyectos y experiencias
+
+**Logros de la sesión:**
+
+#### 1. Backend - Campo video_url
+- Añadido campo video_url a modelo Experiencia (SQLAlchemy)
+- Añadido campo video_url a schema Experiencia (Pydantic)
+- Cambiado fecha_inicio y fecha_fin de Date a String para compatibilidad
+- Base de datos recreada con nueva estructura
+
+#### 2. Frontend - Modelo y State
+- Añadido video_url a clase Pydantic Experiencia en state.py
+- Función convertir_youtube_url() para convertir URLs YouTube a formato embed
+- Conversión automática en cargar_proyectos() y cargar_experiencias()
+- Soporte para formatos: watch?v=, youtu.be/, embed/
+
+#### 3. Frontend - Visualización
+- Iframe de YouTube embebido en sección Proyectos (ya funcionaba)
+- Iframe de YouTube embebido en sección Experiencias (nuevo)
+- Uso de concatenación de strings para interpolación en rx.html()
+- Renderizado condicional: solo muestra iframe si video_url no está vacío
+
+#### 4. Admin - Formularios
+- Campo video_url añadido a formulario de proyectos
+- Campo video_url añadido a formulario de experiencias
+- Guardado correcto en base de datos
+
+### Notas Técnicas
+- rx.html() con concatenación de strings: '<iframe src="' + variable + '"...>'
+- Los f-strings de Python no interpolan variables de Reflex correctamente
+- Conversión de URLs YouTube debe hacerse en la carga de datos (state.py)
+- Fechas cambiadas a String para evitar errores de serialización
+
+### Commits de la Sesión
+1. "Implementar video_url para experiencias con YouTube embed"
+2. "Actualizar documentación - README, arquitectura, progreso_diario"
 
 ---
 

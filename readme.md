@@ -581,6 +581,8 @@ La API estará en: `http://localhost:8001/docs`
 - ✅ Modelo Curso actualizado con institucion_es/en/it/ca
 - ✅ Base de datos recreada con estructura multi-idioma completa
 - ✅ Todas las operaciones CRUD funcionando correctamente
+- ✅ **Videos YouTube embebidos:** Proyectos y Experiencias pueden incluir video_url
+- ✅ Conversión automática de URLs YouTube a formato embed
 
 ### ⏳ Pendiente:
 
@@ -611,7 +613,7 @@ Ver `PROGRESO_DIARIO.md` y `ARQUITECTURA.md` para documentación completa.
 
 - Siempre trabajar con el entorno virtual activado
 - El frontend corre en puerto 3000
-- El backend correrá en puerto 8000
+- El backend corre en puerto 8001
 - La base de datos en desarrollo es SQLite (local)
 - Para producción se usará PostgreSQL
 
@@ -635,4 +637,4 @@ Alessandro Febbrai
 
 ---
 
-**Última actualización:** 18 Enero 2026
+**Última actualización:** 18 Enero 2026 (video_url implementado)

@@ -1,6 +1,6 @@
 # 🏗️ ARQUITECTURA DEL PROYECTO PORTFOLIO
 
-**Última actualización:** 18 Enero 2026
+**Última actualización:** 18 Enero 2026 (video_url implementado)
 
 ---
 
@@ -148,7 +148,7 @@ class Proyecto(Base):
     url_github: str
     url_demo: str (opcional)
     imagen_url: str
-    video_url: str (opcional)
+    video_url: str (opcional, URL YouTube embed)
     orden: int (para ordenar en frontend)
     destacado: bool
     fecha_creacion: datetime
@@ -199,6 +199,7 @@ class Experiencia(Base):
     descripcion_it: text
     descripcion_ca: text
     tecnologias: str (JSON: ["Python", "FastAPI", ...])
+    video_url: str (opcional, URL YouTube embed)
     orden: int
     activo: bool
     mostrar_en_web: bool (solo mostrar 1-2 más recientes)
@@ -316,7 +317,7 @@ GET    /api/admin/analytics      → Obtener estadísticas
 ### Desarrollo:
 ```
 Frontend: localhost:3000 (Reflex dev server)
-Backend:  localhost:8000 (Uvicorn)
+Backend:  localhost:8001 (Uvicorn)
 DB:       SQLite local (portfolio.db)
 ```
 
@@ -449,6 +450,7 @@ Admin hace login en /login
 **Fase 7:** GitHub API con cache de 6 horas
 **Fase 8:** Autenticación JWT completa
 **Fase 9:** Panel Admin CRUD completo (Proyectos, Cursos, Experiencias)
+**Fase 10:** Videos YouTube embebidos en Proyectos y Experiencias
 
 ### 🔄 EN PROGRESO:
 

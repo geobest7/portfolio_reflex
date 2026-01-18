@@ -1,6 +1,5 @@
 from pydantic import BaseModel
 from typing import Optional, List
-from datetime import date
 
 
 class ExperienciaBase(BaseModel):
@@ -10,14 +9,15 @@ class ExperienciaBase(BaseModel):
     cargo_en: str
     cargo_it: str
     cargo_ca: str
-    fecha_inicio: date
-    fecha_fin: Optional[date] = None
+    fecha_inicio: str
+    fecha_fin: Optional[str] = None
     actual: bool = False
     descripcion_es: Optional[str] = None
     descripcion_en: Optional[str] = None
     descripcion_it: Optional[str] = None
     descripcion_ca: Optional[str] = None
     tecnologias: Optional[List[str]] = []
+    video_url: Optional[str] = None
     orden: int = 0
     activo: bool = True
     mostrar_en_web: bool = True

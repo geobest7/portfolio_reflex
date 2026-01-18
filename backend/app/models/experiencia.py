@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Text, Boolean, Date, JSON
+from sqlalchemy import Column, Integer, String, Text, Boolean, JSON
 from ..database import Base
 
 
@@ -14,8 +14,8 @@ class Experiencia(Base):
     cargo_it = Column(String(200), nullable=False)
     cargo_ca = Column(String(200), nullable=False)
     
-    fecha_inicio = Column(Date, nullable=False)
-    fecha_fin = Column(Date)
+    fecha_inicio = Column(String(50), nullable=False)
+    fecha_fin = Column(String(50))
     actual = Column(Boolean, default=False)
     
     descripcion_es = Column(Text)
@@ -24,6 +24,7 @@ class Experiencia(Base):
     descripcion_ca = Column(Text)
     
     tecnologias = Column(JSON)
+    video_url = Column(String(500))
     
     orden = Column(Integer, default=0)
     activo = Column(Boolean, default=True)

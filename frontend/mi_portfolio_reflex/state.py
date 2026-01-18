@@ -5,6 +5,23 @@ from typing import List, Dict, Any, Optional
 from pydantic import BaseModel
 
 
+def convertir_youtube_url(url: str) -> str:
+    """Convierte URL de YouTube a formato embed"""
+    if not url:
+        return ""
+    # Convertir watch?v= a embed/
+    if "watch?v=" in url:
+        return url.replace("watch?v=", "embed/")
+    # Si ya es embed, devolverla tal cual
+    if "embed/" in url:
+        return url
+    # Si es youtu.be/ID
+    if "youtu.be/" in url:
+        video_id = url.split("youtu.be/")[1].split("?")[0]
+        return f"https://www.youtube.com/embed/{video_id}"
+    return url
+
+
 class Proyecto(BaseModel):
     id: int
     titulo_es: str
@@ -59,6 +76,7 @@ class Experiencia(BaseModel):
     descripcion_it: str = ""
     descripcion_ca: str = ""
     tecnologias: List[str]
+    video_url: str = ""
     orden: int
     activo: bool
     mostrar_en_web: bool
@@ -204,6 +222,20 @@ class State(rx.State):
         self.form_nombre_value = ""
         self.form_email_value = ""
         self.form_mensaje_value = ""
+    
+    @staticmethod
+    def convertir_youtube_embed(url: str) -> str:
+        """Convierte URL de YouTube a formato embed"""
+        if not url or url == "":
+            return ""
+        # Convertir watch?v= a embed/
+        if "watch?v=" in url:
+            return url.replace("watch?v=", "embed/")
+        # Convertir youtu.be/ a youtube.com/embed/
+        if "youtu.be/" in url:
+            return url.replace("https://youtu.be/", "https://www.youtube.com/embed/").replace("http://youtu.be/", "https://www.youtube.com/embed/")
+        # Si ya es embed, devolverla tal cual
+        return url
 
     # Propiedades computadas para cada traducción
     @rx.var
@@ -366,7 +398,7 @@ class State(rx.State):
             response = httpx.get("http://localhost:8001/api/proyectos/", params={"destacados": True})
             if response.status_code == 200:
                 data = response.json()
-                # Convertir None a string vacío
+                # Convertir None a string vacío y convertir URLs de YouTube
                 for proyecto in data:
                     if proyecto.get("github_url") is None:
                         proyecto["github_url"] = ""
@@ -376,6 +408,8 @@ class State(rx.State):
                         proyecto["imagen_url"] = ""
                     if proyecto.get("video_url") is None:
                         proyecto["video_url"] = ""
+                    else:
+                        proyecto["video_url"] = convertir_youtube_url(proyecto["video_url"])
                 self.proyectos = [Proyecto(**proyecto) for proyecto in data]
             else:
                 self.error_proyectos = f"Error {response.status_code}"
@@ -431,6 +465,10 @@ class State(rx.State):
                         exp["descripcion_it"] = ""
                     if exp.get("descripcion_ca") is None:
                         exp["descripcion_ca"] = ""
+                    if exp.get("video_url") is None:
+                        exp["video_url"] = ""
+                    else:
+                        exp["video_url"] = convertir_youtube_url(exp["video_url"])
                 self.experiencias = [Experiencia(**exp) for exp in data]
             else:
                 self.error_experiencias = f"Error {response.status_code}"
@@ -553,6 +591,8 @@ class State(rx.State):
                         proyecto["demo_url"] = ""
                     if proyecto.get("imagen_url") is None:
                         proyecto["imagen_url"] = ""
+                    if proyecto.get("video_url") is None:
+                        proyecto["video_url"] = ""
                 self.proyectos_admin = [Proyecto(**proyecto) for proyecto in data]
             else:
                 self.error_proyectos_admin = f"Error {response.status_code}"
@@ -789,6 +829,8 @@ class State(rx.State):
                         exp["descripcion_it"] = ""
                     if exp.get("descripcion_ca") is None:
                         exp["descripcion_ca"] = ""
+                    if exp.get("video_url") is None:
+                        exp["video_url"] = ""
                 self.experiencias_admin = [Experiencia(**exp) for exp in data]
             else:
                 self.error_experiencias_admin = f"Error {response.status_code}"
@@ -848,6 +890,7 @@ class State(rx.State):
                 "descripcion_it": form_data.get("descripcion_it", ""),
                 "descripcion_ca": form_data.get("descripcion_ca", ""),
                 "tecnologias": form_data.get("tecnologias", "").split(",") if form_data.get("tecnologias") else [],
+                "video_url": form_data.get("video_url", ""),
                 "orden": int(form_data.get("orden", 0)),
                 "mostrar_en_web": form_data.get("mostrar_en_web", False),
                 "activo": True,

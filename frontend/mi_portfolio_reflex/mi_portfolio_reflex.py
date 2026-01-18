@@ -225,8 +225,6 @@ def seccion_sobre_mi() -> rx.Component:
             text_align="center",
         ),
         padding="6em 2em",
-        bg="#000000",
-        width="100%",
         id="sobre-mi",
     )
 
@@ -235,7 +233,6 @@ def seccion_experiencia() -> rx.Component:
     return rx.box(
         rx.vstack(
             rx.heading("Experiencia", size="8", color="white"),
-            
             rx.cond(
                 State.cargando_experiencias,
                 rx.vstack(
@@ -245,18 +242,15 @@ def seccion_experiencia() -> rx.Component:
                     max_width="800px",
                 ),
             ),
-            
             rx.cond(
                 State.error_experiencias != "",
                 rx.text(State.error_experiencias, color="red"),
             ),
-            
             rx.vstack(
                 rx.foreach(
                     State.experiencias,
                     lambda exp: rx.box(
                         rx.vstack(
-                            # Tipo y empresa
                             rx.hstack(
                                 rx.icon("briefcase", size=24, color="white"),
                                 rx.vstack(
@@ -267,11 +261,7 @@ def seccion_experiencia() -> rx.Component:
                                             rx.cond(
                                                 State.idioma == "en",
                                                 exp.cargo_en,
-                                                rx.cond(
-                                                    State.idioma == "it",
-                                                    exp.cargo_it,
-                                                    exp.cargo_ca
-                                                )
+                                                rx.cond(State.idioma == "it", exp.cargo_it, exp.cargo_ca)
                                             )
                                         ),
                                         size="4",
@@ -285,55 +275,11 @@ def seccion_experiencia() -> rx.Component:
                                 spacing="3",
                                 align="start",
                             ),
-                            # Fechas
                             rx.hstack(
                                 rx.icon("calendar", size=20, color="#CCCCCC"),
-                                rx.text(
-                                    rx.cond(
-                                        exp.actual,
-                                        f"{exp.fecha_inicio} - Actualidad",
-                                        f"{exp.fecha_inicio} - {exp.fecha_fin}"
-                                    ),
-                                    size="3",
-                                    color="#CCCCCC",
-                                ),
+                                rx.text(exp.fecha_inicio + " - " + rx.cond(exp.actual, "Actualidad", exp.fecha_fin), size="3", color="#CCCCCC"),
                                 spacing="2",
                             ),
-                            # Descripción
-                            rx.cond(
-                                rx.cond(
-                                    State.idioma == "es",
-                                    exp.descripcion_es,
-                                    rx.cond(
-                                        State.idioma == "en",
-                                        exp.descripcion_en,
-                                        rx.cond(
-                                            State.idioma == "it",
-                                            exp.descripcion_it,
-                                            exp.descripcion_ca
-                                        )
-                                    )
-                                ) != "",
-                                rx.text(
-                                    rx.cond(
-                                        State.idioma == "es",
-                                        exp.descripcion_es,
-                                        rx.cond(
-                                            State.idioma == "en",
-                                            exp.descripcion_en,
-                                            rx.cond(
-                                                State.idioma == "it",
-                                                exp.descripcion_it,
-                                                exp.descripcion_ca
-                                            )
-                                        )
-                                    ),
-                                    size="3",
-                                    color="#CCCCCC",
-                                    line_height="1.6",
-                                ),
-                            ),
-                            # Tecnologías
                             rx.hstack(
                                 rx.foreach(
                                     exp.tecnologias,
@@ -341,6 +287,14 @@ def seccion_experiencia() -> rx.Component:
                                 ),
                                 wrap="wrap",
                                 spacing="2",
+                            ),
+                            rx.cond(
+                                exp.video_url != "",
+                                rx.box(
+                                    rx.html('<iframe width="100%" height="315" src="' + exp.video_url + '" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>'),
+                                    width="100%",
+                                    margin_top="1em",
+                                ),
                             ),
                             spacing="4",
                             align="start",
@@ -350,14 +304,12 @@ def seccion_experiencia() -> rx.Component:
                         border="1px solid #333333",
                         bg="#0a0a0a",
                         width="100%",
-                        class_name="fade-in-up",
                     )
                 ),
                 spacing="3",
                 width="100%",
                 max_width="800px",
             ),
-            
             spacing="5",
             align_items="center",
             width="100%",
@@ -676,6 +628,14 @@ def seccion_formacion() -> rx.Component:
                                     is_external=True,
                                 ),
                             ),
+                            rx.cond(
+                                curso.diploma_pdf != "",
+                                rx.link(
+                                    rx.button("Ver Diploma", size="1", variant="solid", color_scheme="cyan"),
+                                    href=curso.diploma_pdf,
+                                    is_external=True,
+                                ),
+                            ),
                             spacing="2",
                             align_items="start",
                         ),
@@ -850,6 +810,19 @@ def seccion_proyectos() -> rx.Component:
                                 color="#CCCCCC",
                                 size="2",
                             ),
+                            
+                            # Video de YouTube (si existe)
+                            rx.cond(
+                                proyecto.video_url != "",
+                                rx.box(
+                                    rx.html(
+                                        f'<iframe width="100%" height="315" src="{proyecto.video_url.replace("watch?v=", "embed/")}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>'
+                                    ),
+                                    width="100%",
+                                    margin_top="1em",
+                                ),
+                            ),
+                            
                             rx.hstack(
                                 rx.foreach(
                                     proyecto.tecnologias,
@@ -1811,6 +1784,17 @@ def formulario_proyecto() -> rx.Component:
                                 width="100%",
                             ),
                             rx.vstack(
+                                rx.text("URL Video (YouTube)", color="#CCC", size="2"),
+                                rx.input(
+                                    name="video_url",
+                                    placeholder="https://www.youtube.com/watch?v=...",
+                                    default_value=rx.cond(State.modo_edicion, State.proyecto_editando.video_url, ""),
+                                    width="100%",
+                                ),
+                                spacing="1",
+                                width="100%",
+                            ),
+                            rx.vstack(
                                 rx.text("Orden", color="#CCC", size="2"),
                                 rx.input(
                                     name="orden",
@@ -2102,7 +2086,19 @@ def formulario_curso() -> rx.Component:
                                 rx.input(name="certificado_url", placeholder="https://...", default_value=rx.cond(State.modo_edicion_curso, State.curso_editando.certificado_url, ""), width="100%"),
                                 spacing="1", width="100%",
                             ),
-                            columns="3", spacing="4", width="100%",
+
+                            rx.vstack(
+                                rx.text("Diploma PDF (opcional)", color="#CCC", size="2"),
+                                rx.input(
+                                    name="diploma_pdf",
+                                    placeholder="URL del PDF del diploma",
+                                    default_value=rx.cond(State.modo_edicion_curso, State.curso_editando.diploma_pdf, ""),
+                                    width="100%",
+                                ),
+                                spacing="1",
+                                width="100%",
+                            ),
+                            columns="4", spacing="4", width="100%",
                         ),
                         
                         # Botón guardar
@@ -2368,6 +2364,11 @@ def formulario_experiencia() -> rx.Component:
                             rx.vstack(
                                 rx.text("Tecnologías (separadas por coma)", color="#CCC", size="2"),
                                 rx.input(name="tecnologias", placeholder="Python,FastAPI,React", default_value=rx.cond(State.modo_edicion_experiencia, State.experiencia_editando.tecnologias.join(","), ""), width="100%"),
+                                spacing="1", width="100%",
+                            ),
+                            rx.vstack(
+                                rx.text("URL Video (YouTube)", color="#CCC", size="2"),
+                                rx.input(name="video_url", placeholder="https://www.youtube.com/watch?v=...", default_value=rx.cond(State.modo_edicion_experiencia, State.experiencia_editando.video_url, ""), width="100%"),
                                 spacing="1", width="100%",
                             ),
                             rx.vstack(

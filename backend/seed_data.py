@@ -179,6 +179,7 @@ def seed_database():
                 descripcion_it="Sviluppo di API REST con FastAPI e gestione di database PostgreSQL. Implementazione di sistemi di autenticazione e ottimizzazione delle query.",
                 descripcion_ca="Desenvolupament d'APIs REST amb FastAPI i gestió de bases de dades PostgreSQL. Implementació de sistemes d'autenticació i optimització de consultes.",
                 tecnologias=["Python", "FastAPI", "PostgreSQL", "Docker", "Git"],
+                video_url=None,
                 orden=1,
                 activo=True,
                 mostrar_en_web=True
