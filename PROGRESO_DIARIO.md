@@ -512,4 +512,123 @@ Frontend (on_mount) → cargar_datos_iniciales()
 
 ---
 
-**Última actualización:** 18 Enero 2026
+## Día 14 (19 Enero 2026) - Refactor Frontend y Corrección de States
+
+### 🎯 Objetivo
+Refactorizar el proyecto frontend dividiendo archivos grandes en módulos organizados y corregir el error de herencia múltiple en el sistema de States.
+
+### ✅ Completado
+
+**1. Refactor Completo del Frontend:**
+- Dividido `mi_portfolio_reflex.py` (2483 líneas → 24 líneas)
+- Dividido `state.py` (921 líneas → wrapper de 3 líneas)
+- Creada estructura modular organizada:
+  - `models.py` - Modelos Pydantic
+  - `utils.py` - Funciones helper
+  - `states/__init__.py` - State unificado (736 líneas)
+  - `components/` - Componentes reutilizables (selectors, navbar, footer, skeletons)
+  - `sections/` - Secciones de home (sobre_mi, experiencia, formacion, proyectos, github, contacto)
+  - `pages/` - Páginas completas (portada, home, cv, login)
+  - `admin/` - Panel admin (dashboard, proyectos, cursos, experiencias)
+
+**2. Corrección del Sistema de States:**
+- **Problema:** Reflex NO permite herencia múltiple de `rx.State`
+- **Error original:** `ValueError: Only one parent state is allowed`
+- **Solución:** Unificar todos los estados en una única clase `State(rx.State)`
+- **Resultado:** Aplicación arranca sin errores
+
+**3. Limpieza del Proyecto:**
+- Eliminados archivos `*_old.py` (mi_portfolio_reflex_old.py, state_old.py)
+- Eliminados archivos de states individuales (base_state.py, form_state.py, data_state.py, auth_state.py, admin_state.py)
+- Código limpio y organizado
+
+**4. Documentación Actualizada:**
+- README.md con nueva estructura de carpetas
+- README.md con explicación del sistema de States corregido
+- progreso_diario.md con entrada del Día 14
+
+### 📊 Estructura Final
+
+```
+frontend/mi_portfolio_reflex/
+├── mi_portfolio_reflex.py (24 líneas) - Solo imports y rutas
+├── state.py (3 líneas) - Wrapper que importa State
+├── models.py - Modelos Pydantic
+├── utils.py - Funciones helper
+├── translations.py - Diccionario de traducciones
+├── states/
+│   └── __init__.py (736 líneas) - State unificado compatible con Reflex
+├── components/ - Componentes reutilizables
+├── sections/ - Secciones de home
+├── pages/ - Páginas completas
+└── admin/ - Panel de administración
+```
+
+### 🔧 Sistema de States - Arquitectura Corregida
+
+**Antes (❌ NO FUNCIONA):**
+```python
+class BaseState(rx.State): ...
+class FormState(rx.State): ...
+# Herencia múltiple NO permitida en Reflex
+class State(BaseState, FormState, ...): pass
+```
+
+**Después (✅ FUNCIONA):**
+```python
+class State(rx.State):
+    # ==================== BASE STATE ====================
+    idioma: str = "es"
+    def cambiar_idioma(self, nuevo_idioma: str): ...
+    
+    # ==================== FORM STATE ====================
+    form_nombre_value: str = ""
+    def enviar_formulario(self): ...
+    
+    # ==================== DATA STATE ====================
+    proyectos: List[Proyecto] = []
+    def cargar_proyectos(self): ...
+    
+    # ==================== AUTH STATE ====================
+    token: str = ""
+    def login(self, form_data: dict): ...
+    
+    # ==================== ADMIN STATE ====================
+    proyectos_admin: List[Proyecto] = []
+    def guardar_proyecto(self, form_data: dict): ...
+```
+
+### 📈 Beneficios del Refactor
+
+1. **Legibilidad:** Archivos pequeños y enfocados (50-736 líneas)
+2. **Mantenibilidad:** Fácil localizar y modificar código
+3. **Escalabilidad:** Agregar nuevas secciones/componentes es simple
+4. **Organización:** Separación clara de responsabilidades
+5. **Compatible:** Sin errores de herencia múltiple en Reflex
+
+### 🚀 Estado Actual
+
+- ✅ Aplicación arranca sin errores
+- ✅ Todas las rutas funcionando correctamente
+- ✅ Frontend en puerto 3000
+- ✅ Backend en puerto 8001
+- ✅ Código limpio y organizado
+- ✅ Documentación actualizada
+
+### Notas Técnicas
+
+- **Reflex NO permite herencia múltiple de rx.State**
+- La solución es tener una única clase State con todas las variables y métodos
+- Los comentarios organizan el código por responsabilidades
+- Los archivos individuales de states fueron eliminados
+- El wrapper `state.py` mantiene compatibilidad con imports existentes
+
+### Commits de la Sesión
+1. "Refactor frontend: dividir archivos grandes en módulos organizados"
+2. "Corregir sistema de States: unificar en una sola clase compatible con Reflex"
+3. "Limpiar archivos old y states individuales"
+4. "Actualizar documentación: README y progreso_diario"
+
+---
+
+**Última actualización:** 19 Enero 2026

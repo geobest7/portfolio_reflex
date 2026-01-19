@@ -48,12 +48,44 @@ mi_portfolio_reflex/
 ├── 📂 frontend/                          # Aplicación Reflex (frontend)
 │   ├── mi_portfolio_reflex/             # Paquete principal Python
 │   │   ├── __init__.py                  # Convierte la carpeta en paquete Python
-│   │   ├── mi_portfolio_reflex.py       # ARCHIVO PRINCIPAL - Define páginas y app
-│   │   ├── state.py                     # Estado global: idiomas, auth, CRUD, datos dinámicos
+│   │   ├── mi_portfolio_reflex.py       # ARCHIVO PRINCIPAL - Define rutas y app (24 líneas)
+│   │   ├── state.py                     # Wrapper que importa State desde states/
 │   │   ├── translations.py              # Diccionario de traducciones (ES, EN, IT, CA)
-│   │   ├── components/                  # Componentes reutilizables (vacio por ahora)
-│   │   ├── pages/                       # Páginas separadas (vacio por ahora)
-│   │   └── styles/                      # Archivos CSS personalizados (vacio)
+│   │   ├── models.py                    # Modelos Pydantic (Proyecto, Curso, Experiencia, GitHubRepo)
+│   │   ├── utils.py                     # Funciones helper (convertir_youtube_url)
+│   │   │
+│   │   ├── states/                      # Estados organizados por responsabilidad
+│   │   │   └── __init__.py              # State unificado (736 líneas) - Compatible con Reflex
+│   │   │
+│   │   ├── components/                  # Componentes reutilizables
+│   │   │   ├── __init__.py
+│   │   │   ├── selectors.py             # Selectores de idioma
+│   │   │   ├── navbar.py                # Navbar con menú hamburguesa
+│   │   │   ├── footer.py                # Footer con links sociales
+│   │   │   └── skeletons.py             # Skeleton loaders
+│   │   │
+│   │   ├── sections/                    # Secciones de la página home
+│   │   │   ├── __init__.py
+│   │   │   ├── sobre_mi.py              # Sección "Sobre mí"
+│   │   │   ├── experiencia.py           # Sección "Experiencia"
+│   │   │   ├── formacion.py             # Sección "Formación"
+│   │   │   ├── proyectos.py             # Sección "Proyectos"
+│   │   │   ├── github.py                # Sección "GitHub Repos"
+│   │   │   └── contacto.py              # Sección "Contacto"
+│   │   │
+│   │   ├── pages/                       # Páginas completas
+│   │   │   ├── __init__.py
+│   │   │   ├── portada.py               # Página portada (/)
+│   │   │   ├── home.py                  # Página home (/home)
+│   │   │   ├── cv.py                    # Página CV (/cv)
+│   │   │   └── login.py                 # Página login (/login)
+│   │   │
+│   │   └── admin/                       # Panel de administración
+│   │       ├── __init__.py
+│   │       ├── dashboard.py             # Dashboard admin (/admin)
+│   │       ├── proyectos.py             # CRUD proyectos
+│   │       ├── cursos.py                # CRUD cursos
+│   │       └── experiencias.py          # CRUD experiencias
 │   │
 │   ├── assets/                          # Archivos estáticos del frontend
 │   │   ├── CV.pdf                       # Curriculum Vitae en PDF
@@ -604,8 +636,6 @@ Ver `PROGRESO_DIARIO.md` y `ARQUITECTURA.md` para documentación completa.
 (Por implementar en Fase 10)
 
 **Frontend:** Vercel  
-**Backend:** Fly.io / Render / Railway  
-**Base de datos:** PostgreSQL en producción
 
 ---
 
