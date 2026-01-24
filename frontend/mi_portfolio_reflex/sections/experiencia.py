@@ -7,7 +7,7 @@ def seccion_experiencia() -> rx.Component:
     """Seccion Experiencia con datos dinamicos desde la API"""
     return rx.box(
         rx.vstack(
-            rx.heading("Experiencia", size="8", color="white"),
+            rx.heading(State.experiencia_titulo, size="8", color="white"),
             rx.cond(
                 State.cargando_experiencias,
                 rx.vstack(

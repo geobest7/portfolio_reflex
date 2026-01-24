@@ -20,6 +20,9 @@ TRANSLATIONS = {
         "sobre_mi_descripcion": "Soy un desarrollador apasionado por la tecnología y el aprendizaje continuo. Me especializo en Python y desarrollo web, creando soluciones eficientes y escalables.",
         "habilidades_titulo": "Habilidades",
 
+        #experiencia
+        "experiencia_titulo": "Experiencia",
+
         # proyectos
         
         "btn_ver_codigo": "Ver código",
@@ -89,6 +92,10 @@ TRANSLATIONS = {
             "I specialize in Python and web development, creating efficient and scalable solutions."
         ),
         "habilidades_titulo": "Skills",
+
+
+        #experiencia
+        "experiencia_titulo": "Experience",
 
         # projects
         
@@ -162,6 +169,10 @@ TRANSLATIONS = {
         ),
         "habilidades_titulo": "Competenze",
 
+        
+        #experiencia
+        "experiencia_titulo": "Esperienza",
+
 
         # progetti
         
@@ -231,6 +242,10 @@ TRANSLATIONS = {
             "M’especialitzo en Python i desenvolupament web, creant solucions eficients i escalables."
         ),
         "habilidades_titulo": "Habilitats",
+
+
+        # experiencia
+        "experiencia_titulo": "Experiència",
 
         # projectes
         

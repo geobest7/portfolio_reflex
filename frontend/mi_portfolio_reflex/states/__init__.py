@@ -43,6 +43,12 @@ class State(rx.State):
     def sobre_mi_descripcion(self) -> str:
         return TRANSLATIONS.get(self.idioma, {}).get("sobre_mi_descripcion", "")
     
+
+    @rx.var
+    def experiencia_titulo(self) -> str:
+        return TRANSLATIONS.get(self.idioma, {}).get("experiencia_titulo", "")
+
+
     @rx.var
     def proyectos_titulo(self) -> str:
         return TRANSLATIONS.get(self.idioma, {}).get("proyectos_titulo", "")
