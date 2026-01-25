@@ -7,10 +7,10 @@ def navbar() -> rx.Component:
     """Barra de navegación con links y selector de idioma"""
     return rx.box(
         rx.hstack(
-            rx.image(
-                src="/logo.png",
-                height="40px",
-                alt="Alessandro Febbrai",
+            rx.box(
+                "AF",
+                class_name="logo-af",
+                aria_label="Alessandro Febbrai",
             ),
             rx.spacer(),
             # Links desktop (ocultos en móvil)
@@ -18,9 +18,9 @@ def navbar() -> rx.Component:
                 rx.link(State.nav_inicio, href="/home#inicio", on_click=State.limpiar_mensaje_formulario, color="white"),
                 rx.link(State.nav_sobre_mi, href="/home#sobre-mi", on_click=State.limpiar_mensaje_formulario, color="white"),
                 rx.link(State.nav_experiencia, href="/home#experiencia", on_click=State.limpiar_mensaje_formulario, color="white"),
+                rx.link(State.nav_formacion, href="/home#formacion", on_click=State.limpiar_mensaje_formulario, color="white"),
                 rx.link(State.nav_proyectos, href="/home#proyectos", on_click=State.limpiar_mensaje_formulario, color="white"),
                 rx.link(State.nav_github, href="/home#github", on_click=State.limpiar_mensaje_formulario, color="white"), 
-                rx.link(State.nav_formacion, href="/home#formacion", on_click=State.limpiar_mensaje_formulario, color="white"),
                 rx.link(State.nav_contacto, href="/home#contacto", on_click=State.limpiar_mensaje_formulario, color="white"),
                 rx.link(State.nav_cv, href="/cv", on_click=State.limpiar_mensaje_formulario, color="white"),
                 spacing="6",
