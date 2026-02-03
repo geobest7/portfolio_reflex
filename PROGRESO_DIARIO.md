@@ -631,4 +631,101 @@ class State(rx.State):
 
 ---
 
-**Última actualización:** 19 Enero 2026
+## Día 15 (3 Febrero 2026) - Limpieza de Código y Mejoras de Seguridad
+
+### 🎯 Objetivo
+Análisis profundo del proyecto, limpieza de código obsoleto, simplificación del Hero y mejoras de seguridad en el panel admin.
+
+### ✅ Completado
+
+**1. Análisis Profundo del Proyecto:**
+- Revisión completa de estructura frontend y backend
+- Identificación de código redundante
+- Verificación de coherencia entre documentación y código real
+- Evaluación del sistema de estados (State unificado - correcto)
+
+**2. Simplificación del Hero:**
+- **Eliminado:** `hero_descripcion` (redundante con `hero_subtitulo`)
+- **Mantenido:** `hero_subtitulo` (rol profesional: "Desarrollador Python Junior")
+- Eliminadas traducciones de `hero_descripcion` en 4 idiomas
+- Eliminada propiedad computada `hero_descripcion` del State
+- Actualizado componente Hero en `pages/home.py`
+
+**3. Mejoras de Seguridad - Backend:**
+- SECRET_KEY movida a configuración centralizada (`config.py` → lee de `.env`)
+- ACCESS_TOKEN_EXPIRE_MINUTES configurable desde `.env`
+- Nuevos schemas en `schemas/auth.py`:
+  - `ChangePassword` - Para cambiar contraseña
+  - `ChangeUsername` - Para cambiar nombre de usuario
+- Nuevos endpoints en `routers/auth.py`:
+  - `PUT /api/auth/change-password` - Cambiar contraseña (requiere contraseña actual)
+  - `PUT /api/auth/change-username` - Cambiar username (requiere contraseña para confirmar)
+- Validaciones implementadas:
+  - Contraseña mínimo 6 caracteres
+  - Username mínimo 3 caracteres
+  - Verificación de contraseña actual antes de cambios
+  - Verificación de username único
+
+**4. Documentación Actualizada:**
+- README.md con estado actual del proyecto
+- PROGRESO_DIARIO.md con entrada del Día 15
+- Eliminadas referencias a `hero_descripcion` en documentación
+
+### 📁 Archivos Modificados
+
+**Frontend:**
+- `pages/home.py` - Eliminado `hero_descripcion` del Hero
+- `states/__init__.py` - Eliminada propiedad computada `hero_descripcion`
+- `translations.py` - Eliminadas 4 traducciones de `hero_descripcion`
+
+**Backend:**
+- `app/config.py` - Añadidos `secret_key` y `access_token_expire_minutes`
+- `app/utils/auth.py` - Usa configuración centralizada en lugar de hardcoded
+- `app/schemas/auth.py` - Añadidos `ChangePassword` y `ChangeUsername`
+- `app/routers/auth.py` - Añadidos endpoints `change-password` y `change-username`
+
+**Documentación:**
+- `README.md` - Actualizado con Fase 9 completada
+- `PROGRESO_DIARIO.md` - Esta entrada
+
+### 🔒 Seguridad Mejorada
+
+**Antes:**
+```python
+# utils/auth.py
+SECRET_KEY = "tu_clave_secreta_super_segura_cambiala_en_produccion"  # Hardcoded!
+```
+
+**Después:**
+```python
+# config.py
+secret_key: str = "cambiar-en-produccion-clave-secreta-muy-larga-y-segura"
+
+# utils/auth.py
+from ..config import settings
+SECRET_KEY = settings.secret_key  # Lee de .env si existe
+```
+
+### 🎯 Próximos Pasos
+
+1. **Sistema de Analíticas** - Tracking de visitas, país, dispositivo
+2. **SEO y Optimización** - Metatags, sitemap, robots.txt
+3. **Despliegue en Producción** - Vercel (frontend), Fly.io/Render (backend)
+4. **Testing** - Unit tests para endpoints críticos
+5. **Evolución futura:**
+   - Python avanzado
+   - Machine Learning
+   - Computer Vision
+
+### 📊 Estado Actual del Proyecto
+
+- **Frontend:** 100% funcional, código limpio y modular
+- **Backend:** API completa con autenticación JWT mejorada
+- **Admin:** CRUD completo + gestión de credenciales
+- **Multi-idioma:** 4 idiomas funcionando (ES, EN, IT, CA)
+- **Seguridad:** SECRET_KEY configurable, endpoints protegidos
+- **Documentación:** Actualizada y coherente con el código
+
+---
+
+**Última actualización:** 3 Febrero 2026

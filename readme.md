@@ -406,10 +406,6 @@ port = 3000                        # Puerto donde corre la app
      - Tamaño: `size="5"` (mediano)
      - Color: Blanco (heredado)
    
-   - **rx.text** - Descripción traducida (ej: "Estudiando programación")
-     - Tamaño: Normal
-     - Color: Blanco (heredado)
-   
    - Padding: `4em 2em`
    - Padding-top: `6em` (compensar navbar sticky)
    - ID: `"inicio"` (para smooth scroll)
@@ -616,6 +612,16 @@ La API estará en: `http://localhost:8001/docs`
 - ✅ **Videos YouTube embebidos:** Proyectos y Experiencias pueden incluir video_url
 - ✅ Conversión automática de URLs YouTube a formato embed
 
+**Fase 9 - Limpieza y Seguridad** ✅ (3 Febrero 2026)
+- ✅ Eliminado `hero_descripcion` redundante (simplificación del Hero)
+- ✅ SECRET_KEY movida a configuración centralizada (config.py → .env)
+- ✅ Endpoints para cambiar credenciales del admin:
+  - PUT /api/auth/change-password
+  - PUT /api/auth/change-username
+- ✅ Validación de contraseñas (mínimo 6 caracteres)
+- ✅ Validación de usernames (mínimo 3 caracteres)
+- ✅ Documentación actualizada
+
 ### ⏳ Pendiente:
 
 **Fase 9 - Sistema de Analíticas**
@@ -667,4 +673,4 @@ Alessandro Febbrai
 
 ---
 
-**Última actualización:** 18 Enero 2026 (video_url implementado)
+**Última actualización:** 3 Febrero 2026 (limpieza de código, mejoras de seguridad admin)

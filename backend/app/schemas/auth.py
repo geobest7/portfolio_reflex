@@ -26,3 +26,13 @@ class UserResponse(BaseModel):
     
     class Config:
         from_attributes = True
+
+class ChangePassword(BaseModel):
+    """Schema para cambiar contraseña"""
+    current_password: str
+    new_password: str
+
+class ChangeUsername(BaseModel):
+    """Schema para cambiar nombre de usuario"""
+    new_username: str
+    password: str  # Requerir contraseña para confirmar

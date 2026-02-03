@@ -25,7 +25,6 @@ def home() -> rx.Component:
             ),
             rx.heading(State.hero_titulo, size="9"),
             rx.text(State.hero_subtitulo, size="5"),
-            rx.text(State.hero_descripcion),
             padding="4em 2em",
             padding_top="6em",
             spacing="4",

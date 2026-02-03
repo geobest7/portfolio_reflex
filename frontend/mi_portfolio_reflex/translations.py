@@ -13,7 +13,6 @@ TRANSLATIONS = {
         # portada / Hero
         "hero_titulo": "¡Hola! Soy Alessandro Febbrai",
         "hero_subtitulo": "Desarrollador Python Junior",
-        "hero_descripcion": "Estudiando programación",
 
         # sobre_mi  
         "sobre_mi_titulo": "Sobre mí",
@@ -83,7 +82,6 @@ TRANSLATIONS = {
         # portada / Hero
         "hero_titulo": "Hi! I'm Alessandro Febbrai",
         "hero_subtitulo": "Junior Python Developer",
-        "hero_descripcion": "Studying programming",
 
         # sobre_mi
         "sobre_mi_titulo": "About me",
@@ -159,7 +157,6 @@ TRANSLATIONS = {
         # portada / Hero
         "hero_titulo": "Ciao! Sono Alessandro Febbrai",
         "hero_subtitulo": "Programmatore Python Junior",
-        "hero_descripcion": "Sto studiando programmazione",
 
         # sobre_mi
         "sobre_mi_titulo": "Chi sono",
@@ -233,7 +230,6 @@ TRANSLATIONS = {
         # portada / Hero
         "hero_titulo": "Hola! Sóc Alessandro Febbrai",
         "hero_subtitulo": "Desenvolupador Python Junior",
-        "hero_descripcion": "Estudiant programació",
 
         # sobre_mi
         "sobre_mi_titulo": "Sobre mi",

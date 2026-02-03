@@ -32,10 +32,6 @@ class State(rx.State):
         return TRANSLATIONS.get(self.idioma, {}).get("hero_subtitulo", "")
     
     @rx.var
-    def hero_descripcion(self) -> str:
-        return TRANSLATIONS.get(self.idioma, {}).get("hero_descripcion", "")
-    
-    @rx.var
     def sobre_mi_titulo(self) -> str:
         return TRANSLATIONS.get(self.idioma, {}).get("sobre_mi_titulo", "")
     

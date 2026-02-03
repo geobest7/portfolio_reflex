@@ -8,11 +8,12 @@ from sqlalchemy.orm import Session
 from ..database import get_db
 from ..models.user import User
 from ..schemas.auth import TokenData
+from ..config import settings
 
-# Configuración
-SECRET_KEY = "tu_clave_secreta_super_segura_cambiala_en_produccion"  # TODO: Mover a .env
+# Configuración desde settings (lee de .env)
+SECRET_KEY = settings.secret_key
 ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24  # 24 horas
+ACCESS_TOKEN_EXPIRE_MINUTES = settings.access_token_expire_minutes
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/login")
