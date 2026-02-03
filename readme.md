@@ -345,15 +345,15 @@ port = 3000                        # Puerto donde corre la app
 │  AF  Inicio  Sobre mí  Proyectos  Contacto  CV  [ES]  │  ← Navbar (horizontal)
 ├─────────────────────────────────────────────────────────┤
 │                    SECCIÓN HERO                         │
-│         ¡Hola! Soy Alessandro Febbrai                  │  ← Título
-│              Desarrollador Python                       │  ← Subtítulo
-│           Estudiando programación                       │  ← Descripción
+│                  [Foto circular]                        │  ← Avatar
+│         ¡Hola! Soy Alessandro Febbrai                  │  ← Título (degradado gris)
+│            Desarrollador Python Junior                  │  ← Subtítulo (degradado gris)
 ├─────────────────────────────────────────────────────────┤
 │                  SECCIÓN SOBRE MÍ                       │
 │                    Sobre mí                             │  ← Título
 │         Descripción personal detallada...               │  ← Texto
 │                  Habilidades                            │  ← Subtítulo
-│    [Python] [Reflex] [FastAPI] [JavaScript] [Git]     │  ← Badges
+│    [🐍 Python] [⚡ Reflex] [🚀 FastAPI] [JS] [📂 Git] │  ← Logos con iconos
 ├─────────────────────────────────────────────────────────┤
 │                 SECCIÓN PROYECTOS                       │
 │                   Proyectos                             │  ← Título
@@ -620,7 +620,15 @@ La API estará en: `http://localhost:8001/docs`
   - PUT /api/auth/change-username
 - ✅ Validación de contraseñas (mínimo 6 caracteres)
 - ✅ Validación de usernames (mínimo 3 caracteres)
-- ✅ Documentación actualizada
+
+**Fase 10 - Mejoras de Diseño** ✅ (4 Febrero 2026)
+- ✅ Portada rediseñada: "PORTFOLIO" grande + "by Alessandro Febbrai"
+- ✅ Títulos con efecto degradado gris (blanco → gris)
+- ✅ Selectores de idioma uniformes (gris claro #EEEEEE cuando activos)
+- ✅ Logo navbar: Círculo "AF" con gradiente y borde blanco
+- ✅ Avatar foto de perfil con borde blanco y sombra
+- ✅ Logos de tecnologías con iconos SVG y hover effects
+- ✅ UI Admin: Modales para cambiar contraseña/usuario
 
 ### ⏳ Pendiente:
 
@@ -673,4 +681,4 @@ Alessandro Febbrai
 
 ---
 
-**Última actualización:** 3 Febrero 2026 (limpieza de código, mejoras de seguridad admin)
+**Última actualización:** 4 Febrero 2026 (mejoras de diseño, UI admin)

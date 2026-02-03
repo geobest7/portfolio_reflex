@@ -129,6 +129,36 @@ def dashboard_admin() -> rx.Component:
                         width="100%",
                     ),
                     
+                    # Sección Configuración de Cuenta
+                    rx.divider(margin_top="2em", margin_bottom="1em"),
+                    rx.heading("Configuración de Cuenta", size="6", color="white", margin_bottom="1em"),
+                    
+                    rx.hstack(
+                        # Botón cambiar contraseña
+                        rx.button(
+                            rx.hstack(
+                                rx.icon("lock", size=18),
+                                rx.text("Cambiar Contraseña"),
+                                spacing="2",
+                            ),
+                            on_click=State.abrir_modal_password,
+                            color_scheme="orange",
+                            variant="outline",
+                        ),
+                        # Botón cambiar username
+                        rx.button(
+                            rx.hstack(
+                                rx.icon("user", size=18),
+                                rx.text("Cambiar Usuario"),
+                                spacing="2",
+                            ),
+                            on_click=State.abrir_modal_username,
+                            color_scheme="purple",
+                            variant="outline",
+                        ),
+                        spacing="4",
+                    ),
+                    
                     # Link al portfolio
                     rx.divider(margin_top="2em", margin_bottom="2em"),
                     rx.link(
@@ -147,6 +177,112 @@ def dashboard_admin() -> rx.Component:
                     max_width="1200px",
                 ),
                 padding="2em",
+            ),
+            
+            # Modal Cambiar Contraseña
+            rx.dialog.root(
+                rx.dialog.content(
+                    rx.dialog.title("Cambiar Contraseña"),
+                    rx.form(
+                        rx.vstack(
+                            rx.input(
+                                name="current_password",
+                                placeholder="Contraseña actual",
+                                type="password",
+                                width="100%",
+                            ),
+                            rx.input(
+                                name="new_password",
+                                placeholder="Nueva contraseña (mín. 6 caracteres)",
+                                type="password",
+                                width="100%",
+                            ),
+                            rx.cond(
+                                State.error_cambio != "",
+                                rx.text(State.error_cambio, color="red", size="2"),
+                            ),
+                            rx.hstack(
+                                rx.button(
+                                    "Cancelar",
+                                    type="button",
+                                    variant="outline",
+                                    color_scheme="gray",
+                                    on_click=State.cerrar_modal_password,
+                                ),
+                                rx.button(
+                                    rx.cond(
+                                        State.cargando_cambio,
+                                        rx.spinner(size="2"),
+                                        rx.text("Guardar"),
+                                    ),
+                                    type="submit",
+                                    color_scheme="orange",
+                                ),
+                                spacing="3",
+                                justify="end",
+                                width="100%",
+                            ),
+                            spacing="4",
+                            width="100%",
+                        ),
+                        on_submit=State.cambiar_password,
+                    ),
+                    style={"max_width": "400px"},
+                ),
+                open=State.mostrar_modal_password,
+            ),
+            
+            # Modal Cambiar Username
+            rx.dialog.root(
+                rx.dialog.content(
+                    rx.dialog.title("Cambiar Usuario"),
+                    rx.form(
+                        rx.vstack(
+                            rx.input(
+                                name="new_username",
+                                placeholder="Nuevo nombre de usuario (mín. 3 caracteres)",
+                                type="text",
+                                width="100%",
+                            ),
+                            rx.input(
+                                name="password",
+                                placeholder="Contraseña actual (para confirmar)",
+                                type="password",
+                                width="100%",
+                            ),
+                            rx.cond(
+                                State.error_cambio != "",
+                                rx.text(State.error_cambio, color="red", size="2"),
+                            ),
+                            rx.hstack(
+                                rx.button(
+                                    "Cancelar",
+                                    type="button",
+                                    variant="outline",
+                                    color_scheme="gray",
+                                    on_click=State.cerrar_modal_username,
+                                ),
+                                rx.button(
+                                    rx.cond(
+                                        State.cargando_cambio,
+                                        rx.spinner(size="2"),
+                                        rx.text("Guardar"),
+                                    ),
+                                    type="submit",
+                                    color_scheme="purple",
+                                ),
+                                spacing="3",
+                                justify="end",
+                                width="100%",
+                            ),
+                            spacing="4",
+                            width="100%",
+                        ),
+                        on_submit=State.cambiar_username,
+                    ),
+                    style={"max_width": "400px"},
+                ),
+                open=State.mostrar_modal_username,
             ),
             
             bg="#000000",

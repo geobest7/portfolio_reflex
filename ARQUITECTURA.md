@@ -1,6 +1,6 @@
 # 🏗️ ARQUITECTURA DEL PROYECTO PORTFOLIO
 
-**Última actualización:** 18 Enero 2026 (video_url implementado)
+**Última actualización:** 4 Febrero 2026 (mejoras de diseño, UI admin)
 
 ---
 

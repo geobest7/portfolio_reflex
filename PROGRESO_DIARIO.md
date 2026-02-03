@@ -728,4 +728,86 @@ SECRET_KEY = settings.secret_key  # Lee de .env si existe
 
 ---
 
-**Última actualización:** 3 Febrero 2026
+## Día 16 (4 Febrero 2026) - Mejoras de Diseño y UI Admin
+
+### 🎯 Objetivo
+Mejorar la estética del portfolio y completar UI del panel admin.
+
+### ✅ Completado
+
+**1. Mejoras de Diseño - Portada:**
+- Rediseño completo: "PORTFOLIO" grande + "by Alessandro Febbrai"
+- Títulos con efecto degradado gris (blanco → gris)
+- Tipografía mejorada con letter-spacing
+
+**2. Selectores de Idioma:**
+- Tamaño uniforme en portada (60x45px) y navbar (50x35px)
+- Color gris claro (#EEEEEE) cuando están activos
+- Hover effects suaves
+- Eliminado color cyan, ahora blanco y negro
+
+**3. Logo Navbar:**
+- Círculo "AF" con gradiente negro
+- Borde blanco (#EEEEEE)
+- Hover effect con escala
+
+**4. Títulos Home:**
+- "¡Hola! Soy Alessandro Febbrai" con degradado gris
+- "Desarrollador Python Junior" con degradado gris
+- Avatar foto de perfil con borde blanco y sombra
+
+**5. Logos de Tecnologías:**
+- Iconos SVG de alta calidad (devicons CDN)
+- Python, Reflex, FastAPI, JavaScript, Git
+- Cards con hover effect (suben 5px, borde cyan)
+
+**6. UI Admin - Gestión de Credenciales:**
+- Botones "Cambiar Contraseña" y "Cambiar Usuario" en dashboard
+- Modales con formularios funcionales
+- Corrección de botón Cancelar (type="button")
+- Integración con endpoints del backend
+
+**7. Optimizaciones:**
+- Timeouts en requests httpx (10s login, 5s info)
+- Bcrypt rounds reducidos a 10 para desarrollo
+- Flujo de login optimizado
+
+### 📁 Archivos Modificados
+
+**Frontend:**
+- `pages/portada.py` - Rediseño completo con degradados
+- `pages/home.py` - Títulos con degradado, avatar mejorado
+- `components/selectors.py` - Botones idioma uniformes, gris claro
+- `components/navbar.py` - Logo AF circular mejorado
+- `sections/sobre_mi.py` - Logos tecnologías con iconos SVG
+- `admin/dashboard.py` - Modales cambiar contraseña/usuario
+- `states/__init__.py` - Métodos para cambio de credenciales
+- `rxconfig.py` - Limpieza de configuración
+
+**Backend:**
+- `app/utils/auth.py` - Bcrypt rounds=10 para desarrollo
+
+### 🎨 Colores Actualizados
+
+| Elemento | Antes | Después |
+|----------|-------|---------|
+| Selector idioma activo | #00CED1 (cyan) | #EEEEEE (gris claro) |
+| Títulos | Blanco sólido | Degradado blanco→gris |
+| Logo AF | Texto simple | Círculo con gradiente |
+
+### 🎯 Próximos Pasos
+
+1. **Favicon personalizado** - Pendiente (SVG creado pero no se carga)
+2. **Sistema de Analíticas** - Tracking de visitas
+3. **SEO básico** - Metatags, sitemap
+4. **Despliegue** - Vercel frontend, Fly.io backend
+
+### 📊 Estado Actual
+
+- **Diseño:** Portada y Home con estilo profesional
+- **UI Admin:** Completa con gestión de credenciales
+- **Paleta:** Blanco, negro, gris (minimalista)
+
+---
+
+**Última actualización:** 4 Febrero 2026

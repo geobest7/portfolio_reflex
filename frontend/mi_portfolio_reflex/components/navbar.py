@@ -8,8 +8,24 @@ def navbar() -> rx.Component:
     return rx.box(
         rx.hstack(
             rx.box(
-                "AF",
-                class_name="logo-af",
+                rx.text(
+                    "AF",
+                    font_size="20px",
+                    font_weight="800",
+                    color="white",
+                    letter_spacing="-0.05em",
+                ),
+                width="45px",
+                height="45px",
+                border_radius="50%",
+                bg="linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%)",
+                border="2px solid #EEEEEE",
+                display="flex",
+                align_items="center",
+                justify_content="center",
+                cursor="pointer",
+                _hover={"border_color": "#FFFFFF", "transform": "scale(1.05)"},
+                transition="all 0.2s ease",
                 aria_label="Alessandro Febbrai",
             ),
             rx.spacer(),

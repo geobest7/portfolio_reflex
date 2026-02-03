@@ -369,10 +369,12 @@ class State(rx.State):
                 "password": form_data["password"],
             }
             
+            # Timeout de 10 segundos para evitar esperas largas
             response = httpx.post(
                 "http://localhost:8001/api/auth/login",
                 data=data,
-                headers={"Content-Type": "application/x-www-form-urlencoded"}
+                headers={"Content-Type": "application/x-www-form-urlencoded"},
+                timeout=10.0
             )
             
             if response.status_code == 200:
@@ -380,18 +382,29 @@ class State(rx.State):
                 self.token = result["access_token"]
                 self.esta_autenticado = True
                 
-                user_response = httpx.get(
-                    "http://localhost:8001/api/auth/me",
-                    headers={"Authorization": f"Bearer {self.token}"}
-                )
+                # Guardar username del form para evitar segundo request
+                self.usuario_autenticado = {"username": form_data["username"]}
                 
-                if user_response.status_code == 200:
-                    self.usuario_autenticado = user_response.json()
-                    return rx.redirect("/admin")
+                # Obtener info completa del usuario en background (no bloquea)
+                try:
+                    user_response = httpx.get(
+                        "http://localhost:8001/api/auth/me",
+                        headers={"Authorization": f"Bearer {self.token}"},
+                        timeout=5.0
+                    )
+                    if user_response.status_code == 200:
+                        self.usuario_autenticado = user_response.json()
+                except:
+                    pass  # Si falla, ya tenemos el username básico
+                
+                self.cargando_login = False
+                return rx.redirect("/admin")
                 
             else:
                 self.error_login = "Usuario o contraseña incorrectos"
                 
+        except httpx.TimeoutException:
+            self.error_login = "Timeout - servidor lento, intenta de nuevo"
         except Exception as e:
             self.error_login = f"Error de conexión: {str(e)}"
         finally:
@@ -402,6 +415,92 @@ class State(rx.State):
         self.usuario_autenticado = {}
         self.esta_autenticado = False
         return rx.redirect("/login")
+    
+    # ==================== CUENTA - Cambio de credenciales ====================
+    mostrar_modal_password: bool = False
+    mostrar_modal_username: bool = False
+    error_cambio: str = ""
+    mensaje_exito: str = ""
+    cargando_cambio: bool = False
+    
+    def abrir_modal_password(self):
+        self.mostrar_modal_password = True
+        self.error_cambio = ""
+        self.mensaje_exito = ""
+    
+    def cerrar_modal_password(self):
+        self.mostrar_modal_password = False
+        self.error_cambio = ""
+        self.mensaje_exito = ""
+    
+    def abrir_modal_username(self):
+        self.mostrar_modal_username = True
+        self.error_cambio = ""
+        self.mensaje_exito = ""
+    
+    def cerrar_modal_username(self):
+        self.mostrar_modal_username = False
+        self.error_cambio = ""
+        self.mensaje_exito = ""
+    
+    def cambiar_password(self, form_data: dict):
+        self.cargando_cambio = True
+        self.error_cambio = ""
+        self.mensaje_exito = ""
+        
+        try:
+            response = httpx.put(
+                "http://localhost:8001/api/auth/change-password",
+                json={
+                    "current_password": form_data["current_password"],
+                    "new_password": form_data["new_password"]
+                },
+                headers={"Authorization": f"Bearer {self.token}"}
+            )
+            
+            if response.status_code == 200:
+                self.mensaje_exito = "Contraseña actualizada correctamente"
+                self.mostrar_modal_password = False
+                return rx.toast.success("Contraseña actualizada")
+            else:
+                error = response.json().get("detail", "Error al cambiar contraseña")
+                self.error_cambio = error
+                return rx.toast.error(error)
+        except Exception as e:
+            self.error_cambio = f"Error de conexión: {str(e)}"
+            return rx.toast.error("Error de conexión")
+        finally:
+            self.cargando_cambio = False
+    
+    def cambiar_username(self, form_data: dict):
+        self.cargando_cambio = True
+        self.error_cambio = ""
+        self.mensaje_exito = ""
+        
+        try:
+            response = httpx.put(
+                "http://localhost:8001/api/auth/change-username",
+                json={
+                    "new_username": form_data["new_username"],
+                    "password": form_data["password"]
+                },
+                headers={"Authorization": f"Bearer {self.token}"}
+            )
+            
+            if response.status_code == 200:
+                self.usuario_autenticado["username"] = form_data["new_username"]
+                self.mensaje_exito = "Usuario actualizado correctamente"
+                self.mostrar_modal_username = False
+                return rx.toast.success("Usuario actualizado")
+            else:
+                error = response.json().get("detail", "Error al cambiar usuario")
+                self.error_cambio = error
+                return rx.toast.error(error)
+        except Exception as e:
+            self.error_cambio = f"Error de conexión: {str(e)}"
+            return rx.toast.error("Error de conexión")
+        finally:
+            self.cargando_cambio = False
     
     # ==================== ADMIN STATE - CRUD Admin ====================
     proyectos_admin: List[Proyecto] = []

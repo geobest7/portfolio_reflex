@@ -15,7 +15,9 @@ SECRET_KEY = settings.secret_key
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = settings.access_token_expire_minutes
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+# Bcrypt con rounds reducidos para desarrollo (más rápido)
+# En producción cambiar a rounds=12 para mayor seguridad
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto", bcrypt__rounds=10)
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/login")
 
 
