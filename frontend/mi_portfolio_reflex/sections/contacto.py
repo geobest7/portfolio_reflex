@@ -15,8 +15,8 @@ def seccion_contacto() -> rx.Component:
                     rx.icon("mail", size=20, color="white"),
                     rx.text(State.contacto_email + ":", color="#cccccc", weight="bold"),
                     rx.link(
-                        "alessandro.febbrai@ejemplo.com",
-                        href="mailto:alessandro.febbrai@ejemplo.com",
+                        "febbrai.alessandro@libero.it",
+                        href="mailto:febbrai.alessandro@libero.it",
                         color="white",
                         _hover={"color": "#808080"},
                     ),
@@ -25,15 +25,20 @@ def seccion_contacto() -> rx.Component:
                 rx.hstack(
                     rx.icon("phone", size=20, color="white"),
                     rx.text(State.contacto_telefono + ":", color="#cccccc", weight="bold"),
-                    rx.text("+34 XXX XXX XXX", color="white"),
+                    rx.link(
+                        "+34 632 172 521",
+                        href="tel:+34632172521",
+                        color="white",
+                        _hover={"color": "#808080"},
+                    ),
                     spacing="2",
                 ),
                 rx.hstack(
                     rx.icon("linkedin", size=20, color="white"),
                     rx.text(State.contacto_linkedin + ":", color="#cccccc", weight="bold"),
                     rx.link(
-                        "/alessandro-febbrai",
-                        href="https://linkedin.com/in/alessandro-febbrai",
+                        "Alessandro Febbrai",
+                        href="https://www.linkedin.com/in/alessandro-febbrai-b239021a2",
                         is_external=True,
                         color="white",
                         _hover={"color": "#808080"},

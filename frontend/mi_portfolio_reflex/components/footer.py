@@ -16,14 +16,14 @@ def footer() -> rx.Component:
                 ),
                 rx.link(
                     rx.icon("linkedin", size=24),
-                    href="https://linkedin.com/in/alessandro-febbrai",
+                    href="https://www.linkedin.com/in/alessandro-febbrai-b239021a2",
                     color="white",
                     _hover={"color": "#808080"},
                     is_external=True,
                 ),
                 rx.link(
                     rx.icon("mail", size=24),
-                    href="mailto:febbraialessandro@gmail.com",
+                    href="mailto:febbrai.alessandro@libero.it",
                     color="white",
                     _hover={"color": "#808080"},
                     is_external=True,
