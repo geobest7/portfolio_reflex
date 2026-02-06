@@ -51,6 +51,8 @@ TRANSLATIONS = {
         "form_error_email_invalido": "Por favor, ingresa un email válido",
         "form_error_mensaje": "Por favor, escribe un mensaje",
         "form_exito": "¡Mensaje enviado correctamente! Te contactaré pronto.",
+        "form_error_timeout": "Error: tiempo de espera agotado. Inténtalo de nuevo.",
+        "form_error_servidor": "Error al conectar con el servidor. Inténtalo más tarde.",
 
 
         # Sección Formación
@@ -124,7 +126,8 @@ TRANSLATIONS = {
         "form_error_email_invalido": "Please enter a valid email",
         "form_error_mensaje": "Please write a message",
         "form_exito": "Message sent successfully! I'll contact you soon.",
-
+        "form_error_timeout": "Error: request timed out. Please try again.",
+        "form_error_servidor": "Error connecting to the server. Please try again later.",
 
 
         # Sección Formación
@@ -199,6 +202,8 @@ TRANSLATIONS = {
         "form_error_email_invalido": "Per favore, inserisci un'email valida",
         "form_error_mensaje": "Per favore, scrivi un messaggio",
         "form_exito": "Messaggio inviato con successo! Ti contatterò presto.",
+        "form_error_timeout": "Errore: tempo di attesa scaduto. Riprova.",
+        "form_error_servidor": "Errore di connessione al server. Riprova più tardi.",
 
 
         # Sección Formación
@@ -272,6 +277,8 @@ TRANSLATIONS = {
         "form_error_email_invalido": "Si us plau, introdueix un email vàlid",
         "form_error_mensaje": "Si us plau, escriu un missatge",
         "form_exito": "Missatge enviat correctament! Et contactaré aviat.",
+        "form_error_timeout": "Error: temps d'espera esgotat. Torna-ho a provar.",
+        "form_error_servidor": "Error en connectar amb el servidor. Torna-ho a provar més tard.",
 
 
         # Sección Formación

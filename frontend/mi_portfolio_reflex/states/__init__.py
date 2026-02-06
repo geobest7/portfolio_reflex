@@ -202,13 +202,36 @@ class State(rx.State):
             return
         
         self.form_enviando = True
-        self.form_mensaje_estado = "exito"
-        self.form_mensaje_texto = TRANSLATIONS.get(self.idioma, {}).get("form_exito", "")
-        self.form_enviando = False
         
-        self.form_nombre_value = ""
-        self.form_email_value = ""
-        self.form_mensaje_value = ""
+        try:
+            response = httpx.post(
+                "http://localhost:8001/api/contacto/",
+                json={
+                    "nombre": self.form_nombre_value.strip(),
+                    "email": self.form_email_value.strip(),
+                    "mensaje": self.form_mensaje_value.strip(),
+                },
+                timeout=10.0
+            )
+            
+            if response.status_code == 200:
+                self.form_mensaje_estado = "exito"
+                self.form_mensaje_texto = TRANSLATIONS.get(self.idioma, {}).get("form_exito", "")
+                self.form_nombre_value = ""
+                self.form_email_value = ""
+                self.form_mensaje_value = ""
+            else:
+                self.form_mensaje_estado = "error"
+                detail = response.json().get("detail", "Error al enviar")
+                self.form_mensaje_texto = detail
+        except httpx.TimeoutException:
+            self.form_mensaje_estado = "error"
+            self.form_mensaje_texto = TRANSLATIONS.get(self.idioma, {}).get("form_error_timeout", "Error: tiempo de espera agotado")
+        except Exception:
+            self.form_mensaje_estado = "error"
+            self.form_mensaje_texto = TRANSLATIONS.get(self.idioma, {}).get("form_error_servidor", "Error al conectar con el servidor")
+        finally:
+            self.form_enviando = False
     
     def limpiar_mensaje_formulario(self):
         self.form_mensaje_estado = ""
