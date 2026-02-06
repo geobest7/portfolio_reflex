@@ -18,6 +18,7 @@ class Settings(BaseSettings):
         "http://localhost:3000",
         "http://localhost:8000",
     ]
+    cors_allow_all: bool = False
     
     github_token: Optional[str] = None
     github_username: str = "geobest7"
@@ -31,6 +32,8 @@ class Settings(BaseSettings):
     
     class Config:
         env_file = "../.env"
+        env_file_encoding = "utf-8"
+        extra = "ignore"
 
 
 settings = Settings()
