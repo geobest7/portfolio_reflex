@@ -28,7 +28,24 @@ Portfolio personal full-stack desarrollado con **Reflex** (frontend) y **FastAPI
 | **Auth** | JWT (python-jose), bcrypt |
 | **Email** | SMTP (Gmail) |
 | **Analytics** | Middleware propio + dashboard admin |
+| **Hosting** | Reflex Cloud (frontend) + Render (backend) |
 | **Control de versiones** | Git + GitHub |
+
+---
+
+## Despliegue en Producción
+
+| Servicio | Plataforma | URL |
+|----------|-----------|-----|
+| **Frontend** | Reflex Cloud | Desplegado con `reflex deploy` |
+| **Backend** | Render | `https://portfolio-reflex-pwdv.onrender.com` |
+
+### Flujo de trabajo
+
+| Cambio | Acción |
+|--------|--------|
+| **Backend** | `git push origin main` → Render redeploy automático |
+| **Frontend** | `git push origin main` + ejecutar `reflex deploy` desde `frontend/` |
 
 ---
 
@@ -59,13 +76,15 @@ mi_portfolio_reflex/
 │   │   ├── schemas/                  # Validación Pydantic
 │   │   ├── routers/                  # API endpoints (CRUD + auth + analytics + contacto + github)
 │   │   ├── middleware/               # Analytics middleware (tracking visitas)
-│   │   └── utils/                    # JWT, password hashing
+│   │   └── utils/                    # JWT, password hashing (bcrypt directo)
 │   ├── create_admin.py               # Script para crear usuario admin inicial
+│   ├── render.yaml                   # Configuración de despliegue en Render
 │   └── requirements.txt
 │
 ├── .env                              # Variables de entorno (NO en Git)
 ├── .gitignore                        # Reglas de exclusión para Git
 └── README.md                         # Este archivo
+```
 
 ---
 
@@ -102,7 +121,7 @@ mi_portfolio_reflex/
 
 ---
 
-## Instalación
+## Instalación local
 
 ```bash
 # Clonar
@@ -139,7 +158,7 @@ SMTP_PASSWORD=tu-app-password
 CONTACT_EMAIL_TO=tu-email-destino
 ```
 
-### Ejecutar
+### Ejecutar en local
 
 ```bash
 # Terminal 1 — Backend
@@ -153,6 +172,19 @@ reflex run
 
 - Frontend: `http://localhost:3000`
 - Backend API: `http://localhost:8001/docs`
+
+### Desplegar cambios a producción
+
+```bash
+# Subir cambios (backend se redeploy automáticamente en Render)
+git add .
+git commit -m "descripcion del cambio"
+git push origin main
+
+# Si hay cambios en el frontend, además ejecutar:
+cd frontend
+reflex deploy
+```
 
 ---
 
