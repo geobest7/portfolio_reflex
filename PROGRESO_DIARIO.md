@@ -810,4 +810,96 @@ Mejorar la estética del portfolio y completar UI del panel admin.
 
 ---
 
-**Última actualización:** 4 Febrero 2026
+---
+
+## Día 17 (6 Febrero 2026) - Funcionalidades Completas + Analíticas + SEO
+
+### 🎯 Objetivo
+Implementar funcionalidades pendientes: visor de diplomas, formulario de contacto funcional, sistema de analíticas y SEO básico.
+
+### ✅ Completado
+
+**1. Visor de Diplomas:**
+- Nueva página `/diploma` con visor PDF embebido (mismo patrón que `/cv`)
+- Botón flotante "Descargar diploma" en esquina inferior derecha
+- `rx.el.iframe` reactivo con URL desde State
+- Método `State.ver_diploma(url)` que guarda URL y redirige
+- Fallback si no hay diploma seleccionado
+- PDF copiado a `assets/`, URL corregida en DB
+
+**2. Formulario de Contacto Funcional:**
+- Endpoint `POST /api/contacto/` en backend con envío SMTP real
+- Validación de campos (nombre, email, mensaje)
+- Envío via Gmail con contraseña de aplicación
+- Frontend conectado al endpoint con manejo de errores
+- Traducciones de errores timeout/servidor en 4 idiomas
+- Fix: ruta `.env` corregida a `../.env` en config.py
+
+**3. Sistema de Analíticas Completo:**
+- Modelo SQLAlchemy `Visita` (IP anonimizada, página, dispositivo, navegador, timestamp)
+- Middleware `AnalyticsMiddleware` - captura automática de visitas GET
+- Excluye rutas `/api/`, `/docs`, assets, etc.
+- Detección de dispositivo (desktop/móvil/tablet) y navegador
+- 6 endpoints protegidos en `/api/analytics/`:
+  - `/resumen` - total visitas + visitantes únicos
+  - `/paginas` - top páginas visitadas
+  - `/dispositivos` - distribución por dispositivo
+  - `/navegadores` - distribución por navegador
+  - `/visitas-por-dia` - serie temporal
+  - `/recientes` - últimas 20 visitas
+- Card "Analíticas" en dashboard admin
+- Página `/admin/analytics` con dashboard visual
+
+**4. SEO Básico:**
+- Metatags en páginas públicas (title, description)
+- OpenGraph tags (og:title, og:description, og:type)
+- Twitter Cards (twitter:card, twitter:title)
+- Keywords y author meta tags
+- robots.txt creado en assets
+- CV marcado como noindex
+
+### 📁 Archivos Creados
+
+**Backend:**
+- `app/models/visita.py` - Modelo Visita
+- `app/middleware/__init__.py` - Paquete middleware
+- `app/middleware/analytics.py` - Middleware de tracking
+- `app/routers/analytics.py` - Endpoints de analíticas
+- `app/routers/contacto.py` - Endpoint envío email
+
+**Frontend:**
+- `pages/diploma.py` - Visor de diplomas
+- `admin/analytics.py` - Dashboard de analíticas
+
+### 📁 Archivos Modificados
+
+**Backend:**
+- `app/config.py` - Configuración SMTP + ruta .env
+- `app/main.py` - Registrar routers y middleware
+
+**Frontend:**
+- `states/__init__.py` - State diploma, contacto real, analytics
+- `sections/formacion.py` - Botón Ver Diploma conectado
+- `pages/__init__.py` - Export pagina_diploma
+- `admin/__init__.py` - Export admin_analytics
+- `admin/dashboard.py` - Card Analíticas añadida
+- `mi_portfolio_reflex.py` - Rutas + metatags SEO
+- `translations.py` - Traducciones errores timeout/servidor
+
+### 📊 Estado Actual del Proyecto
+
+- **Frontend:** 100% funcional con SEO
+- **Backend:** API completa + SMTP + analíticas
+- **Admin:** CRUD + credenciales + dashboard analíticas
+- **Contacto:** Envío de email real funcionando
+- **Analíticas:** Tracking automático de visitas
+- **SEO:** Metatags, OpenGraph, Twitter Cards, robots.txt
+
+### 🎯 Próximos Pasos
+
+1. **Favicon personalizado** - Pendiente
+2. **Despliegue** - Vercel frontend, Fly.io/Render backend
+
+---
+
+**Última actualización:** 6 Febrero 2026

@@ -1,6 +1,6 @@
 # 🏗️ ARQUITECTURA DEL PROYECTO PORTFOLIO
 
-**Última actualización:** 4 Febrero 2026 (mejoras de diseño, UI admin)
+**Última actualización:** 6 Febrero 2026 (visor diplomas, contacto SMTP, analíticas, SEO)
 
 ---
 
