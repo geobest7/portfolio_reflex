@@ -56,6 +56,7 @@ def seccion_sobre_mi() -> rx.Component:
                 size="4",
                 line_height="1.8",
                 max_width="800px",
+                white_space="pre-line",
             ),
             rx.heading(State.tecnologias_titulo, size="6", color="white", margin_top="2em"),
             rx.hstack(

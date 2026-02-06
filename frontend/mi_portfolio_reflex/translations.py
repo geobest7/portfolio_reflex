@@ -16,7 +16,22 @@ TRANSLATIONS = {
 
         # sobre_mi  
         "sobre_mi_titulo": "Sobre mí",
-        "sobre_mi_descripcion": "Soy un desarrollador apasionado por la tecnología y el aprendizaje continuo. Me especializo en Python y desarrollo web, creando soluciones eficientes y escalables.",
+        "sobre_mi_descripcion": (
+            "Empecé a estudiar programación en 2023 desde cero, comenzando con Python. "
+            "Desde entonces he seguido formándome de manera constante y actualmente estoy "
+            "profundizando en Python aplicado a Machine Learning, con el objetivo de avanzar "
+            "más adelante hacia Computer Vision.\n\n"
+            "Tengo bases sólidas en Python y he desarrollado este portfolio utilizando Reflex, "
+            "lo que me ha permitido trabajar principalmente con Python también en el frontend. "
+            "Para la parte más orientada al desarrollo web me he apoyado puntualmente en "
+            "herramientas de IA como Windsurf (Claude), ya que el desarrollo web no es mi "
+            "objetivo principal, aunque lo considero una posible vía profesional en el futuro.\n\n"
+            "Aun así, este proceso —incluso con la ayuda de la IA— me ha servido para entender "
+            "cómo plantear un proyecto real: cómo estructurarlo, organizar el código, resolver "
+            "problemas, documentarlo y desplegarlo. Aún no tengo experiencia laboral en el sector, "
+            "pero me apasiona este mundo y soy consciente de que el aprendizaje continuo es una "
+            "parte fundamental del camino que estoy recorriendo."
+        ),
         "tecnologias_titulo": "Tecnologías conocidas y frameworks",
 
         #experiencia
@@ -88,8 +103,20 @@ TRANSLATIONS = {
         # sobre_mi
         "sobre_mi_titulo": "About me",
         "sobre_mi_descripcion": (
-            "I am a developer passionate about technology and continuous learning. "
-            "I specialize in Python and web development, creating efficient and scalable solutions."
+            "I started studying programming in 2023 from scratch, beginning with Python. "
+            "Since then, I have continued learning consistently, and I am currently focusing "
+            "on Python for Machine Learning, with the goal of moving towards Computer Vision "
+            "in the future.\n\n"
+            "I have solid foundations in Python and built this portfolio using Reflex, which "
+            "allowed me to work mainly with Python also on the frontend. For the more "
+            "web-oriented parts, I occasionally relied on AI tools such as Windsurf (Claude), "
+            "as web development is not my main focus, although I consider it a possible "
+            "professional path in the future.\n\n"
+            "Even so, this process — including the use of AI — helped me understand how to "
+            "approach a real project: how to structure it, organize the code, solve problems, "
+            "document it, and deploy it. I do not yet have professional experience in the field, "
+            "but I am passionate about this world and aware that continuous learning is an "
+            "essential part of the path I am following."
         ),
         "tecnologias_titulo": "Known technologies and frameworks",
 
@@ -164,8 +191,22 @@ TRANSLATIONS = {
         # sobre_mi
         "sobre_mi_titulo": "Chi sono",
         "sobre_mi_descripcion": (
-            "Sono uno sviluppatore appassionato di tecnologia e apprendimento continuo. "
-            "Mi specializzo in Python e sviluppo web, creando soluzioni efficienti e scalabili."
+            "Ho iniziato a studiare programmazione nel 2023 partendo da zero, cominciando "
+            "con Python. Da allora ho continuato a formarmi in modo costante e attualmente "
+            "sto approfondendo Python applicato al Machine Learning, con l'obiettivo di "
+            "orientarmi in futuro verso la Computer Vision.\n\n"
+            "Ho basi solide in Python e ho sviluppato questo portfolio utilizzando Reflex, "
+            "che mi ha permesso di lavorare principalmente con Python anche sul frontend. "
+            "Per le parti più legate allo sviluppo web mi sono appoggiato in modo puntuale "
+            "a strumenti di intelligenza artificiale come Windsurf (Claude), poiché lo "
+            "sviluppo web non è il mio interesse principale, anche se lo considero una "
+            "possibile strada professionale in futuro.\n\n"
+            "In ogni caso, questo percorso — anche con l'aiuto dell'IA — mi ha permesso "
+            "di comprendere come affrontare un progetto reale: come strutturarlo, organizzare "
+            "il codice, risolvere problemi, documentarlo e distribuirlo. Non ho ancora "
+            "esperienza lavorativa nel settore, ma sono appassionato di questo mondo e "
+            "consapevole che la formazione continua è una parte fondamentale del cammino "
+            "che sto seguendo."
         ),
         "tecnologias_titulo": "Tecnologie conosciute e framework",
 
@@ -239,8 +280,21 @@ TRANSLATIONS = {
         # sobre_mi
         "sobre_mi_titulo": "Sobre mi",
         "sobre_mi_descripcion": (
-            "Sóc un desenvolupador apassionat per la tecnologia i l’aprenentatge continu. "
-            "M’especialitzo en Python i desenvolupament web, creant solucions eficients i escalables."
+            "Vaig començar a estudiar programació l'any 2023 des de zero, començant amb Python. "
+            "Des de llavors he continuat formant-me de manera constant i actualment estic "
+            "aprofundint en Python aplicat al Machine Learning, amb l'objectiu d'orientar-me "
+            "més endavant cap a la Computer Vision.\n\n"
+            "Tinc una base sòlida en Python i he desenvolupat aquest portfolio utilitzant "
+            "Reflex, cosa que m'ha permès treballar principalment amb Python també al frontend. "
+            "Per a les parts més relacionades amb el desenvolupament web, m'he recolzat "
+            "puntualment en eines d'intel·ligència artificial com Windsurf (Claude), ja que "
+            "el desenvolupament web no és el meu principal interès, tot i que el considero "
+            "una possible sortida professional en el futur.\n\n"
+            "Tot i això, aquest procés — fins i tot amb l'ajuda de la IA — m'ha ajudat a "
+            "entendre com afrontar un projecte real: com estructurar-lo, organitzar el codi, "
+            "resoldre problemes, documentar-lo i desplegar-lo. Encara no tinc experiència "
+            "laboral en el sector, però m'apassiona aquest món i soc conscient que "
+            "l'aprenentatge continu és una part essencial del camí que estic seguint."
         ),
         "tecnologias_titulo": "Tecnologies conegudes i frameworks",
 
