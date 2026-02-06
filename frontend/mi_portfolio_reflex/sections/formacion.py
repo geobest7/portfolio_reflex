@@ -96,12 +96,15 @@ def seccion_formacion() -> rx.Component:
                             ),
                             rx.cond(
                                 curso.diploma_pdf != "",
-                                rx.button(
-                                    "Ver Diploma",
-                                    size="1",
-                                    variant="solid",
-                                    color_scheme="cyan",
-                                    on_click=State.ver_diploma(curso.diploma_pdf),
+                                rx.link(
+                                    rx.button(
+                                        "Ver Diploma",
+                                        size="1",
+                                        variant="solid",
+                                        color_scheme="cyan",
+                                    ),
+                                    href=curso.diploma_pdf,
+                                    is_external=True,
                                 ),
                             ),
                             spacing="2",

@@ -17,7 +17,7 @@ TRANSLATIONS = {
         # sobre_mi  
         "sobre_mi_titulo": "Sobre mí",
         "sobre_mi_descripcion": "Soy un desarrollador apasionado por la tecnología y el aprendizaje continuo. Me especializo en Python y desarrollo web, creando soluciones eficientes y escalables.",
-        "habilidades_titulo": "Habilidades",
+        "tecnologias_titulo": "Tecnologías conocidas y frameworks",
 
         #experiencia
         "experiencia_titulo": "Experiencia",
@@ -91,7 +91,7 @@ TRANSLATIONS = {
             "I am a developer passionate about technology and continuous learning. "
             "I specialize in Python and web development, creating efficient and scalable solutions."
         ),
-        "habilidades_titulo": "Skills",
+        "tecnologias_titulo": "Known technologies and frameworks",
 
 
         #experiencia
@@ -167,7 +167,7 @@ TRANSLATIONS = {
             "Sono uno sviluppatore appassionato di tecnologia e apprendimento continuo. "
             "Mi specializzo in Python e sviluppo web, creando soluzioni efficienti e scalabili."
         ),
-        "habilidades_titulo": "Competenze",
+        "tecnologias_titulo": "Tecnologie conosciute e framework",
 
         
         #experiencia
@@ -242,7 +242,7 @@ TRANSLATIONS = {
             "Sóc un desenvolupador apassionat per la tecnologia i l’aprenentatge continu. "
             "M’especialitzo en Python i desenvolupament web, creant solucions eficients i escalables."
         ),
-        "habilidades_titulo": "Habilitats",
+        "tecnologias_titulo": "Tecnologies conegudes i frameworks",
 
 
         # experiencia

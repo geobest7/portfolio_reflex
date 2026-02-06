@@ -23,9 +23,10 @@ def footer() -> rx.Component:
                 ),
                 rx.link(
                     rx.icon("mail", size=24),
-                    href="mailto:tu-email@ejemplo.com",
+                    href="mailto:febbraialessandro@gmail.com",
                     color="white",
                     _hover={"color": "#808080"},
+                    is_external=True,
                 ),
                 spacing="6",
                 class_name="footer-social"
