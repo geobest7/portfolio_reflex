@@ -24,7 +24,7 @@ Portfolio personal full-stack desarrollado con **Reflex** (frontend) y **FastAPI
 | Capa | Tecnología |
 |------|-----------|
 | **Frontend** | Reflex (Python → React), CSS custom |
-| **Backend** | FastAPI, SQLAlchemy, SQLite |
+| **Backend** | FastAPI, SQLAlchemy, PostgreSQL (prod) / SQLite (local) |
 | **Auth** | JWT (python-jose), bcrypt |
 | **Email** | SMTP (Gmail) |
 | **Analytics** | Middleware propio + dashboard admin |
@@ -37,15 +37,16 @@ Portfolio personal full-stack desarrollado con **Reflex** (frontend) y **FastAPI
 
 | Servicio | Plataforma | URL |
 |----------|-----------|-----|
-| **Frontend** | Reflex Cloud | Desplegado con `reflex deploy` |
+| **Frontend** | Reflex Cloud | `https://portfolio-alessandro-teal-ring.reflex.run` |
 | **Backend** | Render | `https://portfolio-reflex-pwdv.onrender.com` |
+| **Base de datos** | Render PostgreSQL | Interna (no accesible desde fuera) |
 
 ### Flujo de trabajo
 
 | Cambio | Acción |
 |--------|--------|
 | **Backend** | `git push origin main` → Render redeploy automático |
-| **Frontend** | `git push origin main` + ejecutar `reflex deploy` desde `frontend/` |
+| **Frontend** | `git push origin main` + ejecutar `reflex deploy --app-name portfolio-alessandro` desde `frontend/` |
 
 ---
 
@@ -69,9 +70,9 @@ mi_portfolio_reflex/
 │
 ├── backend/
 │   ├── app/
-│   │   ├── main.py                   # FastAPI + CORS + middleware analytics
+│   │   ├── main.py                   # FastAPI + CORS + middleware analytics + auto-crear admin
 │   │   ├── config.py                 # Settings (pydantic-settings + .env)
-│   │   ├── database.py               # SQLAlchemy + SQLite
+│   │   ├── database.py               # SQLAlchemy + PostgreSQL (prod) / SQLite (local)
 │   │   ├── models/                   # Proyecto, Curso, Experiencia, User, Visita, GitHubRepo
 │   │   ├── schemas/                  # Validación Pydantic
 │   │   ├── routers/                  # API endpoints (CRUD + auth + analytics + contacto + github)
@@ -151,6 +152,7 @@ Crear archivo `.env` en la raíz del proyecto con:
 DATABASE_URL=sqlite:///./portfolio.db
 SECRET_KEY=tu-clave-secreta
 GITHUB_TOKEN=tu-token-github
+CORS_ALLOW_ALL=false
 SMTP_HOST=smtp.gmail.com
 SMTP_PORT=587
 SMTP_USER=tu-email@gmail.com
@@ -183,7 +185,7 @@ git push origin main
 
 # Si hay cambios en el frontend, además ejecutar:
 cd frontend
-reflex deploy
+reflex deploy --app-name portfolio-alessandro
 ```
 
 ---
