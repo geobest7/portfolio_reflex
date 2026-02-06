@@ -513,6 +513,16 @@ class State(rx.State):
             )
             
             if response.status_code == 200:
+                # Re-login para obtener token nuevo con el username actualizado
+                login_response = httpx.post(
+                    f"{API_URL}/api/auth/login",
+                    data={
+                        "username": form_data["new_username"],
+                        "password": form_data["password"]
+                    }
+                )
+                if login_response.status_code == 200:
+                    self.token = login_response.json()["access_token"]
                 self.usuario_autenticado["username"] = form_data["new_username"]
                 self.mensaje_exito = "Usuario actualizado correctamente"
                 self.mostrar_modal_username = False
