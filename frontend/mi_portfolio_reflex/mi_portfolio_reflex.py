@@ -1,6 +1,6 @@
 import reflex as rx
 from .pages import portada, home, pagina_cv, pagina_diploma, pagina_login
-from .admin import dashboard_admin, admin_proyectos, formulario_proyecto, admin_cursos, formulario_curso, admin_experiencias, formulario_experiencia
+from .admin import dashboard_admin, admin_proyectos, formulario_proyecto, admin_cursos, formulario_curso, admin_experiencias, formulario_experiencia, admin_analytics
 
 
 app = rx.App(
@@ -21,3 +21,4 @@ app.add_page(admin_cursos, route="/admin/cursos")
 app.add_page(formulario_curso, route="/admin/cursos/form")
 app.add_page(admin_experiencias, route="/admin/experiencias")
 app.add_page(formulario_experiencia, route="/admin/experiencias/form")
+app.add_page(admin_analytics, route="/admin/analytics")

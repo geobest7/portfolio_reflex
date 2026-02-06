@@ -124,7 +124,34 @@ def dashboard_admin() -> rx.Component:
                             _hover={"border_color": "#00CED1"},
                         ),
                         
-                        columns="3",
+                        # Card Analíticas
+                        rx.box(
+                            rx.vstack(
+                                rx.icon("bar-chart-3", size=40, color="#00CED1"),
+                                rx.heading("Analíticas", size="5", color="white"),
+                                rx.text(
+                                    "Ver estadísticas de visitas",
+                                    color="#CCCCCC",
+                                    size="2",
+                                    text_align="center",
+                                ),
+                                rx.button(
+                                    "Ver Analíticas",
+                                    on_click=rx.redirect("/admin/analytics"),
+                                    width="100%",
+                                    color_scheme="cyan",
+                                ),
+                                spacing="3",
+                                align="center",
+                            ),
+                            padding="2em",
+                            border_radius="8px",
+                            bg="#1a1a1a",
+                            border="1px solid #333",
+                            _hover={"border_color": "#00CED1"},
+                        ),
+                        
+                        columns="4",
                         spacing="4",
                         width="100%",
                     ),

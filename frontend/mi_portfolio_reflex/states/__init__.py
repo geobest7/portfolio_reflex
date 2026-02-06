@@ -862,3 +862,67 @@ class State(rx.State):
                 
         except Exception as e:
             return rx.toast.error(f"Error: {str(e)}")
+    
+    # ==================== ANALYTICS STATE ====================
+    analytics_resumen: dict = {}
+    analytics_paginas: list[dict] = []
+    analytics_dispositivos: list[dict] = []
+    analytics_navegadores: list[dict] = []
+    analytics_por_dia: list[dict] = []
+    analytics_recientes: list[dict] = []
+    cargando_analytics: bool = False
+    error_analytics: str = ""
+    
+    def cargar_analytics(self):
+        self.cargando_analytics = True
+        self.error_analytics = ""
+        
+        try:
+            headers = {"Authorization": f"Bearer {self.token}"}
+            
+            r_resumen = httpx.get(
+                "http://localhost:8001/api/analytics/resumen",
+                headers=headers, timeout=10.0
+            )
+            if r_resumen.status_code == 200:
+                self.analytics_resumen = r_resumen.json()
+            
+            r_paginas = httpx.get(
+                "http://localhost:8001/api/analytics/paginas",
+                headers=headers, timeout=10.0
+            )
+            if r_paginas.status_code == 200:
+                self.analytics_paginas = r_paginas.json()
+            
+            r_dispositivos = httpx.get(
+                "http://localhost:8001/api/analytics/dispositivos",
+                headers=headers, timeout=10.0
+            )
+            if r_dispositivos.status_code == 200:
+                self.analytics_dispositivos = r_dispositivos.json()
+            
+            r_navegadores = httpx.get(
+                "http://localhost:8001/api/analytics/navegadores",
+                headers=headers, timeout=10.0
+            )
+            if r_navegadores.status_code == 200:
+                self.analytics_navegadores = r_navegadores.json()
+            
+            r_por_dia = httpx.get(
+                "http://localhost:8001/api/analytics/visitas-por-dia",
+                headers=headers, timeout=10.0
+            )
+            if r_por_dia.status_code == 200:
+                self.analytics_por_dia = r_por_dia.json()
+            
+            r_recientes = httpx.get(
+                "http://localhost:8001/api/analytics/recientes",
+                headers=headers, timeout=10.0
+            )
+            if r_recientes.status_code == 200:
+                self.analytics_recientes = r_recientes.json()
+                
+        except Exception as e:
+            self.error_analytics = f"Error al cargar analíticas: {str(e)}"
+        finally:
+            self.cargando_analytics = False
