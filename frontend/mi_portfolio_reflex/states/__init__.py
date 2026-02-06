@@ -1,9 +1,12 @@
+import os
 import reflex as rx
 import httpx
 from typing import List, Optional
 from ..translations import TRANSLATIONS
 from ..models import Proyecto, Curso, Experiencia, GitHubRepo
 from ..utils import convertir_youtube_url
+
+API_URL = os.environ.get("API_URL", "http://localhost:8001")
 
 
 class State(rx.State):
@@ -199,7 +202,7 @@ class State(rx.State):
         
         try:
             response = httpx.post(
-                "http://localhost:8001/api/contacto/",
+                f"{API_URL}/api/contacto/",
                 json={
                     "nombre": self.form_nombre_value.strip(),
                     "email": self.form_email_value.strip(),
@@ -273,7 +276,7 @@ class State(rx.State):
         self.error_proyectos = ""
         
         try:
-            response = httpx.get("http://localhost:8001/api/proyectos/", params={"destacados": True})
+            response = httpx.get(f"{API_URL}/api/proyectos/", params={"destacados": True})
             if response.status_code == 200:
                 data = response.json()
                 for proyecto in data:
@@ -300,7 +303,7 @@ class State(rx.State):
         self.error_cursos = ""
         
         try:
-            response = httpx.get("http://localhost:8001/api/cursos/")
+            response = httpx.get(f"{API_URL}/api/cursos/")
             if response.status_code == 200:
                 data = response.json()
                 for curso in data:
@@ -323,7 +326,7 @@ class State(rx.State):
         self.error_experiencias = ""
         
         try:
-            response = httpx.get("http://localhost:8001/api/experiencias/", params={"mostrar_en_web": True})
+            response = httpx.get(f"{API_URL}/api/experiencias/", params={"mostrar_en_web": True})
             if response.status_code == 200:
                 data = response.json()
                 for exp in data:
@@ -354,7 +357,7 @@ class State(rx.State):
         self.error_repos = ""
         
         try:
-            response = httpx.get("http://localhost:8001/api/github/repos")
+            response = httpx.get(f"{API_URL}/api/github/repos")
             if response.status_code == 200:
                 data = response.json()
                 for repo in data:
@@ -393,7 +396,7 @@ class State(rx.State):
             
             # Timeout de 10 segundos para evitar esperas largas
             response = httpx.post(
-                "http://localhost:8001/api/auth/login",
+                f"{API_URL}/api/auth/login",
                 data=data,
                 headers={"Content-Type": "application/x-www-form-urlencoded"},
                 timeout=10.0
@@ -410,7 +413,7 @@ class State(rx.State):
                 # Obtener info completa del usuario en background (no bloquea)
                 try:
                     user_response = httpx.get(
-                        "http://localhost:8001/api/auth/me",
+                        f"{API_URL}/api/auth/me",
                         headers={"Authorization": f"Bearer {self.token}"},
                         timeout=5.0
                     )
@@ -472,7 +475,7 @@ class State(rx.State):
         
         try:
             response = httpx.put(
-                "http://localhost:8001/api/auth/change-password",
+                f"{API_URL}/api/auth/change-password",
                 json={
                     "current_password": form_data["current_password"],
                     "new_password": form_data["new_password"]
@@ -501,7 +504,7 @@ class State(rx.State):
         
         try:
             response = httpx.put(
-                "http://localhost:8001/api/auth/change-username",
+                f"{API_URL}/api/auth/change-username",
                 json={
                     "new_username": form_data["new_username"],
                     "password": form_data["password"]
@@ -537,7 +540,7 @@ class State(rx.State):
         
         try:
             response = httpx.get(
-                "http://localhost:8001/api/proyectos/",
+                f"{API_URL}/api/proyectos/",
                 params={"limit": 100},
                 headers={"Authorization": f"Bearer {self.token}"}
             )
@@ -563,7 +566,7 @@ class State(rx.State):
     def eliminar_proyecto(self, proyecto_id: int):
         try:
             response = httpx.delete(
-                f"http://localhost:8001/api/proyectos/{proyecto_id}",
+                f"{API_URL}/api/proyectos/{proyecto_id}",
                 headers={"Authorization": f"Bearer {self.token}"}
             )
             if response.status_code == 200:
@@ -613,13 +616,13 @@ class State(rx.State):
             
             if self.modo_edicion and self.proyecto_editando:
                 response = httpx.put(
-                    f"http://localhost:8001/api/proyectos/{self.proyecto_editando.id}",
+                    f"{API_URL}/api/proyectos/{self.proyecto_editando.id}",
                     json=proyecto_data,
                     headers={"Authorization": f"Bearer {self.token}"}
                 )
             else:
                 response = httpx.post(
-                    "http://localhost:8001/api/proyectos/",
+                    f"{API_URL}/api/proyectos/",
                     json=proyecto_data,
                     headers={"Authorization": f"Bearer {self.token}"}
                 )
@@ -647,7 +650,7 @@ class State(rx.State):
         
         try:
             response = httpx.get(
-                "http://localhost:8001/api/cursos/",
+                f"{API_URL}/api/cursos/",
                 params={"limit": 100},
                 headers={"Authorization": f"Bearer {self.token}"}
             )
@@ -671,7 +674,7 @@ class State(rx.State):
     def eliminar_curso(self, curso_id: int):
         try:
             response = httpx.delete(
-                f"http://localhost:8001/api/cursos/{curso_id}",
+                f"{API_URL}/api/cursos/{curso_id}",
                 headers={"Authorization": f"Bearer {self.token}"}
             )
             if response.status_code == 200:
@@ -719,13 +722,13 @@ class State(rx.State):
             
             if self.modo_edicion_curso and self.curso_editando:
                 response = httpx.put(
-                    f"http://localhost:8001/api/cursos/{self.curso_editando.id}",
+                    f"{API_URL}/api/cursos/{self.curso_editando.id}",
                     json=curso_data,
                     headers={"Authorization": f"Bearer {self.token}"}
                 )
             else:
                 response = httpx.post(
-                    "http://localhost:8001/api/cursos/",
+                    f"{API_URL}/api/cursos/",
                     json=curso_data,
                     headers={"Authorization": f"Bearer {self.token}"}
                 )
@@ -753,7 +756,7 @@ class State(rx.State):
         
         try:
             response = httpx.get(
-                "http://localhost:8001/api/experiencias/",
+                f"{API_URL}/api/experiencias/",
                 params={"limit": 100},
                 headers={"Authorization": f"Bearer {self.token}"}
             )
@@ -783,7 +786,7 @@ class State(rx.State):
     def eliminar_experiencia(self, experiencia_id: int):
         try:
             response = httpx.delete(
-                f"http://localhost:8001/api/experiencias/{experiencia_id}",
+                f"{API_URL}/api/experiencias/{experiencia_id}",
                 headers={"Authorization": f"Bearer {self.token}"}
             )
             if response.status_code == 200:
@@ -835,13 +838,13 @@ class State(rx.State):
             
             if self.modo_edicion_experiencia and self.experiencia_editando:
                 response = httpx.put(
-                    f"http://localhost:8001/api/experiencias/{self.experiencia_editando.id}",
+                    f"{API_URL}/api/experiencias/{self.experiencia_editando.id}",
                     json=experiencia_data,
                     headers={"Authorization": f"Bearer {self.token}"}
                 )
             else:
                 response = httpx.post(
-                    "http://localhost:8001/api/experiencias/",
+                    f"{API_URL}/api/experiencias/",
                     json=experiencia_data,
                     headers={"Authorization": f"Bearer {self.token}"}
                 )
@@ -875,42 +878,42 @@ class State(rx.State):
             headers = {"Authorization": f"Bearer {self.token}"}
             
             r_resumen = httpx.get(
-                "http://localhost:8001/api/analytics/resumen",
+                f"{API_URL}/api/analytics/resumen",
                 headers=headers, timeout=10.0
             )
             if r_resumen.status_code == 200:
                 self.analytics_resumen = r_resumen.json()
             
             r_paginas = httpx.get(
-                "http://localhost:8001/api/analytics/paginas",
+                f"{API_URL}/api/analytics/paginas",
                 headers=headers, timeout=10.0
             )
             if r_paginas.status_code == 200:
                 self.analytics_paginas = r_paginas.json()
             
             r_dispositivos = httpx.get(
-                "http://localhost:8001/api/analytics/dispositivos",
+                f"{API_URL}/api/analytics/dispositivos",
                 headers=headers, timeout=10.0
             )
             if r_dispositivos.status_code == 200:
                 self.analytics_dispositivos = r_dispositivos.json()
             
             r_navegadores = httpx.get(
-                "http://localhost:8001/api/analytics/navegadores",
+                f"{API_URL}/api/analytics/navegadores",
                 headers=headers, timeout=10.0
             )
             if r_navegadores.status_code == 200:
                 self.analytics_navegadores = r_navegadores.json()
             
             r_por_dia = httpx.get(
-                "http://localhost:8001/api/analytics/visitas-por-dia",
+                f"{API_URL}/api/analytics/visitas-por-dia",
                 headers=headers, timeout=10.0
             )
             if r_por_dia.status_code == 200:
                 self.analytics_por_dia = r_por_dia.json()
             
             r_recientes = httpx.get(
-                "http://localhost:8001/api/analytics/recientes",
+                f"{API_URL}/api/analytics/recientes",
                 headers=headers, timeout=10.0
             )
             if r_recientes.status_code == 200:
