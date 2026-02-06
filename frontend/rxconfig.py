@@ -8,6 +8,7 @@ import reflex as rx
 config = rx.Config(
     app_name="mi_portfolio_reflex",
     port=3000,
+    show_built_with_reflex=False,
 )
 
 
