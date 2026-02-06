@@ -12,6 +12,7 @@ class State(rx.State):
     # ==================== BASE STATE - Idioma y Menú ====================
     idioma: str = "es"
     menu_abierto: bool = False
+    diploma_url_actual: str = ""
     
     def cambiar_idioma(self, nuevo_idioma: str):
         self.idioma = nuevo_idioma
@@ -21,6 +22,10 @@ class State(rx.State):
     
     def cerrar_menu(self):
         self.menu_abierto = False
+    
+    def ver_diploma(self, url: str):
+        self.diploma_url_actual = url
+        return rx.redirect("/diploma")
     
     # Propiedades computadas para traducciones
     @rx.var
