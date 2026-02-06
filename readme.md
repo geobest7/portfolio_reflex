@@ -60,8 +60,7 @@ mi_portfolio_reflex/
 │   │   ├── routers/                  # API endpoints (CRUD + auth + analytics + contacto + github)
 │   │   ├── middleware/               # Analytics middleware (tracking visitas)
 │   │   └── utils/                    # JWT, password hashing
-│   ├── seed_data.py
-│   ├── create_admin.py
+│   ├── create_admin.py               # Script para crear usuario admin inicial
 │   └── requirements.txt
 │
 ├── .env                              # Variables de entorno (NO en Git)
