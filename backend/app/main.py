@@ -1,12 +1,38 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from .config import settings
-from .database import engine, Base
+from .database import engine, Base, SessionLocal
 from .routers import proyectos, cursos, experiencias, github, auth, contacto, analytics
 from .models import proyecto, curso, experiencia, github_repo, user, visita
+from .models.user import User
+from .utils.auth import get_password_hash
 from .middleware.analytics import AnalyticsMiddleware
 
 Base.metadata.create_all(bind=engine)
+
+
+def crear_admin_si_no_existe():
+    """Crear usuario admin automaticamente si no existe (necesario porque SQLite se pierde en cada redeploy de Render)"""
+    db = SessionLocal()
+    try:
+        existing = db.query(User).filter(User.username == "admin").first()
+        if not existing:
+            admin_user = User(
+                username="admin",
+                email="admin@portfolio.com",
+                hashed_password=get_password_hash("admin123"),
+                is_active=True,
+                is_admin=True
+            )
+            db.add(admin_user)
+            db.commit()
+    except Exception:
+        db.rollback()
+    finally:
+        db.close()
+
+
+crear_admin_si_no_existe()
 
 app = FastAPI(
     title=settings.app_name,
