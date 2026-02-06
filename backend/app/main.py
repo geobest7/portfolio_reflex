@@ -1,7 +1,7 @@
-from fastapi import FastAPI, Depends, HTTPException
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from .config import settings
-from .database import engine, Base, get_db
+from .database import engine, Base
 from .routers import proyectos, cursos, experiencias, github, auth, contacto, analytics
 from .models import proyecto, curso, experiencia, github_repo, user, visita
 from .middleware.analytics import AnalyticsMiddleware
@@ -40,25 +40,3 @@ def root():
 @app.get("/health")
 def health_check():
     return {"status": "healthy"}
-
-
-@app.post("/setup-admin")
-def setup_admin(secret: str, db=Depends(get_db)):
-    """Endpoint temporal para crear admin en producción. Eliminar después del primer uso."""
-    if secret != settings.secret_key:
-        raise HTTPException(status_code=403, detail="Forbidden")
-    from .models.user import User
-    from .utils.auth import get_password_hash
-    existing = db.query(User).filter(User.username == "admin").first()
-    if existing:
-        return {"message": "Admin ya existe"}
-    admin_user = User(
-        username="admin",
-        email="admin@portfolio.com",
-        hashed_password=get_password_hash("admin123"),
-        is_active=True,
-        is_admin=True
-    )
-    db.add(admin_user)
-    db.commit()
-    return {"message": "Admin creado. Usuario: admin, Password: admin123. CAMBIA LA PASSWORD."}
