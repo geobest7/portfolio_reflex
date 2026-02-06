@@ -111,19 +111,11 @@ def admin_analytics() -> rx.Component:
                                 State.analytics_paginas,
                                 lambda item: rx.hstack(
                                     rx.text(item["pagina"], color="white", size="2", width="200px"),
-                                    rx.box(
-                                        width=rx.cond(
-                                            item["visitas"] > 0,
-                                            (item["visitas"] * 5).to(str) + "px",
-                                            "5px",
-                                        ),
-                                        height="20px",
-                                        bg="#00CED1",
-                                        border_radius="4px",
-                                        min_width="5px",
-                                        max_width="300px",
+                                    rx.badge(
+                                        item["visitas"].to(str),
+                                        color_scheme="cyan",
+                                        size="1",
                                     ),
-                                    rx.text(item["visitas"].to(str), color="#CCCCCC", size="2"),
                                     spacing="3",
                                     align="center",
                                     width="100%",
