@@ -9,3 +9,4 @@ pandas>=2.1.0
 requests>=2.31.0
 pydantic-settings>=2.0.0
 email-validator
+httpx>=0.25.0
