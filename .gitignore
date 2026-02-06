@@ -15,7 +15,9 @@ __pycache__/
 
 # Reflex
 .web/
+.states
 assets/
+assets/external/
 
 # Base de datos local
 *.db

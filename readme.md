@@ -65,9 +65,8 @@ mi_portfolio_reflex/
 │   └── requirements.txt
 │
 ├── .env                              # Variables de entorno (NO en Git)
-├── .gitignore
-└── README.md
-```
+├── .gitignore                        # Reglas de exclusión para Git
+└── README.md                         # Este archivo
 
 ---
 
