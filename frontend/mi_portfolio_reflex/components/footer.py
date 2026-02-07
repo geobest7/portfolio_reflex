@@ -21,13 +21,6 @@ def footer() -> rx.Component:
                     _hover={"color": "#808080"},
                     is_external=True,
                 ),
-                rx.link(
-                    rx.icon("mail", size=24),
-                    href="mailto:febbrai.alessandro@libero.it",
-                    color="white",
-                    _hover={"color": "#808080"},
-                    is_external=True,
-                ),
                 spacing="6",
                 class_name="footer-social"
             ),

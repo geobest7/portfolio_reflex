@@ -27,6 +27,7 @@ def navbar() -> rx.Component:
                 _hover={"border_color": "#FFFFFF", "transform": "scale(1.05)"},
                 transition="all 0.2s ease",
                 aria_label="Alessandro Febbrai",
+                flex_shrink="0",
             ),
             rx.spacer(),
             # Links desktop (ocultos en móvil)
@@ -43,7 +44,11 @@ def navbar() -> rx.Component:
                 class_name="navbar-links",
             ),
             rx.spacer(),
-            selector_idioma(),
+            # Selector idioma desktop (oculto en móvil via CSS)
+            rx.box(
+                selector_idioma(),
+                class_name="navbar-lang-selector",
+            ),
             # Icono hamburguesa (visible solo en móvil)
             rx.button(
                 rx.icon("menu", size=28),
@@ -52,6 +57,7 @@ def navbar() -> rx.Component:
                 color="white",
                 class_name="hamburger-icon",
                 _hover={"background": "transparent"},
+                flex_shrink="0",
             ),
             width="100%",
             align="center",
@@ -123,6 +129,14 @@ def navbar() -> rx.Component:
                     padding="1em",
                     _hover={"background": "#1a1a1a"},
                 ),
+                # Selector idioma dentro del menú móvil
+                rx.box(
+                    selector_idioma(),
+                    padding="1em",
+                    width="100%",
+                    display="flex",
+                    justify_content="center",
+                ),
                 spacing="0",
                 width="100%",
                 bg="#000000",
@@ -134,8 +148,10 @@ def navbar() -> rx.Component:
         ),
         bg="#000000",
         padding="1em 2em",
+        margin="0",
         width="100%",
         position="fixed",
         top="0",
+        left="0",
         z_index="1000",
     )

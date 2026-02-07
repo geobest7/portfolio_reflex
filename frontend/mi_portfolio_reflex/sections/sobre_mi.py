@@ -7,7 +7,7 @@ TECNOLOGIAS = [
     ("Jupyter", "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/jupyter/jupyter-original-wordmark.svg"),
     ("NumPy", "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/numpy/numpy-original.svg"),
     ("Pandas", "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/pandas/pandas-original.svg"),
-    ("Reflex", "https://reflex.dev/logo.svg"),
+    ("Reflex", "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/reflex/reflex-original.svg"),
     ("Windsurf AI", "https://windsurf.com/favicon.svg"),
     ("FastAPI", "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/fastapi/fastapi-original.svg"),
     ("Git", "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/git/git-original.svg"),
