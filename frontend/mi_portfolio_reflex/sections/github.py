@@ -46,6 +46,9 @@ def seccion_github_repos() -> rx.Component:
                                 repo.name,
                                 size="5",
                                 color="white",
+                                word_break="break-word",
+                                overflow_wrap="break-word",
+                                width="100%",
                             ),
                             # Descripción
                             rx.cond(
@@ -54,6 +57,7 @@ def seccion_github_repos() -> rx.Component:
                                     repo.description,
                                     color="#CCCCCC",
                                     size="2",
+                                    word_break="break-word",
                                 ),
                             ),
                             # Stats: lenguaje, stars, forks
@@ -121,6 +125,8 @@ def seccion_github_repos() -> rx.Component:
                         border="1px solid #333333",
                         background_color="#0A0A0A",
                         width="100%",
+                        max_width="100%",
+                        overflow="hidden",
                         class_name="fade-in-up",
                     )
                 ),
