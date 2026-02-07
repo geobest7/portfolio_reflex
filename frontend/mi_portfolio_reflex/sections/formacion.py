@@ -7,7 +7,7 @@ def seccion_formacion() -> rx.Component:
     """Seccion Formacion con datos dinamicos desde la API"""
     return rx.box(
         rx.vstack(
-            rx.heading(State.formacion_titulo, size="8", color="white"),
+            rx.heading(State.formacion_titulo, size="8", color="white", text_align="center", width="100%"),
             
             rx.cond(
                 State.cargando_cursos,

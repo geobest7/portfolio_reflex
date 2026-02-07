@@ -27,16 +27,23 @@ TECNOLOGIAS = [
 def _tech_card(nombre: str, icon_url: str) -> rx.Component:
     return rx.box(
         rx.vstack(
-            rx.image(
-                src=icon_url,
-                width="50px",
-                height="50px",
+            rx.box(
+                rx.image(
+                    src=icon_url,
+                    width="100%",
+                    height="100%",
+                    object_fit="contain",
+                ),
+                width="45px",
+                height="45px",
+                flex_shrink="0",
             ),
-            rx.text(nombre, color="white", font_size="14px", font_weight="600"),
+            rx.text(nombre, color="white", font_size="13px", font_weight="600", text_align="center"),
             spacing="2",
             align="center",
         ),
-        padding="1em",
+        width="90px",
+        padding="0.8em",
         border_radius="8px",
         bg="#1a1a1a",
         border="2px solid #333",
@@ -49,7 +56,7 @@ def seccion_sobre_mi() -> rx.Component:
     """Sección Sobre mí"""
     return rx.box(
         rx.vstack(
-            rx.heading(State.sobre_mi_titulo, size="8", color="white"),
+            rx.heading(State.sobre_mi_titulo, size="8", color="white", text_align="center", width="100%"),
             rx.text(
                 State.sobre_mi_descripcion,
                 color="#cccccc",
@@ -58,7 +65,7 @@ def seccion_sobre_mi() -> rx.Component:
                 max_width="800px",
                 white_space="pre-line",
             ),
-            rx.heading(State.tecnologias_titulo, size="6", color="white", margin_top="2em"),
+            rx.heading(State.tecnologias_titulo, size="6", color="white", margin_top="2em", text_align="center", width="100%"),
             rx.hstack(
                 *[_tech_card(nombre, url) for nombre, url in TECNOLOGIAS],
                 spacing="4",

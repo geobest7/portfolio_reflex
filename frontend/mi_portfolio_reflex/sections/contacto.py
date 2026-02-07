@@ -6,7 +6,7 @@ def seccion_contacto() -> rx.Component:
     """Sección Contacto con información y formulario"""
     return rx.box(
         rx.vstack(
-            rx.heading(State.contacto_titulo, size="8", color="white"),
+            rx.heading(State.contacto_titulo, size="8", color="white", text_align="center", width="100%"),
 
             # Información de contacto
             rx.vstack(

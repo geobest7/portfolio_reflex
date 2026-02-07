@@ -7,7 +7,7 @@ def seccion_github_repos() -> rx.Component:
     """Sección de repositorios de GitHub con datos dinámicos desde la API"""
     return rx.box(
         rx.vstack(
-            rx.heading(State.github_titulo, size="8", color="white"),
+            rx.heading(State.github_titulo, size="8", color="white", text_align="center", width="100%"),
             rx.text(
                 State.github_subtitulo,
                 color="#CCCCCC",
