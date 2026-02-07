@@ -8,7 +8,7 @@ TECNOLOGIAS = [
     ("NumPy", "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/numpy/numpy-original.svg"),
     ("Pandas", "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/pandas/pandas-original.svg"),
     ("Reflex", "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/reflex/reflex-original.svg"),
-    ("Windsurf AI", "https://windsurf.com/favicon.svg"),
+    ("Windsurf AI", "https://windsurf.com/apple-touch-icon.png"),
     ("FastAPI", "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/fastapi/fastapi-original.svg"),
     ("Git", "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/git/git-original.svg"),
     ("GitHub", "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg"),
