@@ -1,10 +1,36 @@
+import os
 import reflex as rx
 from ..components.selectors import selector_idioma_portada
+
+_API_URL = os.environ.get("API_URL", "http://localhost:8001")
+
+_TRACKING_SCRIPT = f"""
+(function() {{
+    if (window._tracked) return;
+    window._tracked = true;
+    try {{
+        fetch("{_API_URL}/api/analytics/track", {{
+            method: "POST",
+            headers: {{"Content-Type": "application/json"}},
+            body: JSON.stringify({{
+                pagina: window.location.pathname,
+                referrer: document.referrer || "",
+                user_agent: navigator.userAgent || "",
+                screen_width: window.screen.width,
+                screen_height: window.screen.height,
+                idioma: navigator.language || "",
+                plataforma: navigator.platform || ""
+            }})
+        }});
+    }} catch(e) {{}}
+}})();
+"""
 
 
 def portada() -> rx.Component:
     """Página de portada - Solo selector de idioma"""
     return rx.box(
+        rx.script(_TRACKING_SCRIPT),
         rx.center(
             rx.vstack(
                 rx.heading(

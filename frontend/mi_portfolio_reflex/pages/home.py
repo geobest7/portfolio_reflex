@@ -1,3 +1,4 @@
+import os
 import reflex as rx
 from ..states import State
 from ..components import navbar, footer
@@ -10,10 +11,35 @@ from ..sections import (
     seccion_contacto
 )
 
+_API_URL = os.environ.get("API_URL", "http://localhost:8001")
+
+_TRACKING_SCRIPT = f"""
+(function() {{
+    if (window._tracked) return;
+    window._tracked = true;
+    try {{
+        fetch("{_API_URL}/api/analytics/track", {{
+            method: "POST",
+            headers: {{"Content-Type": "application/json"}},
+            body: JSON.stringify({{
+                pagina: window.location.pathname,
+                referrer: document.referrer || "",
+                user_agent: navigator.userAgent || "",
+                screen_width: window.screen.width,
+                screen_height: window.screen.height,
+                idioma: navigator.language || "",
+                plataforma: navigator.platform || ""
+            }})
+        }});
+    }} catch(e) {{}}
+}})();
+"""
+
 
 def home() -> rx.Component:
     """Página Home - Contenido principal del portfolio"""
     return rx.box(
+        rx.script(_TRACKING_SCRIPT),
         navbar(),
         rx.vstack(
             rx.image(

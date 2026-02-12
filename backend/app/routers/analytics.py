@@ -1,15 +1,128 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Request
 from fastapi.responses import StreamingResponse
 from sqlalchemy.orm import Session
 from sqlalchemy import func, desc
 from datetime import datetime, timedelta
 from io import BytesIO
+from pydantic import BaseModel
+from typing import Optional
 from ..database import get_db
 from ..models.visita import Visita
 from ..utils.auth import get_current_admin_user
 
 router = APIRouter()
 
+
+# ==================== TRACKING (público, sin auth) ====================
+
+class TrackingData(BaseModel):
+    pagina: str
+    referrer: str = ""
+    user_agent: str = ""
+    screen_width: Optional[int] = None
+    screen_height: Optional[int] = None
+    idioma: str = ""
+    plataforma: str = ""
+
+
+def detectar_dispositivo(user_agent: str, screen_width: Optional[int] = None) -> str:
+    """Detectar dispositivo usando screen_width (más fiable) y user_agent como fallback"""
+    if screen_width:
+        if screen_width <= 768:
+            return "movil"
+        elif screen_width <= 1024:
+            return "tablet"
+        return "desktop"
+    ua = user_agent.lower()
+    if any(m in ua for m in ["mobile", "android", "iphone"]):
+        return "movil"
+    if "ipad" in ua or "tablet" in ua:
+        return "tablet"
+    return "desktop"
+
+
+def detectar_navegador(user_agent: str) -> str:
+    ua = user_agent.lower()
+    if "edg" in ua:
+        return "Edge"
+    if "opr" in ua or "opera" in ua:
+        return "Opera"
+    if "chrome" in ua and "safari" in ua:
+        return "Chrome"
+    if "firefox" in ua:
+        return "Firefox"
+    if "safari" in ua:
+        return "Safari"
+    return "Otro"
+
+
+def detectar_os(user_agent: str, plataforma: str = "") -> str:
+    """Detectar sistema operativo"""
+    p = plataforma.lower()
+    if p:
+        if "win" in p:
+            return "Windows"
+        if "mac" in p:
+            return "macOS"
+        if "linux" in p:
+            return "Linux"
+        if "iphone" in p or "ipad" in p:
+            return "iOS"
+        if "android" in p:
+            return "Android"
+    ua = user_agent.lower()
+    if "iphone" in ua or "ipad" in ua:
+        return "iOS"
+    if "android" in ua:
+        return "Android"
+    if "windows" in ua:
+        return "Windows"
+    if "macintosh" in ua or "mac os" in ua:
+        return "macOS"
+    if "linux" in ua:
+        return "Linux"
+    return "Otro"
+
+
+def anonimizar_ip(ip: str) -> str:
+    if not ip:
+        return ""
+    partes = ip.split(".")
+    if len(partes) == 4:
+        partes[-1] = "0"
+        return ".".join(partes)
+    return ip
+
+
+@router.post("/track")
+async def registrar_visita(data: TrackingData, request: Request, db: Session = Depends(get_db)):
+    """Endpoint público para registrar visitas desde el navegador del visitante"""
+    ip_raw = request.headers.get("x-forwarded-for", "").split(",")[0].strip()
+    if not ip_raw:
+        ip_raw = request.client.host if request.client else ""
+    
+    visita = Visita(
+        ip=anonimizar_ip(ip_raw),
+        pagina=data.pagina or "/",
+        metodo="GET",
+        user_agent=(data.user_agent or "")[:500],
+        referer=(data.referrer or "")[:500],
+        pais="",
+        ciudad="",
+        dispositivo=detectar_dispositivo(data.user_agent, data.screen_width),
+        navegador=detectar_navegador(data.user_agent),
+        screen_width=data.screen_width,
+        screen_height=data.screen_height,
+        idioma=(data.idioma or "")[:10],
+        plataforma=detectar_os(data.user_agent, data.plataforma),
+    )
+    db.add(visita)
+    db.commit()
+    
+    return {"status": "ok"}
+
+
+# ==================== CONSULTAS (requieren auth) ====================
 
 @router.get("/resumen")
 def resumen_analytics(
@@ -93,6 +206,47 @@ def distribucion_navegadores(
     return [{"navegador": r[0], "total": r[1]} for r in resultados]
 
 
+@router.get("/plataformas")
+def distribucion_plataformas(
+    dias: int = 30,
+    db: Session = Depends(get_db),
+    current_user=Depends(get_current_admin_user)
+):
+    """Distribución por sistema operativo"""
+    fecha_desde = datetime.utcnow() - timedelta(days=dias)
+    
+    resultados = db.query(
+        Visita.plataforma,
+        func.count(Visita.id).label("total")
+    ).filter(
+        Visita.timestamp >= fecha_desde
+    ).group_by(Visita.plataforma).order_by(desc("total")).all()
+    
+    return [{"plataforma": r[0] or "Desconocido", "total": r[1]} for r in resultados]
+
+
+@router.get("/referrers")
+def distribucion_referrers(
+    dias: int = 30,
+    limit: int = 10,
+    db: Session = Depends(get_db),
+    current_user=Depends(get_current_admin_user)
+):
+    """De dónde vienen los visitantes"""
+    fecha_desde = datetime.utcnow() - timedelta(days=dias)
+    
+    resultados = db.query(
+        Visita.referer,
+        func.count(Visita.id).label("total")
+    ).filter(
+        Visita.timestamp >= fecha_desde,
+        Visita.referer != "",
+        Visita.referer != None,
+    ).group_by(Visita.referer).order_by(desc("total")).limit(limit).all()
+    
+    return [{"referrer": r[0], "total": r[1]} for r in resultados]
+
+
 @router.get("/visitas-por-dia")
 def visitas_por_dia(
     dias: int = 30,
@@ -128,6 +282,8 @@ def visitas_recientes(
             "pagina": v.pagina,
             "dispositivo": v.dispositivo,
             "navegador": v.navegador,
+            "plataforma": v.plataforma or "",
+            "referer": v.referer or "",
             "timestamp": v.timestamp.isoformat() if v.timestamp else "",
         }
         for v in visitas
@@ -148,15 +304,14 @@ def exportar_excel(
     
     wb = openpyxl.Workbook()
     
-    # Estilos
     header_font = Font(bold=True, color="FFFFFF", size=11)
-    header_fill = PatternFill(start_color="1a1a1a", end_color="1a1a1a", fill_type="solid")
+    header_fill = PatternFill(start_color="2c3e50", end_color="2c3e50", fill_type="solid")
     header_align = Alignment(horizontal="center", vertical="center")
     thin_border = Border(
-        left=Side(style="thin", color="333333"),
-        right=Side(style="thin", color="333333"),
-        top=Side(style="thin", color="333333"),
-        bottom=Side(style="thin", color="333333"),
+        left=Side(style="thin", color="cccccc"),
+        right=Side(style="thin", color="cccccc"),
+        top=Side(style="thin", color="cccccc"),
+        bottom=Side(style="thin", color="cccccc"),
     )
     
     def style_header(ws, row=1):
@@ -198,57 +353,9 @@ def exportar_excel(
     ws_dias.column_dimensions["A"].width = 15
     ws_dias.column_dimensions["B"].width = 12
     
-    # === Hoja 3: Páginas ===
-    ws_paginas = wb.create_sheet("Páginas")
-    ws_paginas.append(["Página", "Visitas"])
-    style_header(ws_paginas)
-    
-    paginas = db.query(
-        Visita.pagina, func.count(Visita.id).label("visitas")
-    ).filter(Visita.timestamp >= fecha_desde).group_by(
-        Visita.pagina
-    ).order_by(desc("visitas")).all()
-    
-    for r in paginas:
-        ws_paginas.append([r[0], r[1]])
-    ws_paginas.column_dimensions["A"].width = 40
-    ws_paginas.column_dimensions["B"].width = 12
-    
-    # === Hoja 4: Dispositivos ===
-    ws_disp = wb.create_sheet("Dispositivos")
-    ws_disp.append(["Dispositivo", "Total"])
-    style_header(ws_disp)
-    
-    dispositivos = db.query(
-        Visita.dispositivo, func.count(Visita.id).label("total")
-    ).filter(Visita.timestamp >= fecha_desde).group_by(
-        Visita.dispositivo
-    ).order_by(desc("total")).all()
-    
-    for r in dispositivos:
-        ws_disp.append([r[0], r[1]])
-    ws_disp.column_dimensions["A"].width = 20
-    ws_disp.column_dimensions["B"].width = 12
-    
-    # === Hoja 5: Navegadores ===
-    ws_nav = wb.create_sheet("Navegadores")
-    ws_nav.append(["Navegador", "Total"])
-    style_header(ws_nav)
-    
-    navegadores = db.query(
-        Visita.navegador, func.count(Visita.id).label("total")
-    ).filter(Visita.timestamp >= fecha_desde).group_by(
-        Visita.navegador
-    ).order_by(desc("total")).all()
-    
-    for r in navegadores:
-        ws_nav.append([r[0], r[1]])
-    ws_nav.column_dimensions["A"].width = 20
-    ws_nav.column_dimensions["B"].width = 12
-    
-    # === Hoja 6: Todas las visitas ===
+    # === Hoja 3: Todas las visitas ===
     ws_todas = wb.create_sheet("Todas las Visitas")
-    ws_todas.append(["Fecha/Hora", "Página", "Dispositivo", "Navegador", "IP", "País", "Ciudad"])
+    ws_todas.append(["Fecha/Hora", "Página", "Dispositivo", "Navegador", "SO", "IP", "Referrer"])
     style_header(ws_todas)
     
     visitas = db.query(Visita).filter(
@@ -261,19 +368,18 @@ def exportar_excel(
             v.pagina or "",
             v.dispositivo or "",
             v.navegador or "",
+            v.plataforma or "",
             v.ip or "",
-            v.pais or "",
-            v.ciudad or "",
+            v.referer or "",
         ])
     ws_todas.column_dimensions["A"].width = 18
     ws_todas.column_dimensions["B"].width = 30
-    ws_todas.column_dimensions["C"].width = 15
-    ws_todas.column_dimensions["D"].width = 15
-    ws_todas.column_dimensions["E"].width = 18
-    ws_todas.column_dimensions["F"].width = 15
-    ws_todas.column_dimensions["G"].width = 15
+    ws_todas.column_dimensions["C"].width = 12
+    ws_todas.column_dimensions["D"].width = 12
+    ws_todas.column_dimensions["E"].width = 12
+    ws_todas.column_dimensions["F"].width = 16
+    ws_todas.column_dimensions["G"].width = 30
     
-    # Guardar en buffer
     buffer = BytesIO()
     wb.save(buffer)
     buffer.seek(0)

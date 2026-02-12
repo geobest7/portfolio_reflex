@@ -6,9 +6,31 @@ from .routers import proyectos, cursos, experiencias, github, auth, contacto, an
 from .models import proyecto, curso, experiencia, github_repo, user, visita
 from .models.user import User
 from .utils.auth import get_password_hash
-from .middleware.analytics import AnalyticsMiddleware
 
 Base.metadata.create_all(bind=engine)
+
+
+def migrar_columnas_visitas():
+    """Añadir columnas nuevas a la tabla visitas si no existen"""
+    from sqlalchemy import text
+    db = SessionLocal()
+    try:
+        for col, tipo in [
+            ("screen_width", "INTEGER"),
+            ("screen_height", "INTEGER"),
+            ("idioma", "VARCHAR(10)"),
+            ("plataforma", "VARCHAR(100)"),
+        ]:
+            try:
+                db.execute(text(f"ALTER TABLE visitas ADD COLUMN {col} {tipo}"))
+                db.commit()
+            except Exception:
+                db.rollback()
+    finally:
+        db.close()
+
+
+migrar_columnas_visitas()
 
 
 def crear_admin_si_no_existe():
@@ -54,8 +76,6 @@ app.include_router(github.router, prefix="/api/github", tags=["github"])
 app.include_router(auth.router, prefix="/api/auth", tags=["auth"])
 app.include_router(contacto.router, prefix="/api/contacto", tags=["contacto"])
 app.include_router(analytics.router, prefix="/api/analytics", tags=["analytics"])
-
-app.add_middleware(AnalyticsMiddleware)
 
 
 @app.get("/")

@@ -17,3 +17,7 @@ class Visita(Base):
     dispositivo = Column(String(50))
     navegador = Column(String(100))
     timestamp = Column(DateTime, default=datetime.utcnow, index=True)
+    screen_width = Column(Integer, nullable=True)
+    screen_height = Column(Integer, nullable=True)
+    idioma = Column(String(10), nullable=True)
+    plataforma = Column(String(100), nullable=True)

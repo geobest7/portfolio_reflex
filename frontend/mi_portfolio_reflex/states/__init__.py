@@ -875,14 +875,30 @@ class State(rx.State):
     analytics_paginas: list[dict[str, str]] = []
     analytics_dispositivos: list[dict[str, str]] = []
     analytics_navegadores: list[dict[str, str]] = []
+    analytics_plataformas: list[dict[str, str]] = []
+    analytics_referrers: list[dict[str, str]] = []
     analytics_por_dia: list[dict[str, str]] = []
     analytics_recientes: list[dict[str, str]] = []
     cargando_analytics: bool = False
     error_analytics: str = ""
     
     def descargar_excel_analytics(self):
-        """Descargar Excel de analíticas"""
-        return rx.redirect(f"{API_URL}/api/analytics/export?dias=30")
+        """Descargar Excel via backend con auth"""
+        try:
+            headers = {"Authorization": f"Bearer {self.token}"}
+            r = httpx.get(
+                f"{API_URL}/api/analytics/export?dias=30",
+                headers=headers, timeout=30.0
+            )
+            if r.status_code == 200:
+                return rx.download(
+                    data=r.content,
+                    filename="analytics.xlsx",
+                )
+            else:
+                return rx.toast.error("Error al descargar Excel")
+        except Exception as e:
+            return rx.toast.error(f"Error: {str(e)}")
     
     def cargar_analytics(self):
         self.cargando_analytics = True
@@ -893,14 +909,14 @@ class State(rx.State):
             
             r_resumen = httpx.get(
                 f"{API_URL}/api/analytics/resumen",
-                headers=headers, timeout=10.0
+                headers=headers, timeout=15.0
             )
             if r_resumen.status_code == 200:
                 self.analytics_resumen = r_resumen.json()
             
             r_paginas = httpx.get(
                 f"{API_URL}/api/analytics/paginas",
-                headers=headers, timeout=10.0
+                headers=headers, timeout=15.0
             )
             if r_paginas.status_code == 200:
                 self.analytics_paginas = [
@@ -910,7 +926,7 @@ class State(rx.State):
             
             r_dispositivos = httpx.get(
                 f"{API_URL}/api/analytics/dispositivos",
-                headers=headers, timeout=10.0
+                headers=headers, timeout=15.0
             )
             if r_dispositivos.status_code == 200:
                 self.analytics_dispositivos = [
@@ -920,7 +936,7 @@ class State(rx.State):
             
             r_navegadores = httpx.get(
                 f"{API_URL}/api/analytics/navegadores",
-                headers=headers, timeout=10.0
+                headers=headers, timeout=15.0
             )
             if r_navegadores.status_code == 200:
                 self.analytics_navegadores = [
@@ -928,9 +944,29 @@ class State(rx.State):
                     for item in r_navegadores.json()
                 ]
             
+            r_plataformas = httpx.get(
+                f"{API_URL}/api/analytics/plataformas",
+                headers=headers, timeout=15.0
+            )
+            if r_plataformas.status_code == 200:
+                self.analytics_plataformas = [
+                    {k: str(v) for k, v in item.items()}
+                    for item in r_plataformas.json()
+                ]
+            
+            r_referrers = httpx.get(
+                f"{API_URL}/api/analytics/referrers",
+                headers=headers, timeout=15.0
+            )
+            if r_referrers.status_code == 200:
+                self.analytics_referrers = [
+                    {k: str(v) for k, v in item.items()}
+                    for item in r_referrers.json()
+                ]
+            
             r_por_dia = httpx.get(
                 f"{API_URL}/api/analytics/visitas-por-dia",
-                headers=headers, timeout=10.0
+                headers=headers, timeout=15.0
             )
             if r_por_dia.status_code == 200:
                 self.analytics_por_dia = [
@@ -940,7 +976,7 @@ class State(rx.State):
             
             r_recientes = httpx.get(
                 f"{API_URL}/api/analytics/recientes",
-                headers=headers, timeout=10.0
+                headers=headers, timeout=15.0
             )
             if r_recientes.status_code == 200:
                 self.analytics_recientes = [
