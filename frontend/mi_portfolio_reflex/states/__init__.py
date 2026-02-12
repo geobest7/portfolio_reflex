@@ -208,7 +208,7 @@ class State(rx.State):
                     "email": self.form_email_value.strip(),
                     "mensaje": self.form_mensaje_value.strip(),
                 },
-                timeout=10.0
+                timeout=60.0
             )
             
             if response.status_code == 200:

@@ -49,7 +49,7 @@ Enviado desde el formulario de contacto del portfolio.
 """
         msg.attach(MIMEText(body, "plain"))
         
-        with smtplib.SMTP(settings.smtp_host, settings.smtp_port) as server:
+        with smtplib.SMTP(settings.smtp_host, settings.smtp_port, timeout=15) as server:
             server.starttls()
             server.login(settings.smtp_user, settings.smtp_password)
             server.send_message(msg)
@@ -60,6 +60,11 @@ Enviado desde el formulario de contacto del portfolio.
         raise HTTPException(
             status_code=500,
             detail="Error de autenticación del servidor de email"
+        )
+    except (TimeoutError, OSError) as e:
+        raise HTTPException(
+            status_code=504,
+            detail="No se pudo conectar al servidor de email. Inténtalo más tarde."
         )
     except Exception as e:
         raise HTTPException(
