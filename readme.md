@@ -9,10 +9,10 @@ Portfolio personal full-stack desarrollado con **Reflex** (frontend) y **FastAPI
 - **Multi-idioma** — ES / EN / IT / CA con traducciones completas
 - **Diseño minimalista** — Interfaz negra, limpia y profesional
 - **Panel admin** — CRUD completo para proyectos, cursos y experiencias
-- **Analíticas propias** — Tracking de visitas, dispositivos y navegadores
-- **Formulario de contacto** — Envío de emails real via SMTP
-- **Autenticación JWT** — Login seguro para admin
-- **GitHub API** — Repositorios cargados automáticamente con cache
+- **Analíticas reales** — Tracking client-side con JS, dashboard con dispositivos, SO, navegadores, referrers y export Excel
+- **Formulario de contacto** — Envío de emails via Resend API
+- **Autenticación JWT** — Login seguro para admin con cambio de credenciales
+- **GitHub API** — Repositorios cargados automáticamente con cache 6h
 - **Responsive** — Adaptado a móvil, tablet y desktop
 - **SEO** — Metatags, OpenGraph, Twitter Cards, robots.txt
 - **Visor CV/Diploma** — PDFs visualizables y descargables
@@ -26,9 +26,9 @@ Portfolio personal full-stack desarrollado con **Reflex** (frontend) y **FastAPI
 | **Frontend** | Reflex (Python → React), CSS custom |
 | **Backend** | FastAPI, SQLAlchemy, PostgreSQL (prod) / SQLite (local) |
 | **Auth** | JWT (python-jose), bcrypt |
-| **Email** | SMTP (Gmail) |
-| **Analytics** | Middleware propio + dashboard admin |
-| **Hosting** | Reflex Cloud (frontend) + Render (backend) |
+| **Email** | Resend API |
+| **Analytics** | Tracking JS client-side + endpoint público + dashboard admin |
+| **Hosting** | Reflex Cloud (frontend) + Render (backend + PostgreSQL) |
 | **Control de versiones** | Git + GitHub |
 
 ---
@@ -60,23 +60,22 @@ mi_portfolio_reflex/
 │   │   ├── translations.py           # Traducciones (ES, EN, IT, CA)
 │   │   ├── models.py                 # Modelos Pydantic
 │   │   ├── utils.py                  # Helpers
-│   │   ├── states/                   # State unificado
+│   │   ├── states/                   # State unificado (auth, analytics, CRUD, contacto)
 │   │   ├── components/               # Navbar, footer, selectores, skeletons
 │   │   ├── sections/                 # Sobre mí, proyectos, formación, experiencia, github, contacto
 │   │   ├── pages/                    # Portada, home, CV, login
 │   │   └── admin/                    # Dashboard, CRUD proyectos/cursos/experiencias, analíticas
-│   ├── assets/                       # CV.pdf, foto_perfil.png, favicon.ico, styles/
+│   ├── assets/                       # CV.pdf, foto_perfil.png, favicon.ico, tracking.js, styles/
 │   └── rxconfig.py
 │
 ├── backend/
 │   ├── app/
-│   │   ├── main.py                   # FastAPI + CORS + middleware analytics + auto-crear admin
+│   │   ├── main.py                   # FastAPI + CORS + migración DB + auto-crear admin
 │   │   ├── config.py                 # Settings (pydantic-settings + .env)
 │   │   ├── database.py               # SQLAlchemy + PostgreSQL (prod) / SQLite (local)
 │   │   ├── models/                   # Proyecto, Curso, Experiencia, User, Visita, GitHubRepo
 │   │   ├── schemas/                  # Validación Pydantic
 │   │   ├── routers/                  # API endpoints (CRUD + auth + analytics + contacto + github)
-│   │   ├── middleware/               # Analytics middleware (tracking visitas)
 │   │   └── utils/                    # JWT, password hashing (bcrypt directo)
 │   ├── create_admin.py               # Script para crear usuario admin inicial
 │   ├── render.yaml                   # Configuración de despliegue en Render
@@ -84,8 +83,20 @@ mi_portfolio_reflex/
 │
 ├── .env                              # Variables de entorno (NO en Git)
 ├── .gitignore                        # Reglas de exclusión para Git
-└── README.md                         # Este archivo
+└── readme.md                         # Este archivo
 ```
+
+---
+
+## Sistema de Analíticas
+
+El tracking de visitas funciona con **JavaScript client-side** ejecutado en el navegador real del visitante:
+
+1. `frontend/assets/tracking.js` se carga en cada página via `rx.script(src="/tracking.js")`
+2. El script envía datos reales al backend: user agent, tamaño de pantalla, idioma, plataforma, referrer
+3. El backend (`POST /api/analytics/track`) detecta dispositivo, navegador y SO, y almacena la visita
+4. El dashboard admin muestra: visitas totales, únicos, visitas/día, dispositivos, SO, navegadores, páginas, referrers y últimas visitas
+5. Export a Excel disponible desde el dashboard (con autenticación JWT)
 
 ---
 
@@ -107,18 +118,27 @@ mi_portfolio_reflex/
 
 ## API Endpoints
 
-| Método | Ruta | Descripción |
-|--------|------|-------------|
-| GET/POST/PUT/DELETE | `/api/proyectos/` | CRUD proyectos (protegido) |
-| GET/POST/PUT/DELETE | `/api/cursos/` | CRUD cursos (protegido) |
-| GET/POST/PUT/DELETE | `/api/experiencias/` | CRUD experiencias (protegido) |
-| POST | `/api/auth/login` | Login OAuth2 |
-| GET | `/api/auth/me` | Info usuario actual |
-| PUT | `/api/auth/change-password` | Cambiar contraseña |
-| PUT | `/api/auth/change-username` | Cambiar username |
-| GET | `/api/github/repos` | Repos GitHub (cache 6h) |
-| POST | `/api/contacto/` | Enviar email de contacto |
-| GET | `/api/analytics/*` | Estadísticas de visitas (protegido) |
+| Método | Ruta | Auth | Descripción |
+|--------|------|------|-------------|
+| GET/POST/PUT/DELETE | `/api/proyectos/` | JWT | CRUD proyectos |
+| GET/POST/PUT/DELETE | `/api/cursos/` | JWT | CRUD cursos |
+| GET/POST/PUT/DELETE | `/api/experiencias/` | JWT | CRUD experiencias |
+| POST | `/api/auth/login` | — | Login OAuth2 |
+| GET | `/api/auth/me` | JWT | Info usuario actual |
+| PUT | `/api/auth/change-password` | JWT | Cambiar contraseña |
+| PUT | `/api/auth/change-username` | JWT | Cambiar username |
+| GET | `/api/github/repos` | — | Repos GitHub (cache 6h) |
+| POST | `/api/contacto/` | — | Enviar email de contacto (Resend) |
+| POST | `/api/analytics/track` | — | Registrar visita (público, desde JS) |
+| GET | `/api/analytics/resumen` | JWT | Total visitas + únicos (30 días) |
+| GET | `/api/analytics/paginas` | JWT | Páginas más visitadas |
+| GET | `/api/analytics/dispositivos` | JWT | Dispositivos (desktop/móvil/tablet) |
+| GET | `/api/analytics/navegadores` | JWT | Navegadores (Chrome, Firefox, Safari...) |
+| GET | `/api/analytics/plataformas` | JWT | Sistemas operativos (Windows, Android, iOS...) |
+| GET | `/api/analytics/referrers` | JWT | Origen del tráfico |
+| GET | `/api/analytics/visitas-por-dia` | JWT | Visitas agrupadas por día |
+| GET | `/api/analytics/recientes` | JWT | Últimas visitas detalladas |
+| GET | `/api/analytics/export` | JWT | Exportar a Excel (.xlsx) |
 
 ---
 
@@ -153,10 +173,7 @@ DATABASE_URL=sqlite:///./portfolio.db
 SECRET_KEY=tu-clave-secreta
 GITHUB_TOKEN=tu-token-github
 CORS_ALLOW_ALL=false
-SMTP_HOST=smtp.gmail.com
-SMTP_PORT=587
-SMTP_USER=tu-email@gmail.com
-SMTP_PASSWORD=tu-app-password
+RESEND_API_KEY=tu-api-key-resend
 CONTACT_EMAIL_TO=tu-email-destino
 ```
 
