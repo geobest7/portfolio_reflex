@@ -880,6 +880,10 @@ class State(rx.State):
     cargando_analytics: bool = False
     error_analytics: str = ""
     
+    def descargar_excel_analytics(self):
+        """Descargar Excel de analíticas"""
+        return rx.redirect(f"{API_URL}/api/analytics/export?dias=30")
+    
     def cargar_analytics(self):
         self.cargando_analytics = True
         self.error_analytics = ""
