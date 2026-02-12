@@ -1,6 +1,4 @@
-import smtplib
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
+import httpx
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, EmailStr
 from ..config import settings
@@ -16,27 +14,33 @@ class ContactForm(BaseModel):
 
 @router.post("/")
 async def enviar_contacto(form: ContactForm):
-    """Enviar email desde el formulario de contacto"""
+    """Enviar email desde el formulario de contacto usando Resend API"""
     
     if not form.nombre.strip():
         raise HTTPException(status_code=400, detail="El nombre es obligatorio")
     if not form.mensaje.strip():
         raise HTTPException(status_code=400, detail="El mensaje es obligatorio")
     
-    if not settings.smtp_user or not settings.smtp_password or not settings.contact_email_to:
+    if not settings.resend_api_key:
         raise HTTPException(
             status_code=500,
             detail="El servicio de email no está configurado"
         )
     
     try:
-        msg = MIMEMultipart()
-        msg["From"] = settings.smtp_user
-        msg["To"] = settings.contact_email_to
-        msg["Subject"] = f"Portfolio - Nuevo mensaje de {form.nombre}"
-        
-        body = f"""
-Nuevo mensaje desde el formulario de contacto del Portfolio:
+        async with httpx.AsyncClient() as client:
+            response = await client.post(
+                "https://api.resend.com/emails",
+                headers={
+                    "Authorization": f"Bearer {settings.resend_api_key}",
+                    "Content-Type": "application/json",
+                },
+                json={
+                    "from": "Portfolio Contact <onboarding@resend.dev>",
+                    "to": [settings.contact_email_to],
+                    "subject": f"Portfolio - Nuevo mensaje de {form.nombre}",
+                    "reply_to": form.email,
+                    "text": f"""Nuevo mensaje desde el formulario de contacto del Portfolio:
 
 Nombre: {form.nombre}
 Email: {form.email}
@@ -45,32 +49,24 @@ Mensaje:
 {form.mensaje}
 
 ---
-Enviado desde el formulario de contacto del portfolio.
-"""
-        msg.attach(MIMEText(body, "plain"))
+Enviado desde el formulario de contacto del portfolio.""",
+                },
+                timeout=15.0,
+            )
         
-        if settings.smtp_port == 465:
-            with smtplib.SMTP_SSL(settings.smtp_host, settings.smtp_port, timeout=15) as server:
-                server.login(settings.smtp_user, settings.smtp_password)
-                server.send_message(msg)
+        if response.status_code == 200:
+            return {"status": "ok", "message": "Mensaje enviado correctamente"}
         else:
-            with smtplib.SMTP(settings.smtp_host, settings.smtp_port, timeout=15) as server:
-                server.starttls()
-                server.login(settings.smtp_user, settings.smtp_password)
-                server.send_message(msg)
-        
-        return {"status": "ok", "message": "Mensaje enviado correctamente"}
+            detail = response.json().get("message", "Error al enviar")
+            raise HTTPException(status_code=500, detail=detail)
     
-    except smtplib.SMTPAuthenticationError:
-        raise HTTPException(
-            status_code=500,
-            detail="Error de autenticación del servidor de email"
-        )
-    except (TimeoutError, OSError) as e:
+    except httpx.TimeoutException:
         raise HTTPException(
             status_code=504,
             detail="No se pudo conectar al servidor de email. Inténtalo más tarde."
         )
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(
             status_code=500,

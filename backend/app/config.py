@@ -23,12 +23,15 @@ class Settings(BaseSettings):
     github_token: Optional[str] = None
     github_username: str = "geobest7"
     
-    # SMTP para formulario de contacto
+    # SMTP para formulario de contacto (legacy)
     smtp_host: str = "smtp.gmail.com"
     smtp_port: int = 587
     smtp_user: str = ""
     smtp_password: str = ""
     contact_email_to: str = ""
+    
+    # Resend API para formulario de contacto
+    resend_api_key: str = ""
     
     class Config:
         env_file = "../.env"
