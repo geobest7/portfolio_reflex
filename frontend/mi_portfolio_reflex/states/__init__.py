@@ -872,11 +872,11 @@ class State(rx.State):
     
     # ==================== ANALYTICS STATE ====================
     analytics_resumen: dict = {}
-    analytics_paginas: list[dict] = []
-    analytics_dispositivos: list[dict] = []
-    analytics_navegadores: list[dict] = []
-    analytics_por_dia: list[dict] = []
-    analytics_recientes: list[dict] = []
+    analytics_paginas: list[dict[str, str]] = []
+    analytics_dispositivos: list[dict[str, str]] = []
+    analytics_navegadores: list[dict[str, str]] = []
+    analytics_por_dia: list[dict[str, str]] = []
+    analytics_recientes: list[dict[str, str]] = []
     cargando_analytics: bool = False
     error_analytics: str = ""
     
@@ -903,35 +903,50 @@ class State(rx.State):
                 headers=headers, timeout=10.0
             )
             if r_paginas.status_code == 200:
-                self.analytics_paginas = r_paginas.json()
+                self.analytics_paginas = [
+                    {k: str(v) for k, v in item.items()}
+                    for item in r_paginas.json()
+                ]
             
             r_dispositivos = httpx.get(
                 f"{API_URL}/api/analytics/dispositivos",
                 headers=headers, timeout=10.0
             )
             if r_dispositivos.status_code == 200:
-                self.analytics_dispositivos = r_dispositivos.json()
+                self.analytics_dispositivos = [
+                    {k: str(v) for k, v in item.items()}
+                    for item in r_dispositivos.json()
+                ]
             
             r_navegadores = httpx.get(
                 f"{API_URL}/api/analytics/navegadores",
                 headers=headers, timeout=10.0
             )
             if r_navegadores.status_code == 200:
-                self.analytics_navegadores = r_navegadores.json()
+                self.analytics_navegadores = [
+                    {k: str(v) for k, v in item.items()}
+                    for item in r_navegadores.json()
+                ]
             
             r_por_dia = httpx.get(
                 f"{API_URL}/api/analytics/visitas-por-dia",
                 headers=headers, timeout=10.0
             )
             if r_por_dia.status_code == 200:
-                self.analytics_por_dia = r_por_dia.json()
+                self.analytics_por_dia = [
+                    {k: str(v) for k, v in item.items()}
+                    for item in r_por_dia.json()
+                ]
             
             r_recientes = httpx.get(
                 f"{API_URL}/api/analytics/recientes",
                 headers=headers, timeout=10.0
             )
             if r_recientes.status_code == 200:
-                self.analytics_recientes = r_recientes.json()
+                self.analytics_recientes = [
+                    {k: str(v) for k, v in item.items()}
+                    for item in r_recientes.json()
+                ]
                 
         except Exception as e:
             self.error_analytics = f"Error al cargar analíticas: {str(e)}"
