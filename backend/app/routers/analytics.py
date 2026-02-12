@@ -94,15 +94,6 @@ def anonimizar_ip(ip: str) -> str:
     return ip
 
 
-@router.delete("/limpiar-visitas")
-def limpiar_visitas(db: Session = Depends(get_db), current_user=Depends(get_current_admin_user)):
-    """Borrar todas las visitas (solo admin)"""
-    count = db.query(Visita).count()
-    db.query(Visita).delete()
-    db.commit()
-    return {"status": "ok", "borradas": count}
-
-
 @router.post("/track")
 async def registrar_visita(data: TrackingData, request: Request, db: Session = Depends(get_db)):
     """Endpoint público para registrar visitas desde el navegador del visitante"""
