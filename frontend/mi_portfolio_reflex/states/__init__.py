@@ -12,6 +12,35 @@ API_URL = os.environ.get("API_URL", "http://localhost:8001")
 class State(rx.State):
     """Estado principal unificado - Compatible con Reflex (sin herencia múltiple)"""
     
+    # ==================== TRACKING ====================
+    def registrar_visita(self):
+        """Ejecuta JS de tracking en el navegador del visitante"""
+        return rx.call_script(
+            """
+            if (!window._tracked) {
+                window._tracked = true;
+                try {
+                    var api = window.location.hostname === 'localhost'
+                        ? 'http://localhost:8001'
+                        : 'https://portfolio-reflex-pwdv.onrender.com';
+                    fetch(api + '/api/analytics/track', {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({
+                            pagina: window.location.pathname,
+                            referrer: document.referrer || '',
+                            user_agent: navigator.userAgent || '',
+                            screen_width: window.screen.width,
+                            screen_height: window.screen.height,
+                            idioma: navigator.language || '',
+                            plataforma: navigator.platform || ''
+                        })
+                    });
+                } catch(e) {}
+            }
+            """
+        )
+
     # ==================== BASE STATE - Idioma y Menú ====================
     idioma: str = "es"
     menu_abierto: bool = False

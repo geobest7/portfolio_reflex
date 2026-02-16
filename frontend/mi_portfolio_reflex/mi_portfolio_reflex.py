@@ -1,14 +1,12 @@
 import reflex as rx
 from .pages import portada, home, pagina_cv, pagina_login
 from .admin import dashboard_admin, admin_proyectos, formulario_proyecto, admin_cursos, formulario_curso, admin_experiencias, formulario_experiencia, admin_analytics
+from .states import State
 
 
 app = rx.App(
     stylesheets=[
         "styles/styles.css",
-    ],
-    head_components=[
-        rx.script(src="/tracking.js"),
     ],
 )
 
@@ -17,6 +15,7 @@ app.add_page(
     route="/",
     title="Alessandro Febbrai | Portfolio",
     description="Portfolio de Alessandro Febbrai - Desarrollador Python Junior. Proyectos, formación y experiencia en desarrollo web.",
+    on_load=State.registrar_visita,
     meta=[
         {"property": "og:title", "content": "Alessandro Febbrai | Portfolio"},
         {"property": "og:description", "content": "Portfolio de Alessandro Febbrai - Desarrollador Python Junior"},
@@ -34,6 +33,7 @@ app.add_page(
     route="/home",
     title="Alessandro Febbrai | Desarrollador Python",
     description="Sobre mí, proyectos, formación y experiencia profesional de Alessandro Febbrai. Desarrollo web con Python, FastAPI y Reflex.",
+    on_load=State.registrar_visita,
     meta=[
         {"property": "og:title", "content": "Alessandro Febbrai | Desarrollador Python"},
         {"property": "og:description", "content": "Proyectos, formación y experiencia en desarrollo web con Python"},
