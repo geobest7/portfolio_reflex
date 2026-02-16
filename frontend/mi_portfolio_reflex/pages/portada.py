@@ -2,24 +2,23 @@ import reflex as rx
 from ..states import State
 
 
-def _lang_button(codigo: str, flag: str, nombre: str) -> rx.Component:
-    """Botón de idioma con bandera para la portada"""
+def _lang_button(codigo: str, label: str) -> rx.Component:
+    """Botón de idioma sencillo B/N para la portada"""
     return rx.button(
-        rx.vstack(
-            rx.text(flag, font_size="28px", line_height="1"),
-            rx.text(nombre, font_size="11px", font_weight="500", color=rx.cond(State.idioma == codigo, "#000", "#999")),
-            spacing="1",
-            align="center",
-        ),
+        label,
         on_click=[State.cambiar_idioma(codigo), rx.redirect("/home")],
-        bg=rx.cond(State.idioma == codigo, "rgba(255,255,255,0.95)", "rgba(255,255,255,0.06)"),
-        border=rx.cond(State.idioma == codigo, "1px solid rgba(255,255,255,0.9)", "1px solid rgba(255,255,255,0.12)"),
-        border_radius="12px",
-        width="76px",
-        height="72px",
+        bg=rx.cond(State.idioma == codigo, "white", "transparent"),
+        color=rx.cond(State.idioma == codigo, "#000", "#999"),
+        border=rx.cond(State.idioma == codigo, "1px solid white", "1px solid rgba(255,255,255,0.15)"),
+        border_radius="8px",
+        min_width="48px",
+        height="40px",
+        font_size="14px",
+        font_weight="600",
+        letter_spacing="0.05em",
         cursor="pointer",
         class_name="portada-lang-btn",
-        _hover={"bg": rx.cond(State.idioma == codigo, "rgba(255,255,255,1)", "rgba(255,255,255,0.12)")},
+        _hover={"color": "white", "border_color": "rgba(255,255,255,0.5)"},
     )
 
 
@@ -64,17 +63,12 @@ def portada() -> rx.Component:
                     class_name="portada-divider",
                 ),
                 rx.hstack(
-                    _lang_button("es", "🇪🇸", "Español"),
-                    _lang_button("en", "🇬🇧", "English"),
-                    _lang_button("it", "🇮🇹", "Italiano"),
-                    _lang_button("ca", "🇦�", "Català"),
+                    _lang_button("es", "ES"),
+                    _lang_button("en", "EN"),
+                    _lang_button("it", "IT"),
+                    _lang_button("ca", "CA"),
                     spacing="3",
                     class_name="portada-idiomas",
-                ),
-                rx.box(
-                    rx.icon("chevron-down", size=20, color="rgba(255,255,255,0.3)"),
-                    class_name="portada-scroll-hint",
-                    margin_top="2em",
                 ),
                 spacing="4",
                 align="center",
