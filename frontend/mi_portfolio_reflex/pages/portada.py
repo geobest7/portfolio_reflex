@@ -3,9 +3,36 @@ from ..components.selectors import selector_idioma_portada
 
 
 
+_TRACKING_JS = """
+(function() {
+    if (window._tracked) return;
+    window._tracked = true;
+    try {
+        var api = window.location.hostname === 'localhost'
+            ? 'http://localhost:8001'
+            : 'https://portfolio-reflex-pwdv.onrender.com';
+        fetch(api + '/api/analytics/track', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                pagina: window.location.pathname,
+                referrer: document.referrer || '',
+                user_agent: navigator.userAgent || '',
+                screen_width: window.screen.width,
+                screen_height: window.screen.height,
+                idioma: navigator.language || '',
+                plataforma: navigator.platform || ''
+            })
+        });
+    } catch(e) {}
+})();
+"""
+
+
 def portada() -> rx.Component:
     """Página de portada - Solo selector de idioma"""
     return rx.box(
+        rx.el.script(_TRACKING_JS),
         rx.center(
             rx.vstack(
                 rx.heading(
