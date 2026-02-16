@@ -6,7 +6,6 @@ from ..components.selectors import selector_idioma_portada
 def portada() -> rx.Component:
     """Página de portada - Solo selector de idioma"""
     return rx.box(
-        rx.script(src="/tracking.js"),
         rx.center(
             rx.vstack(
                 rx.heading(

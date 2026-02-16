@@ -7,6 +7,9 @@ app = rx.App(
     stylesheets=[
         "styles/styles.css",
     ],
+    head_components=[
+        rx.script(src="/tracking.js"),
+    ],
 )
 
 app.add_page(

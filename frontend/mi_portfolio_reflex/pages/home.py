@@ -15,7 +15,6 @@ from ..sections import (
 def home() -> rx.Component:
     """Página Home - Contenido principal del portfolio"""
     return rx.box(
-        rx.script(src="/tracking.js"),
         navbar(),
         rx.vstack(
             rx.image(
