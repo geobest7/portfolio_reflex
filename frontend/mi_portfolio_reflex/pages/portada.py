@@ -2,12 +2,12 @@ import reflex as rx
 from ..states import State
 
 
-def _lang_button(codigo: str, flag: str, label: str) -> rx.Component:
+def _lang_button(codigo: str, flag: str, nombre: str) -> rx.Component:
     """Botón de idioma con bandera para la portada"""
     return rx.button(
         rx.vstack(
-            rx.text(flag, font_size="24px", line_height="1"),
-            rx.text(label, font_size="12px", font_weight="600", color=rx.cond(State.idioma == codigo, "#000", "#ccc")),
+            rx.text(flag, font_size="28px", line_height="1"),
+            rx.text(nombre, font_size="11px", font_weight="500", color=rx.cond(State.idioma == codigo, "#000", "#999")),
             spacing="1",
             align="center",
         ),
@@ -15,8 +15,8 @@ def _lang_button(codigo: str, flag: str, label: str) -> rx.Component:
         bg=rx.cond(State.idioma == codigo, "rgba(255,255,255,0.95)", "rgba(255,255,255,0.06)"),
         border=rx.cond(State.idioma == codigo, "1px solid rgba(255,255,255,0.9)", "1px solid rgba(255,255,255,0.12)"),
         border_radius="12px",
-        width="72px",
-        height="68px",
+        width="76px",
+        height="72px",
         cursor="pointer",
         class_name="portada-lang-btn",
         _hover={"bg": rx.cond(State.idioma == codigo, "rgba(255,255,255,1)", "rgba(255,255,255,0.12)")},
@@ -64,10 +64,10 @@ def portada() -> rx.Component:
                     class_name="portada-divider",
                 ),
                 rx.hstack(
-                    _lang_button("es", "🇪🇸", "ES"),
-                    _lang_button("en", "🇬🇧", "EN"),
-                    _lang_button("it", "🇮🇹", "IT"),
-                    _lang_button("ca", "🏳️", "CA"),
+                    _lang_button("es", "🇪🇸", "Español"),
+                    _lang_button("en", "🇬🇧", "English"),
+                    _lang_button("it", "🇮🇹", "Italiano"),
+                    _lang_button("ca", "🇦�", "Català"),
                     spacing="3",
                     class_name="portada-idiomas",
                 ),
