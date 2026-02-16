@@ -2,143 +2,125 @@ import reflex as rx
 from ..states import State
 
 
+def _contact_item(icon: str, label, value: str, href: str, external: bool = False) -> rx.Component:
+    """Item de contacto con icono"""
+    return rx.hstack(
+        rx.box(
+            rx.icon(icon, size=18, color="white"),
+            width="36px",
+            height="36px",
+            border_radius="8px",
+            bg="rgba(255,255,255,0.06)",
+            display="flex",
+            align_items="center",
+            justify_content="center",
+            flex_shrink="0",
+        ),
+        rx.vstack(
+            rx.text(label, color="#666", size="1", font_weight="500"),
+            rx.link(
+                value,
+                href=href,
+                is_external=external,
+                color="white",
+                size="2",
+                _hover={"color": "#ccc"},
+            ),
+            spacing="0",
+            align="start",
+        ),
+        spacing="3",
+        align="center",
+    )
+
+
 def seccion_contacto() -> rx.Component:
-    """Sección Contacto con información y formulario"""
+    """Sección Contacto con layout 2 columnas"""
     return rx.box(
         rx.vstack(
             rx.heading(State.contacto_titulo, size="8", color="white", text_align="center", width="100%"),
-
-            # Información de contacto
-            rx.vstack(
-                rx.heading(State.contacto_info_titulo, size="6", color="white", margin_bottom="1em"),
+            rx.text(State.contacto_subtitulo, color="#999", size="4", text_align="center", max_width="600px"),
+            rx.box(
                 rx.hstack(
-                    rx.icon("mail", size=20, color="white"),
-                    rx.text(State.contacto_email + ":", color="#cccccc", weight="bold"),
-                    rx.link(
-                        "febbrai.alessandro@libero.it",
-                        href="mailto:febbrai.alessandro@libero.it",
-                        color="white",
-                        _hover={"color": "#808080"},
+                    # Columna izquierda: info de contacto
+                    rx.vstack(
+                        rx.heading(State.contacto_info_titulo, size="5", color="white", margin_bottom="0.5em"),
+                        _contact_item("mail", State.contacto_email, "febbrai.alessandro@libero.it", "mailto:febbrai.alessandro@libero.it"),
+                        _contact_item("phone", State.contacto_telefono, "+34 632 172 521", "tel:+34632172521"),
+                        _contact_item("linkedin", State.contacto_linkedin, "Alessandro Febbrai", "https://www.linkedin.com/in/alessandro-febbrai-b239021a2", True),
+                        _contact_item("github", State.contacto_github, "geobest7", "https://github.com/geobest7", True),
+                        spacing="4",
+                        align="start",
+                        flex="1",
+                        min_width="280px",
                     ),
-                    spacing="2",
-                ),
-                rx.hstack(
-                    rx.icon("phone", size=20, color="white"),
-                    rx.text(State.contacto_telefono + ":", color="#cccccc", weight="bold"),
-                    rx.link(
-                        "+34 632 172 521",
-                        href="tel:+34632172521",
-                        color="white",
-                        _hover={"color": "#808080"},
-                    ),
-                    spacing="2",
-                ),
-                rx.hstack(
-                    rx.icon("linkedin", size=20, color="white"),
-                    rx.text(State.contacto_linkedin + ":", color="#cccccc", weight="bold"),
-                    rx.link(
-                        "Alessandro Febbrai",
-                        href="https://www.linkedin.com/in/alessandro-febbrai-b239021a2",
-                        is_external=True,
-                        color="white",
-                        _hover={"color": "#808080"},
-                    ),
-                    spacing="2",
-                ),
-                rx.hstack(
-                    rx.icon("github", size=20, color="white"),
-                    rx.text(State.contacto_github + ":", color="#cccccc", weight="bold"),
-                    rx.link(
-                        "/geobest7",
-                        href="https://github.com/geobest7",
-                        is_external=True,
-                        color="white",
-                        _hover={"color": "#808080"},
-                    ),
-                    spacing="2",
-                ),
-                spacing="3",
-                align="start",
-                margin_bottom="3em",
-            ),
-            
-            # Subtítulo antes del formulario
-            rx.text(State.contacto_subtitulo, color="#cccccc", size="4", margin_bottom="2em"),
-
-            # Formulario de contacto
-            rx.vstack(
-                rx.input(
-                    placeholder=State.form_nombre,
-                    value=State.form_nombre_value,
-                    on_change=State.set_nombre,
-                    width="100%",
-                    max_width="500px",
-                    size="3",
-                ),
-                rx.input(
-                    placeholder=State.form_email,
-                    value=State.form_email_value,
-                    on_change=State.set_email,
-                    type="email",
-                    width="100%",
-                    max_width="500px",
-                    size="3",
-                ),
-                rx.text_area(
-                    placeholder=State.form_mensaje,
-                    value=State.form_mensaje_value,
-                    on_change=State.set_mensaje,
-                    width="100%",
-                    max_width="500px",
-                    min_height="150px",
-                    size="3",
-                ),
-                rx.button(
-                    State.btn_enviar,
-                    on_click=State.enviar_formulario,
-                    loading=State.form_enviando,
-                    size="3",
-                    variant="solid",
-                    color_scheme="gray",
-                    style={"background": "white", "color": "black"},
-                ),
-                # Mensaje de éxito o error
-                rx.cond(
-                    State.form_mensaje_estado != "",
-                    rx.box(
-                        rx.text(
-                            State.form_mensaje_texto,
-                            color=rx.cond(
-                                State.form_mensaje_estado == "exito",
-                                "#00ff00",
-                                "#ff0000",
-                            ),
-                            weight="bold",
+                    # Columna derecha: formulario
+                    rx.vstack(
+                        rx.input(
+                            placeholder=State.form_nombre,
+                            value=State.form_nombre_value,
+                            on_change=State.set_nombre,
+                            width="100%",
                             size="3",
                         ),
-                        padding="1em",
-                        border_radius="8px",
-                        bg=rx.cond(
-                            State.form_mensaje_estado == "exito",
-                            "#001a00",
-                            "#1a0000",
+                        rx.input(
+                            placeholder=State.form_email,
+                            value=State.form_email_value,
+                            on_change=State.set_email,
+                            type="email",
+                            width="100%",
+                            size="3",
                         ),
-                        border=rx.cond(
-                            State.form_mensaje_estado == "exito",
-                            "1px solid #00ff00",
-                            "1px solid #ff0000",
+                        rx.text_area(
+                            placeholder=State.form_mensaje,
+                            value=State.form_mensaje_value,
+                            on_change=State.set_mensaje,
+                            width="100%",
+                            min_height="130px",
+                            size="3",
                         ),
-                        max_width="500px",
-                        width="100%",
+                        rx.button(
+                            State.btn_enviar,
+                            on_click=State.enviar_formulario,
+                            loading=State.form_enviando,
+                            size="3",
+                            width="100%",
+                            style={"background": "white", "color": "black", "font-weight": "600"},
+                            _hover={"opacity": "0.9"},
+                        ),
+                        rx.cond(
+                            State.form_mensaje_estado != "",
+                            rx.box(
+                                rx.text(
+                                    State.form_mensaje_texto,
+                                    color=rx.cond(State.form_mensaje_estado == "exito", "#4ade80", "#f87171"),
+                                    weight="bold",
+                                    size="2",
+                                ),
+                                padding="0.8em",
+                                border_radius="8px",
+                                bg=rx.cond(State.form_mensaje_estado == "exito", "rgba(74,222,128,0.08)", "rgba(248,113,113,0.08)"),
+                                border=rx.cond(State.form_mensaje_estado == "exito", "1px solid rgba(74,222,128,0.3)", "1px solid rgba(248,113,113,0.3)"),
+                                width="100%",
+                            ),
+                        ),
+                        spacing="3",
+                        flex="1",
+                        min_width="300px",
                     ),
+                    spacing="8",
+                    width="100%",
+                    max_width="900px",
+                    wrap="wrap",
+                    align="start",
                 ),
-                spacing="4",
                 width="100%",
-                align="center",
+                display="flex",
+                justify_content="center",
+                margin_top="2em",
             ),
             spacing="4",
             align="center",
-            text_align="center",
         ),
         padding="6em 2em",
         bg="#000000",

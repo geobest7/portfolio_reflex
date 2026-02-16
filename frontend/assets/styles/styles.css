@@ -56,6 +56,96 @@ section {
 .fade-in-up:nth-child(3) { animation-delay: 0.3s; }
 .fade-in-up:nth-child(4) { animation-delay: 0.4s; }
 
+/* ==================== PORTADA ==================== */
+@keyframes portada-fade-in {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes portada-glow-pulse {
+    0%, 100% { box-shadow: 0 0 20px rgba(255, 255, 255, 0.1), 0 0 40px rgba(255, 255, 255, 0.05); }
+    50% { box-shadow: 0 0 30px rgba(255, 255, 255, 0.2), 0 0 60px rgba(255, 255, 255, 0.1); }
+}
+
+@keyframes portada-border-rotate {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+@keyframes portada-float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+}
+
+.portada-foto {
+    animation: portada-glow-pulse 3s ease-in-out infinite, portada-fade-in 0.8s ease-out;
+}
+
+.portada-titulo {
+    animation: portada-fade-in 0.8s ease-out 0.2s both;
+}
+
+.portada-subtitulo {
+    animation: portada-fade-in 0.8s ease-out 0.4s both;
+}
+
+.portada-rol {
+    animation: portada-fade-in 0.8s ease-out 0.6s both;
+}
+
+.portada-divider {
+    animation: portada-fade-in 0.8s ease-out 0.7s both;
+}
+
+.portada-idiomas {
+    animation: portada-fade-in 0.8s ease-out 0.8s both;
+}
+
+.portada-scroll-hint {
+    animation: portada-float 2s ease-in-out infinite, portada-fade-in 0.8s ease-out 1s both;
+}
+
+.portada-lang-btn {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.portada-lang-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(255, 255, 255, 0.15);
+}
+
+/* Navbar glassmorphism */
+.navbar-glass {
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    background: rgba(0, 0, 0, 0.75) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+/* Navbar link hover underline */
+.nav-link {
+    position: relative;
+    transition: color 0.2s ease;
+}
+
+.nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: white;
+    transition: width 0.3s ease;
+}
+
+.nav-link:hover::after {
+    width: 100%;
+}
+
 /* ==================== RESPONSIVE - MOBILE ==================== */
 @media (max-width: 768px) {
     section {
