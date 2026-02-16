@@ -2,17 +2,12 @@
 import reflex as rx
 
 
-class TrackingComponent(rx.Component):
-    """Componente invisible que ejecuta tracking JS via React useEffect."""
-
-    def _get_hooks(self) -> str:
-        return """
-const trackingRan = useRef(false);
-useEffect(() => {
-    if (trackingRan.current) return;
-    trackingRan.current = true;
+_TRACKING_JS = """
+(function() {
+    if (window._tracked) return;
+    window._tracked = true;
     try {
-        const api = window.location.hostname === 'localhost'
+        var api = window.location.hostname === 'localhost'
             ? 'http://localhost:8001'
             : 'https://portfolio-reflex-pwdv.onrender.com';
         fetch(api + '/api/analytics/track', {
@@ -29,16 +24,10 @@ useEffect(() => {
             })
         });
     } catch(e) {}
-}, []);
+})();
 """
-
-    def _get_imports(self) -> dict:
-        return {"react": ["useEffect", "useRef"]}
-
-    def render(self):
-        return ""
 
 
 def tracking_script() -> rx.Component:
     """Helper para incluir el tracking en cualquier página."""
-    return TrackingComponent.create()
+    return rx.script(_TRACKING_JS)
