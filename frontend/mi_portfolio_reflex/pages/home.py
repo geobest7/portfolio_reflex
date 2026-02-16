@@ -1,7 +1,6 @@
 import reflex as rx
 from ..states import State
 from ..components import navbar, footer
-from ..components.tracking import tracking_script
 from ..sections import (
     seccion_sobre_mi,
     seccion_experiencia,
@@ -15,7 +14,6 @@ from ..sections import (
 def home() -> rx.Component:
     """Página Home - Contenido principal del portfolio"""
     return rx.box(
-        tracking_script(),
         navbar(),
         rx.vstack(
             rx.image(

@@ -13,33 +13,42 @@ class State(rx.State):
     """Estado principal unificado - Compatible con Reflex (sin herencia múltiple)"""
     
     # ==================== TRACKING ====================
+    _visita_registrada: bool = False
+
     def registrar_visita(self):
-        """Ejecuta JS de tracking en el navegador del visitante"""
+        """Recoge datos del navegador via JS y los envía al callback."""
+        if self._visita_registrada:
+            return
         return rx.call_script(
             """
-            if (!window._tracked) {
-                window._tracked = true;
-                try {
-                    var api = window.location.hostname === 'localhost'
-                        ? 'http://localhost:8001'
-                        : 'https://portfolio-reflex-pwdv.onrender.com';
-                    fetch(api + '/api/analytics/track', {
-                        method: 'POST',
-                        headers: {'Content-Type': 'application/json'},
-                        body: JSON.stringify({
-                            pagina: window.location.pathname,
-                            referrer: document.referrer || '',
-                            user_agent: navigator.userAgent || '',
-                            screen_width: window.screen.width,
-                            screen_height: window.screen.height,
-                            idioma: navigator.language || '',
-                            plataforma: navigator.platform || ''
-                        })
-                    });
-                } catch(e) {}
-            }
-            """
+            JSON.stringify({
+                pagina: window.location.pathname,
+                referrer: document.referrer || '',
+                user_agent: navigator.userAgent || '',
+                screen_width: window.screen.width,
+                screen_height: window.screen.height,
+                idioma: navigator.language || '',
+                plataforma: navigator.platform || ''
+            })
+            """,
+            callback=State.enviar_tracking,
         )
+
+    def enviar_tracking(self, datos_json: str):
+        """Recibe datos del navegador y los envía al backend FastAPI."""
+        if self._visita_registrada:
+            return
+        self._visita_registrada = True
+        try:
+            import json
+            datos = json.loads(datos_json)
+            httpx.post(
+                f"{API_URL}/api/analytics/track",
+                json=datos,
+                timeout=10.0,
+            )
+        except Exception:
+            pass
 
     # ==================== BASE STATE - Idioma y Menú ====================
     idioma: str = "es"

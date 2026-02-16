@@ -1,12 +1,10 @@
 import reflex as rx
 from ..components.selectors import selector_idioma_portada
-from ..components.tracking import tracking_script
 
 
 def portada() -> rx.Component:
     """Página de portada - Solo selector de idioma"""
     return rx.box(
-        tracking_script(),
         rx.center(
             rx.vstack(
                 rx.heading(
