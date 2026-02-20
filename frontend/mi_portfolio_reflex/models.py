@@ -34,7 +34,11 @@ class Curso(BaseModel):
     institucion_it: str
     institucion_ca: str
     fecha_inicio: str
-    fecha_fin: str = ""  
+    fecha_fin: str = ""
+    descripcion_es: str = ""
+    descripcion_en: str = ""
+    descripcion_it: str = ""
+    descripcion_ca: str = ""
     certificado_url: str = ""  
     diploma_pdf: str = ""
     activo: bool

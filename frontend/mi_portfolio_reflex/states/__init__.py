@@ -318,10 +318,8 @@ class State(rx.State):
             if response.status_code == 200:
                 data = response.json()
                 for proyecto in data:
-                    if proyecto.get("github_url") is None:
-                        proyecto["github_url"] = ""
-                    if proyecto.get("demo_url") is None:
-                        proyecto["demo_url"] = ""
+                    proyecto["github_url"] = proyecto.pop("url_github", "") or ""
+                    proyecto["demo_url"] = proyecto.pop("url_demo", "") or ""
                     if proyecto.get("imagen_url") is None:
                         proyecto["imagen_url"] = ""
                     if proyecto.get("video_url") is None:
@@ -347,6 +345,14 @@ class State(rx.State):
                 for curso in data:
                     if curso.get("fecha_fin") is None:
                         curso["fecha_fin"] = ""
+                    if curso.get("descripcion_es") is None:
+                        curso["descripcion_es"] = ""
+                    if curso.get("descripcion_en") is None:
+                        curso["descripcion_en"] = ""
+                    if curso.get("descripcion_it") is None:
+                        curso["descripcion_it"] = ""
+                    if curso.get("descripcion_ca") is None:
+                        curso["descripcion_ca"] = ""
                     if curso.get("certificado_url") is None:
                         curso["certificado_url"] = ""
                     if curso.get("diploma_pdf") is None:
@@ -595,10 +601,8 @@ class State(rx.State):
             if response.status_code == 200:
                 data = response.json()
                 for proyecto in data:
-                    if proyecto.get("github_url") is None:
-                        proyecto["github_url"] = ""
-                    if proyecto.get("demo_url") is None:
-                        proyecto["demo_url"] = ""
+                    proyecto["github_url"] = proyecto.pop("url_github", "") or ""
+                    proyecto["demo_url"] = proyecto.pop("url_demo", "") or ""
                     if proyecto.get("imagen_url") is None:
                         proyecto["imagen_url"] = ""
                     if proyecto.get("video_url") is None:
@@ -643,6 +647,8 @@ class State(rx.State):
     
     def guardar_proyecto(self, form_data: dict):
         try:
+            tecnologias_raw = form_data.get("tecnologias", "").strip()
+            tecnologias = [t.strip() for t in tecnologias_raw.split(",") if t.strip()] if tecnologias_raw else []
             proyecto_data = {
                 "titulo_es": form_data["titulo_es"],
                 "titulo_en": form_data["titulo_en"],
@@ -652,13 +658,13 @@ class State(rx.State):
                 "descripcion_en": form_data["descripcion_en"],
                 "descripcion_it": form_data["descripcion_it"],
                 "descripcion_ca": form_data["descripcion_ca"],
-                "tecnologias": form_data.get("tecnologias", "").split(",") if form_data.get("tecnologias") else [],
-                "github_url": form_data.get("github_url", ""),
-                "demo_url": form_data.get("demo_url", ""),
-                "imagen_url": form_data.get("imagen_url", ""),
-                "video_url": form_data.get("video_url", ""),
-                "destacado": form_data.get("destacado", False),
-                "orden": int(form_data.get("orden", 0)),
+                "tecnologias": tecnologias,
+                "url_github": form_data.get("github_url", "") or None,
+                "url_demo": form_data.get("demo_url", "") or None,
+                "imagen_url": form_data.get("imagen_url", "") or None,
+                "video_url": form_data.get("video_url", "") or None,
+                "destacado": form_data.get("destacado") == "on",
+                "orden": int(form_data.get("orden", 0) or 0),
                 "activo": True,
             }
             
@@ -681,7 +687,8 @@ class State(rx.State):
                 self.cargar_proyectos_admin()
                 return rx.redirect("/admin/proyectos")
             else:
-                return rx.toast.error(f"Error al guardar: {response.status_code}")
+                detail = response.json().get("detail", response.text[:200]) if response.text else str(response.status_code)
+                return rx.toast.error(f"Error {response.status_code}: {detail}")
                 
         except Exception as e:
             return rx.toast.error(f"Error: {str(e)}")
@@ -707,6 +714,14 @@ class State(rx.State):
                 for curso in data:
                     if curso.get("fecha_fin") is None:
                         curso["fecha_fin"] = ""
+                    if curso.get("descripcion_es") is None:
+                        curso["descripcion_es"] = ""
+                    if curso.get("descripcion_en") is None:
+                        curso["descripcion_en"] = ""
+                    if curso.get("descripcion_it") is None:
+                        curso["descripcion_it"] = ""
+                    if curso.get("descripcion_ca") is None:
+                        curso["descripcion_ca"] = ""
                     if curso.get("certificado_url") is None:
                         curso["certificado_url"] = ""
                     if curso.get("diploma_pdf") is None:
@@ -751,6 +766,8 @@ class State(rx.State):
     
     def guardar_curso(self, form_data: dict):
         try:
+            fecha_inicio = form_data.get("fecha_inicio", "").strip() or None
+            fecha_fin = form_data.get("fecha_fin", "").strip() or None
             curso_data = {
                 "tipo": form_data["tipo"],
                 "titulo_es": form_data["titulo_es"],
@@ -761,10 +778,15 @@ class State(rx.State):
                 "institucion_en": form_data["institucion_en"],
                 "institucion_it": form_data["institucion_it"],
                 "institucion_ca": form_data["institucion_ca"],
-                "fecha_inicio": form_data["fecha_inicio"],
-                "fecha_fin": form_data.get("fecha_fin", ""),
-                "certificado_url": form_data.get("certificado_url", ""),
-                "diploma_pdf": form_data.get("diploma_pdf", ""),
+                "fecha_inicio": fecha_inicio,
+                "fecha_fin": fecha_fin,
+                "descripcion_es": form_data.get("descripcion_es", "") or None,
+                "descripcion_en": form_data.get("descripcion_en", "") or None,
+                "descripcion_it": form_data.get("descripcion_it", "") or None,
+                "descripcion_ca": form_data.get("descripcion_ca", "") or None,
+                "certificado_url": form_data.get("certificado_url", "").strip() or None,
+                "diploma_pdf": form_data.get("diploma_pdf", "").strip() or None,
+                "orden": int(form_data.get("orden", 0) or 0),
                 "activo": True,
             }
             
@@ -787,7 +809,8 @@ class State(rx.State):
                 self.cargar_cursos_admin()
                 return rx.redirect("/admin/cursos")
             else:
-                return rx.toast.error(f"Error al guardar: {response.status_code}")
+                detail = response.json().get("detail", response.text[:200]) if response.text else str(response.status_code)
+                return rx.toast.error(f"Error {response.status_code}: {detail}")
                 
         except Exception as e:
             return rx.toast.error(f"Error: {str(e)}")
@@ -863,6 +886,9 @@ class State(rx.State):
     
     def guardar_experiencia(self, form_data: dict):
         try:
+            tecnologias_raw = form_data.get("tecnologias", "").strip()
+            tecnologias = [t.strip() for t in tecnologias_raw.split(",") if t.strip()] if tecnologias_raw else []
+            fecha_fin = form_data.get("fecha_fin", "").strip() or None
             experiencia_data = {
                 "tipo": form_data["tipo"],
                 "empresa": form_data["empresa"],
@@ -871,16 +897,16 @@ class State(rx.State):
                 "cargo_it": form_data["cargo_it"],
                 "cargo_ca": form_data["cargo_ca"],
                 "fecha_inicio": form_data["fecha_inicio"],
-                "fecha_fin": form_data.get("fecha_fin", ""),
-                "actual": form_data.get("actual", False),
-                "descripcion_es": form_data.get("descripcion_es", ""),
-                "descripcion_en": form_data.get("descripcion_en", ""),
-                "descripcion_it": form_data.get("descripcion_it", ""),
-                "descripcion_ca": form_data.get("descripcion_ca", ""),
-                "tecnologias": form_data.get("tecnologias", "").split(",") if form_data.get("tecnologias") else [],
-                "video_url": form_data.get("video_url", ""),
-                "orden": int(form_data.get("orden", 0)),
-                "mostrar_en_web": form_data.get("mostrar_en_web", False),
+                "fecha_fin": fecha_fin,
+                "actual": form_data.get("actual") == "on",
+                "descripcion_es": form_data.get("descripcion_es", "") or None,
+                "descripcion_en": form_data.get("descripcion_en", "") or None,
+                "descripcion_it": form_data.get("descripcion_it", "") or None,
+                "descripcion_ca": form_data.get("descripcion_ca", "") or None,
+                "tecnologias": tecnologias,
+                "video_url": form_data.get("video_url", "").strip() or None,
+                "orden": int(form_data.get("orden", 0) or 0),
+                "mostrar_en_web": form_data.get("mostrar_en_web") == "on",
                 "activo": True,
             }
             
@@ -903,7 +929,8 @@ class State(rx.State):
                 self.cargar_experiencias_admin()
                 return rx.redirect("/admin/experiencias")
             else:
-                return rx.toast.error(f"Error al guardar: {response.status_code}")
+                detail = response.json().get("detail", response.text[:200]) if response.text else str(response.status_code)
+                return rx.toast.error(f"Error {response.status_code}: {detail}")
                 
         except Exception as e:
             return rx.toast.error(f"Error: {str(e)}")
