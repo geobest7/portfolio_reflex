@@ -37,7 +37,7 @@ Portfolio personal full-stack desarrollado con **Reflex** (frontend) y **FastAPI
 
 | Servicio | Plataforma | URL |
 |----------|-----------|-----|
-| **Frontend** | Reflex Cloud | `https://portfolio-alessandro-teal-ring.reflex.run` |
+| **Frontend** | Reflex Cloud | `https://portfolio-alessandro-teal-moon.reflex.run` |
 | **Backend** | Render | `https://portfolio-reflex-pwdv.onrender.com` |
 | **Base de datos** | Render PostgreSQL | Interna (no accesible desde fuera) |
 
