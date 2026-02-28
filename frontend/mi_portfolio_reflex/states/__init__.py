@@ -193,6 +193,13 @@ class State(rx.State):
     def formacion_titulo(self) -> str:
         return TRANSLATIONS.get(self.idioma, {}).get("formacion_titulo", "")
     
+    diploma_url_actual: str = ""
+    
+    def abrir_diploma(self, url: str):
+        """Guardar URL del diploma y redirigir a la página visor"""
+        self.diploma_url_actual = url
+        return rx.redirect("/diploma")
+    
     @rx.var
     def ver_diploma(self) -> str:
         return TRANSLATIONS.get(self.idioma, {}).get("ver_diploma", "")

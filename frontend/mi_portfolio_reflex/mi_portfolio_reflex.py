@@ -1,5 +1,6 @@
 import reflex as rx
 from .pages import portada, home, pagina_cv, pagina_login
+from .pages.diploma import pagina_diploma
 from .admin import dashboard_admin, admin_proyectos, formulario_proyecto, admin_cursos, formulario_curso, admin_experiencias, formulario_experiencia, admin_analytics
 from .states import State
 
@@ -51,6 +52,12 @@ app.add_page(
     meta=[
         {"name": "robots", "content": "noindex"},
     ],
+)
+app.add_page(
+    pagina_diploma,
+    route="/diploma",
+    title="Diploma | Alessandro Febbrai",
+    meta=[{"name": "robots", "content": "noindex"}],
 )
 app.add_page(pagina_login, route="/login")
 app.add_page(dashboard_admin, route="/admin")

@@ -99,20 +99,17 @@ def _curso_card(curso) -> rx.Component:
                 ),
                 rx.cond(
                     curso.diploma_pdf != "",
-                    rx.link(
-                        rx.button(
-                            rx.hstack(
-                                rx.icon("scroll-text", size=14),
-                                rx.text(State.ver_diploma),
-                                spacing="2",
-                                align="center",
-                            ),
-                            size="1",
-                            variant="solid",
-                            color_scheme="yellow",
+                    rx.button(
+                        rx.hstack(
+                            rx.icon("scroll-text", size=14),
+                            rx.text(State.ver_diploma),
+                            spacing="2",
+                            align="center",
                         ),
-                        href=curso.diploma_pdf,
-                        is_external=True,
+                        size="1",
+                        variant="solid",
+                        color_scheme="yellow",
+                        on_click=State.abrir_diploma(curso.diploma_pdf),
                     ),
                 ),
                 spacing="3",
