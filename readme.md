@@ -9,6 +9,7 @@ Portfolio personal full-stack desarrollado con **Reflex** (frontend) y **FastAPI
 - **Multi-idioma** — ES / EN / IT / CA con traducciones completas
 - **Diseño minimalista** — Interfaz B/N, glassmorphism, animaciones CSS, cards con hover
 - **Panel admin** — CRUD completo para proyectos, cursos y experiencias
+- **Media uploads (Cloudinary)** — Imágenes, PDFs y videos para Proyectos/Experiencias/Formación
 - **Analíticas reales** — Tracking via `rx.call_script` + callback, dashboard con dispositivos, SO, navegadores, referrers y export Excel
 - **Formulario de contacto** — Envío de emails via Resend API
 - **Autenticación JWT** — Login seguro para admin con cambio de credenciales
@@ -16,6 +17,14 @@ Portfolio personal full-stack desarrollado con **Reflex** (frontend) y **FastAPI
 - **Responsive** — Adaptado a móvil, tablet y desktop
 - **SEO** — Metatags, OpenGraph, Twitter Cards, robots.txt
 - **Visor CV/Diploma** — PDFs visualizables y descargables
+
+### Uploads (Cloudinary)
+
+- **Imágenes y PDFs**: se suben al backend y el backend sube a Cloudinary.
+- **Videos**: se suben **directamente desde el navegador a Cloudinary** (para evitar timeouts/límites de plataformas). El backend solo genera la **firma** con `GET /api/upload/sign`.
+- **Límites**:
+  - Video: **100MB**
+  - Imagen/PDF: **10MB**
 
 ---
 
@@ -27,6 +36,7 @@ Portfolio personal full-stack desarrollado con **Reflex** (frontend) y **FastAPI
 | **Backend** | FastAPI, SQLAlchemy, PostgreSQL (prod) / SQLite (local) |
 | **Auth** | JWT (python-jose), bcrypt |
 | **Email** | Resend API |
+| **Media** | Cloudinary (image/raw/video) |
 | **Analytics** | `rx.call_script` callback + endpoint público + dashboard admin |
 | **Hosting** | Reflex Cloud (frontend) + Render (backend + PostgreSQL) |
 | **Control de versiones** | Git + GitHub |
@@ -83,7 +93,7 @@ mi_portfolio_reflex/
 │
 ├── .env                              # Variables de entorno (NO en Git)
 ├── .gitignore                        # Reglas de exclusión para Git
-└── readme.md                         # Este archivo
+└── README.md                         # Este archivo
 ```
 
 ---
@@ -102,34 +112,6 @@ El tracking de visitas funciona con **`rx.call_script`** ejecutado en el navegad
 
 ---
 
-## Diseño Visual
-
-- **Portada**: Foto de perfil con glow animado, nombre, "Python Developer", botones B/N (ES/EN/IT/CA), animaciones escalonadas
-- **Navbar**: Glassmorphism (blur + transparencia), links con underline animado al hover
-- **Hero**: Foto 180px con borde gradiente, animaciones de entrada
-- **Cards**: Bordes `rgba` sutiles, hover con iluminación y elevación, `border-radius: 10px`
-- **Contacto**: Layout 2 columnas (info + formulario), iconos en cajas cuadradas
-- **Tech stack**: Grid de iconos 90px con hover translateY
-- **Paleta**: Negro `#000`, blanco, grises `rgba(255,255,255,0.xx)`
-
----
-
-## Páginas
-
-| Ruta | Descripción |
-|------|-------------|
-| `/` | Portada — foto, nombre, rol, selector de idioma (ES/EN/IT/CA), animaciones escalonadas |
-| `/home` | Página principal con todas las secciones |
-| `/cv` | Visor PDF del CV a pantalla completa |
-| `/login` | Login admin |
-| `/admin` | Dashboard admin |
-| `/admin/proyectos` | CRUD proyectos |
-| `/admin/cursos` | CRUD cursos |
-| `/admin/experiencias` | CRUD experiencias |
-| `/admin/analytics` | Dashboard de analíticas |
-
----
-
 ## API Endpoints
 
 | Método | Ruta | Auth | Descripción |
@@ -144,6 +126,8 @@ El tracking de visitas funciona con **`rx.call_script`** ejecutado en el navegad
 | GET | `/api/github/repos` | — | Repos GitHub (cache 6h) |
 | POST | `/api/contacto/` | — | Enviar email de contacto (Resend) |
 | POST | `/api/analytics/track` | — | Registrar visita (público, desde JS) |
+| POST | `/api/upload/` | JWT | Subir imagen/PDF/video a Cloudinary (vía backend) |
+| GET | `/api/upload/sign` | JWT | Obtener firma Cloudinary para upload directo (usado para videos) |
 | GET | `/api/analytics/resumen` | JWT | Total visitas + únicos (30 días) |
 | GET | `/api/analytics/paginas` | JWT | Páginas más visitadas |
 | GET | `/api/analytics/dispositivos` | JWT | Dispositivos (desktop/móvil/tablet) |
@@ -152,7 +136,6 @@ El tracking de visitas funciona con **`rx.call_script`** ejecutado en el navegad
 | GET | `/api/analytics/referrers` | JWT | Origen del tráfico |
 | GET | `/api/analytics/visitas-por-dia` | JWT | Visitas agrupadas por día |
 | GET | `/api/analytics/recientes` | JWT | Últimas visitas detalladas |
-| GET | `/api/analytics/export` | JWT | Exportar a Excel (.xlsx) |
 
 ---
 
