@@ -27,9 +27,19 @@ def _exp_card(exp) -> rx.Component:
     return rx.box(
         rx.vstack(
             rx.hstack(
-                rx.icon("briefcase", size=24, color="white"),
+                rx.text(
+                    exp.tipo.upper(),
+                    color=rx.cond(exp.tipo == "practica", "#00CED1", "#4CAF50"),
+                    font_weight="bold",
+                    size="2",
+                ),
+                spacing="3",
+                align_items="center",
+            ),
+            rx.hstack(
+                rx.icon("briefcase", size=24, color=rx.cond(exp.tipo == "practica", "#00CED1", "#4CAF50")),
                 rx.vstack(
-                    rx.text(_cargo_exp(exp), size="4", weight="bold", color="white"),
+                    rx.text(_cargo_exp(exp), size="4", weight="bold", color=rx.cond(exp.tipo == "practica", "#00CED1", "#4CAF50")),
                     rx.text(exp.empresa, size="3", color="#CCCCCC"),
                     spacing="1",
                     align="start",

@@ -49,7 +49,7 @@ def seccion_proyectos() -> rx.Component:
                                     )
                                 ),
                                 size="5",
-                                color="white",
+                                color="#E040FB",
                             ),
                             rx.text(
                                 rx.cond(

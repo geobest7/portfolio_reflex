@@ -706,14 +706,14 @@ class State(rx.State):
     uploaded_documento_url: str = ""
     subiendo_archivo: bool = False
     
-    def _upload_to_cloudinary(self, file_data: bytes, filename: str, content_type: str, timeout: float = 30.0) -> str:
-        """Sube archivo a Cloudinary via backend API. Retorna URL o lanza excepción."""
-        response = httpx.post(
-            f"{API_URL}/api/upload/",
-            files={"file": (filename, file_data, content_type)},
-            headers={"Authorization": f"Bearer {self.token}"},
-            timeout=timeout,
-        )
+    async def _upload_to_cloudinary(self, file_data: bytes, filename: str, content_type: str, timeout: float = 30.0) -> str:
+        """Sube archivo a Cloudinary via backend API (async). Retorna URL o lanza excepción."""
+        async with httpx.AsyncClient(timeout=timeout) as client:
+            response = await client.post(
+                f"{API_URL}/api/upload/",
+                files={"file": (filename, file_data, content_type)},
+                headers={"Authorization": f"Bearer {self.token}"},
+            )
         if response.status_code == 200:
             return response.json()["url"]
         detail = response.json().get("detail", response.text[:200]) if response.text else str(response.status_code)
@@ -727,7 +727,7 @@ class State(rx.State):
         try:
             file = files[0]
             data = await file.read()
-            self.uploaded_diploma_url = self._upload_to_cloudinary(data, file.filename, file.content_type or "application/pdf")
+            self.uploaded_diploma_url = await self._upload_to_cloudinary(data, file.filename, file.content_type or "application/pdf")
             yield rx.toast.success("Diploma subido correctamente")
         except Exception as e:
             yield rx.toast.error(f"Error al subir: {str(e)}")
@@ -742,7 +742,7 @@ class State(rx.State):
         try:
             file = files[0]
             data = await file.read()
-            self.uploaded_certificado_url = self._upload_to_cloudinary(data, file.filename, file.content_type or "application/pdf")
+            self.uploaded_certificado_url = await self._upload_to_cloudinary(data, file.filename, file.content_type or "application/pdf")
             yield rx.toast.success("Certificado subido correctamente")
         except Exception as e:
             yield rx.toast.error(f"Error al subir: {str(e)}")
@@ -757,7 +757,7 @@ class State(rx.State):
         try:
             file = files[0]
             data = await file.read()
-            self.uploaded_video_url = self._upload_to_cloudinary(data, file.filename, file.content_type or "video/mp4", timeout=120.0)
+            self.uploaded_video_url = await self._upload_to_cloudinary(data, file.filename, file.content_type or "video/mp4", timeout=300.0)
             yield rx.toast.success("Video subido correctamente")
         except Exception as e:
             yield rx.toast.error(f"Error al subir: {str(e)}")
@@ -772,7 +772,7 @@ class State(rx.State):
         try:
             file = files[0]
             data = await file.read()
-            self.uploaded_imagen_url = self._upload_to_cloudinary(data, file.filename, file.content_type or "image/jpeg")
+            self.uploaded_imagen_url = await self._upload_to_cloudinary(data, file.filename, file.content_type or "image/jpeg")
             yield rx.toast.success("Imagen subida correctamente")
         except Exception as e:
             yield rx.toast.error(f"Error al subir: {str(e)}")
@@ -787,7 +787,7 @@ class State(rx.State):
         try:
             file = files[0]
             data = await file.read()
-            self.uploaded_documento_url = self._upload_to_cloudinary(data, file.filename, file.content_type or "application/pdf")
+            self.uploaded_documento_url = await self._upload_to_cloudinary(data, file.filename, file.content_type or "application/pdf")
             yield rx.toast.success("Documento subido correctamente")
         except Exception as e:
             yield rx.toast.error(f"Error al subir: {str(e)}")
