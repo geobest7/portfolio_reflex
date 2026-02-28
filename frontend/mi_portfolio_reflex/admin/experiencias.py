@@ -161,6 +161,12 @@ def formulario_experiencia() -> rx.Component:
                         rx.grid(
                             rx.vstack(
                                 rx.text("Video", color="#CCC", size="2"),
+                                rx.el.input(
+                                    type="file",
+                                    id="_vid_file_input",
+                                    accept="video/mp4,video/webm,.mp4,.webm,.mov",
+                                    style={"width": "100%", "color": "#999", "padding": "0.5em", "border": "1px solid rgba(255,255,255,0.2)", "border_radius": "8px", "background": "transparent"},
+                                ),
                                 rx.button(
                                     rx.cond(
                                         State.subiendo_archivo,
@@ -168,14 +174,14 @@ def formulario_experiencia() -> rx.Component:
                                         rx.cond(
                                             State.uploaded_video_url != "",
                                             rx.hstack(rx.icon("check", size=16, color="green"), rx.text("Video subido ✓", color="green", size="2"), spacing="2"),
-                                            rx.hstack(rx.icon("video", size=16), rx.text("Seleccionar Video (MP4, max 100MB)"), spacing="2"),
+                                            rx.hstack(rx.icon("upload", size=16), rx.text("Subir Video a Cloudinary"), spacing="2"),
                                         ),
                                     ),
-                                    on_click=State.iniciar_upload_video,
+                                    on_click=State.subir_video_directo,
                                     type="button",
                                     variant="outline",
+                                    color_scheme="cyan",
                                     width="100%",
-                                    padding="1.5em",
                                 ),
                                 rx.input(name="video_url", type="hidden", value=rx.cond(State.uploaded_video_url != "", State.uploaded_video_url, rx.cond(State.modo_edicion_experiencia, State.experiencia_editando.video_url, ""))),
                                 rx.text("O pega URL:", color="#666", size="1"),

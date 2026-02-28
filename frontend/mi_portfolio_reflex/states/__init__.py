@@ -635,6 +635,7 @@ class State(rx.State):
     
     def abrir_formulario_proyecto(self, proyecto_id: int = 0):
         self.reset_upload_urls()
+        self._prefetch_video_sign()
         if proyecto_id > 0:
             proyecto = next((p for p in self.proyectos_admin if p.id == proyecto_id), None)
             if proyecto:
@@ -706,6 +707,12 @@ class State(rx.State):
     uploaded_documento_url: str = ""
     subiendo_archivo: bool = False
     
+    # Sign params para upload directo de video a Cloudinary
+    video_sign_cloud_name: str = ""
+    video_sign_api_key: str = ""
+    video_sign_timestamp: str = ""
+    video_sign_signature: str = ""
+    
     async def _upload_to_cloudinary(self, file_data: bytes, filename: str, content_type: str, timeout: float = 30.0) -> str:
         """Sube archivo a Cloudinary via backend API (async). Retorna URL o lanza excepción."""
         async with httpx.AsyncClient(timeout=timeout) as client:
@@ -749,84 +756,72 @@ class State(rx.State):
         finally:
             self.subiendo_archivo = False
     
-    async def iniciar_upload_video(self):
-        """Upload de video directo desde el navegador a Cloudinary.
-        1. Pide firma al backend (petición tiny <1s)
-        2. Devuelve rx.call_script con JS que abre file picker y sube directo
-        Browser → Cloudinary (sin pasar por Reflex Cloud ni Render)
-        """
-        self.subiendo_archivo = True
-        yield
+    def _prefetch_video_sign(self):
+        """Pre-fetch Cloudinary sign params para video upload directo"""
         try:
-            async with httpx.AsyncClient(timeout=15.0) as client:
-                sign_resp = await client.get(
-                    f"{API_URL}/api/upload/sign",
-                    params={"resource_type": "video"},
-                    headers={"Authorization": f"Bearer {self.token}"},
-                )
-            if sign_resp.status_code != 200:
-                self.subiendo_archivo = False
-                yield rx.toast.error("Error al obtener firma de upload")
-                return
-            
-            sign = sign_resp.json()
-            
-            js_code = """
-            (async () => {
-                return new Promise((resolve) => {
-                    const input = document.createElement('input');
-                    input.type = 'file';
-                    input.accept = 'video/mp4,video/webm,video/quicktime,.mp4,.webm,.mov';
-                    input.onchange = async (e) => {
-                        const file = e.target.files[0];
-                        if (!file) { resolve(JSON.stringify({error: 'No se seleccionó archivo'})); return; }
-                        if (file.size > 100 * 1024 * 1024) { resolve(JSON.stringify({error: 'Video demasiado grande (máx 100MB)'})); return; }
-                        const formData = new FormData();
-                        formData.append('file', file);
-                        formData.append('api_key', '""" + str(sign["api_key"]) + """');
-                        formData.append('timestamp', '""" + str(sign["timestamp"]) + """');
-                        formData.append('signature', '""" + str(sign["signature"]) + """');
-                        formData.append('folder', '""" + str(sign["folder"]) + """');
-                        try {
-                            const resp = await fetch(
-                                'https://api.cloudinary.com/v1_1/""" + str(sign["cloud_name"]) + """/video/upload',
-                                { method: 'POST', body: formData }
-                            );
-                            const data = await resp.json();
-                            if (data.secure_url) {
-                                resolve(JSON.stringify({url: data.secure_url}));
-                            } else {
-                                resolve(JSON.stringify({error: data.error?.message || 'Upload failed'}));
-                            }
-                        } catch (err) {
-                            resolve(JSON.stringify({error: err.message}));
-                        }
-                    };
-                    input.click();
-                });
-            })()
-            """
-            
-            yield rx.call_script(js_code, callback=State._video_upload_callback)
-            
-        except Exception as e:
-            self.subiendo_archivo = False
-            yield rx.toast.error(f"Error: {str(e)}")
+            resp = httpx.get(
+                f"{API_URL}/api/upload/sign",
+                params={"resource_type": "video"},
+                headers={"Authorization": f"Bearer {self.token}"},
+                timeout=10.0,
+            )
+            if resp.status_code == 200:
+                sign = resp.json()
+                self.video_sign_cloud_name = sign["cloud_name"]
+                self.video_sign_api_key = sign["api_key"]
+                self.video_sign_timestamp = str(sign["timestamp"])
+                self.video_sign_signature = sign["signature"]
+        except Exception:
+            pass
     
-    def _video_upload_callback(self, result: str):
-        """Callback: recibe resultado del upload directo de video desde el navegador"""
+    def subir_video_directo(self):
+        """Lee el video ya seleccionado del file input y lo sube a Cloudinary
+        via XHR síncrono desde el navegador. Browser → Cloudinary (1 salto)."""
+        if not self.video_sign_cloud_name:
+            return rx.toast.error("Error: firma de upload no disponible. Recarga la página.")
+        
+        self.subiendo_archivo = True
+        
+        js_code = (
+            "(() => {"
+            "  const fi = document.getElementById('_vid_file_input');"
+            "  if (!fi || !fi.files || !fi.files[0]) return JSON.stringify({error: 'Selecciona un video primero'});"
+            "  const file = fi.files[0];"
+            "  if (file.size > 100*1024*1024) return JSON.stringify({error: 'Video demasiado grande (máx 100MB)'});"
+            "  const fd = new FormData();"
+            "  fd.append('file', file);"
+            "  fd.append('api_key', '" + self.video_sign_api_key + "');"
+            "  fd.append('timestamp', '" + self.video_sign_timestamp + "');"
+            "  fd.append('signature', '" + self.video_sign_signature + "');"
+            "  fd.append('folder', 'portfolio');"
+            "  const xhr = new XMLHttpRequest();"
+            "  xhr.open('POST', 'https://api.cloudinary.com/v1_1/" + self.video_sign_cloud_name + "/video/upload', false);"
+            "  try { xhr.send(fd); } catch(e) { return JSON.stringify({error: 'Network error: ' + e.message}); }"
+            "  if (xhr.status === 200) {"
+            "    const d = JSON.parse(xhr.responseText);"
+            "    return JSON.stringify({url: d.secure_url});"
+            "  } else {"
+            "    return JSON.stringify({error: 'Upload failed: HTTP ' + xhr.status});"
+            "  }"
+            "})()"
+        )
+        
+        return rx.call_script(js_code, callback=State._video_upload_callback)
+    
+    def _video_upload_callback(self, result: str = ""):
+        """Callback: recibe URL del video subido desde el navegador"""
         import json
+        self.subiendo_archivo = False
+        if not result:
+            return rx.toast.error("Error: no se recibió respuesta del upload")
         try:
             data = json.loads(result)
             if "url" in data:
                 self.uploaded_video_url = data["url"]
-                self.subiendo_archivo = False
                 return rx.toast.success("Video subido correctamente")
             else:
-                self.subiendo_archivo = False
                 return rx.toast.error(f"Error: {data.get('error', 'Error desconocido')}")
         except Exception as e:
-            self.subiendo_archivo = False
             return rx.toast.error(f"Error: {str(e)}")
     
     async def upload_imagen(self, files: list[rx.UploadFile]):
@@ -1030,6 +1025,7 @@ class State(rx.State):
     
     def abrir_formulario_experiencia(self, experiencia_id: int = 0):
         self.reset_upload_urls()
+        self._prefetch_video_sign()
         if experiencia_id > 0:
             exp = next((e for e in self.experiencias_admin if e.id == experiencia_id), None)
             if exp:
