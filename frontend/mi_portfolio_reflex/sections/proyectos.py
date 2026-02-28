@@ -69,9 +69,9 @@ def seccion_proyectos() -> rx.Component:
                                 size="2",
                             ),
                             
-                            # Video del proyecto (si existe)
+                            # Video del proyecto (solo si es URL directa a video, no YouTube)
                             rx.cond(
-                                proyecto.video_url != "",
+                                proyecto.video_url.contains(".mp4") | proyecto.video_url.contains(".webm") | proyecto.video_url.contains("cloudinary"),
                                 rx.box(
                                     rx.el.video(
                                         rx.el.source(src=proyecto.video_url, type="video/mp4"),
