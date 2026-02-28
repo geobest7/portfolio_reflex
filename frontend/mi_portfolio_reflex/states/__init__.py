@@ -774,53 +774,57 @@ class State(rx.State):
         except Exception:
             pass
     
-    def subir_video_directo(self):
-        """Lee el video ya seleccionado del file input y lo sube a Cloudinary
-        via XHR síncrono desde el navegador. Browser → Cloudinary (1 salto)."""
+    async def subir_video_directo(self):
+        """Lee el video del file input y sube a Cloudinary via async JS fetch.
+        Browser → Cloudinary directamente (1 salto)."""
         if not self.video_sign_cloud_name:
-            return rx.toast.error("Error: firma de upload no disponible. Recarga la página.")
+            yield rx.toast.error("Error: firma de upload no disponible. Recarga la página.")
+            return
         
         self.subiendo_archivo = True
+        yield
         
         js_code = (
-            "(() => {"
+            "(async () => {"
             "  const fi = document.getElementById('_vid_file_input');"
             "  if (!fi || !fi.files || !fi.files[0]) return JSON.stringify({error: 'Selecciona un video primero'});"
             "  const file = fi.files[0];"
-            "  if (file.size > 100*1024*1024) return JSON.stringify({error: 'Video demasiado grande (máx 100MB)'});"
+            "  if (file.size > 100*1024*1024) return JSON.stringify({error: 'Video demasiado grande (max 100MB)'});"
             "  const fd = new FormData();"
             "  fd.append('file', file);"
             "  fd.append('api_key', '" + self.video_sign_api_key + "');"
             "  fd.append('timestamp', '" + self.video_sign_timestamp + "');"
             "  fd.append('signature', '" + self.video_sign_signature + "');"
             "  fd.append('folder', 'portfolio');"
-            "  const xhr = new XMLHttpRequest();"
-            "  xhr.open('POST', 'https://api.cloudinary.com/v1_1/" + self.video_sign_cloud_name + "/video/upload', false);"
-            "  try { xhr.send(fd); } catch(e) { return JSON.stringify({error: 'Network error: ' + e.message}); }"
-            "  if (xhr.status === 200) {"
-            "    const d = JSON.parse(xhr.responseText);"
-            "    return JSON.stringify({url: d.secure_url});"
-            "  } else {"
-            "    return JSON.stringify({error: 'Upload failed: HTTP ' + xhr.status});"
+            "  try {"
+            "    const resp = await fetch("
+            "      'https://api.cloudinary.com/v1_1/" + self.video_sign_cloud_name + "/video/upload',"
+            "      {method: 'POST', body: fd}"
+            "    );"
+            "    const data = await resp.json();"
+            "    if (data.secure_url) return JSON.stringify({url: data.secure_url});"
+            "    return JSON.stringify({error: data.error ? data.error.message : 'Upload failed'});"
+            "  } catch(e) {"
+            "    return JSON.stringify({error: e.message});"
             "  }"
             "})()"
         )
         
-        return rx.call_script(js_code, callback=State._video_upload_callback)
+        yield rx.call_script(js_code, callback=State.set_video_upload_result)
     
-    def _video_upload_callback(self, result: str = ""):
-        """Callback: recibe URL del video subido desde el navegador"""
+    def set_video_upload_result(self, result: str):
+        """Callback de rx.call_script: recibe JSON con url o error."""
         import json
         self.subiendo_archivo = False
         if not result:
-            return rx.toast.error("Error: no se recibió respuesta del upload")
+            return rx.toast.error("No se recibió respuesta del upload")
         try:
             data = json.loads(result)
             if "url" in data:
                 self.uploaded_video_url = data["url"]
                 return rx.toast.success("Video subido correctamente")
             else:
-                return rx.toast.error(f"Error: {data.get('error', 'Error desconocido')}")
+                return rx.toast.error(data.get("error", "Error desconocido"))
         except Exception as e:
             return rx.toast.error(f"Error: {str(e)}")
     
