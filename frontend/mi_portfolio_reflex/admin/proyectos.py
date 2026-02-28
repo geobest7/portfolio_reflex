@@ -219,30 +219,21 @@ def formulario_proyecto() -> rx.Component:
                         rx.grid(
                             rx.vstack(
                                 rx.text("Video del proyecto", color="#CCC", size="2"),
-                                rx.upload(
-                                    rx.vstack(
+                                rx.button(
+                                    rx.cond(
+                                        State.subiendo_archivo,
+                                        rx.hstack(rx.spinner(size="1"), rx.text("Subiendo video...", color="cyan", size="2"), spacing="2"),
                                         rx.cond(
-                                            State.subiendo_archivo,
-                                            rx.hstack(rx.spinner(size="1"), rx.text("Subiendo...", color="cyan", size="2"), spacing="2"),
-                                            rx.cond(
-                                                State.uploaded_video_url != "",
-                                                rx.hstack(rx.icon("check", size=16, color="green"), rx.text("Video subido", color="green", size="2"), spacing="2"),
-                                                rx.hstack(rx.icon("upload", size=16, color="#999"), rx.text("Suelta un video aquí o haz clic (MP4)", color="#999", size="2"), spacing="2"),
-                                            ),
+                                            State.uploaded_video_url != "",
+                                            rx.hstack(rx.icon("check", size=16, color="green"), rx.text("Video subido ✓", color="green", size="2"), spacing="2"),
+                                            rx.hstack(rx.icon("video", size=16), rx.text("Seleccionar Video (MP4, max 100MB)"), spacing="2"),
                                         ),
-                                        align="center",
-                                        justify="center",
-                                        padding="1.5em",
-                                        border="1px dashed rgba(255,255,255,0.2)",
-                                        border_radius="8px",
-                                        width="100%",
-                                        cursor="pointer",
                                     ),
-                                    id="video_upload",
-                                    max_files=1,
-                                    max_size=100 * 1024 * 1024,
-                                    no_keyboard=True,
-                                    on_drop=State.upload_video(rx.upload_files(upload_id="video_upload")),
+                                    on_click=State.iniciar_upload_video,
+                                    type="button",
+                                    variant="outline",
+                                    width="100%",
+                                    padding="1.5em",
                                 ),
                                 rx.input(name="video_url", type="hidden", value=rx.cond(State.uploaded_video_url != "", State.uploaded_video_url, rx.cond(State.modo_edicion, State.proyecto_editando.video_url, ""))),
                                 rx.text("O pega URL directamente:", color="#666", size="1"),

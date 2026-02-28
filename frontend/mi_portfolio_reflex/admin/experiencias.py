@@ -161,12 +161,21 @@ def formulario_experiencia() -> rx.Component:
                         rx.grid(
                             rx.vstack(
                                 rx.text("Video", color="#CCC", size="2"),
-                                _upload_zone(
-                                    "exp_video_upload",
-                                    "Suelta un video aquí o haz clic (MP4)",
-                                    State.upload_video(rx.upload_files(upload_id="exp_video_upload")),
-                                    State.uploaded_video_url != "",
-                                    max_size_bytes=100 * 1024 * 1024,
+                                rx.button(
+                                    rx.cond(
+                                        State.subiendo_archivo,
+                                        rx.hstack(rx.spinner(size="1"), rx.text("Subiendo video...", color="cyan", size="2"), spacing="2"),
+                                        rx.cond(
+                                            State.uploaded_video_url != "",
+                                            rx.hstack(rx.icon("check", size=16, color="green"), rx.text("Video subido ✓", color="green", size="2"), spacing="2"),
+                                            rx.hstack(rx.icon("video", size=16), rx.text("Seleccionar Video (MP4, max 100MB)"), spacing="2"),
+                                        ),
+                                    ),
+                                    on_click=State.iniciar_upload_video,
+                                    type="button",
+                                    variant="outline",
+                                    width="100%",
+                                    padding="1.5em",
                                 ),
                                 rx.input(name="video_url", type="hidden", value=rx.cond(State.uploaded_video_url != "", State.uploaded_video_url, rx.cond(State.modo_edicion_experiencia, State.experiencia_editando.video_url, ""))),
                                 rx.text("O pega URL:", color="#666", size="1"),

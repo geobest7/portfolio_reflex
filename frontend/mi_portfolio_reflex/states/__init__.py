@@ -749,20 +749,15 @@ class State(rx.State):
         finally:
             self.subiendo_archivo = False
     
-    async def upload_video(self, files: list[rx.UploadFile]):
-        """Sube video directamente a Cloudinary (sin pasar por Render).
-        1. Pide firma al backend (petición tiny)
-        2. Sube directo a Cloudinary API (evita timeout de Render)
+    async def iniciar_upload_video(self):
+        """Upload de video directo desde el navegador a Cloudinary.
+        1. Pide firma al backend (petición tiny <1s)
+        2. Devuelve rx.call_script con JS que abre file picker y sube directo
+        Browser → Cloudinary (sin pasar por Reflex Cloud ni Render)
         """
-        if not files:
-            return
         self.subiendo_archivo = True
         yield
         try:
-            file = files[0]
-            file_data = await file.read()
-            
-            # Paso 1: obtener firma de Cloudinary desde backend (petición tiny, <1s)
             async with httpx.AsyncClient(timeout=15.0) as client:
                 sign_resp = await client.get(
                     f"{API_URL}/api/upload/sign",
@@ -770,35 +765,69 @@ class State(rx.State):
                     headers={"Authorization": f"Bearer {self.token}"},
                 )
             if sign_resp.status_code != 200:
-                yield rx.toast.error(f"Error al obtener firma: {sign_resp.text[:200]}")
+                self.subiendo_archivo = False
+                yield rx.toast.error("Error al obtener firma de upload")
                 return
             
             sign = sign_resp.json()
             
-            # Paso 2: subir directamente a Cloudinary (Reflex Cloud → Cloudinary, sin Render)
-            upload_url = f"https://api.cloudinary.com/v1_1/{sign['cloud_name']}/video/upload"
-            async with httpx.AsyncClient(timeout=300.0) as client:
-                resp = await client.post(
-                    upload_url,
-                    data={
-                        "api_key": sign["api_key"],
-                        "timestamp": sign["timestamp"],
-                        "signature": sign["signature"],
-                        "folder": sign["folder"],
-                    },
-                    files={"file": (file.filename, file_data, file.content_type or "video/mp4")},
-                )
+            js_code = """
+            (async () => {
+                return new Promise((resolve) => {
+                    const input = document.createElement('input');
+                    input.type = 'file';
+                    input.accept = 'video/mp4,video/webm,video/quicktime,.mp4,.webm,.mov';
+                    input.onchange = async (e) => {
+                        const file = e.target.files[0];
+                        if (!file) { resolve(JSON.stringify({error: 'No se seleccionó archivo'})); return; }
+                        if (file.size > 100 * 1024 * 1024) { resolve(JSON.stringify({error: 'Video demasiado grande (máx 100MB)'})); return; }
+                        const formData = new FormData();
+                        formData.append('file', file);
+                        formData.append('api_key', '""" + str(sign["api_key"]) + """');
+                        formData.append('timestamp', '""" + str(sign["timestamp"]) + """');
+                        formData.append('signature', '""" + str(sign["signature"]) + """');
+                        formData.append('folder', '""" + str(sign["folder"]) + """');
+                        try {
+                            const resp = await fetch(
+                                'https://api.cloudinary.com/v1_1/""" + str(sign["cloud_name"]) + """/video/upload',
+                                { method: 'POST', body: formData }
+                            );
+                            const data = await resp.json();
+                            if (data.secure_url) {
+                                resolve(JSON.stringify({url: data.secure_url}));
+                            } else {
+                                resolve(JSON.stringify({error: data.error?.message || 'Upload failed'}));
+                            }
+                        } catch (err) {
+                            resolve(JSON.stringify({error: err.message}));
+                        }
+                    };
+                    input.click();
+                });
+            })()
+            """
             
-            if resp.status_code == 200:
-                self.uploaded_video_url = resp.json()["secure_url"]
-                yield rx.toast.success("Video subido correctamente")
-            else:
-                detail = resp.text[:300] if resp.text else str(resp.status_code)
-                yield rx.toast.error(f"Error Cloudinary: {detail}")
+            yield rx.call_script(js_code, callback=State._video_upload_callback)
+            
         except Exception as e:
-            yield rx.toast.error(f"Error al subir video: {str(e)}")
-        finally:
             self.subiendo_archivo = False
+            yield rx.toast.error(f"Error: {str(e)}")
+    
+    def _video_upload_callback(self, result: str):
+        """Callback: recibe resultado del upload directo de video desde el navegador"""
+        import json
+        try:
+            data = json.loads(result)
+            if "url" in data:
+                self.uploaded_video_url = data["url"]
+                self.subiendo_archivo = False
+                return rx.toast.success("Video subido correctamente")
+            else:
+                self.subiendo_archivo = False
+                return rx.toast.error(f"Error: {data.get('error', 'Error desconocido')}")
+        except Exception as e:
+            self.subiendo_archivo = False
+            return rx.toast.error(f"Error: {str(e)}")
     
     async def upload_imagen(self, files: list[rx.UploadFile]):
         if not files:
