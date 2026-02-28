@@ -1,4 +1,5 @@
 import io
+import time
 import logging
 from fastapi import APIRouter, UploadFile, File, Depends, HTTPException
 from ..config import settings
@@ -6,6 +7,7 @@ from ..utils.auth import get_current_admin_user
 from ..models.user import User
 import cloudinary
 import cloudinary.uploader
+import cloudinary.utils
 
 logger = logging.getLogger(__name__)
 
@@ -95,3 +97,33 @@ async def upload_file(
     except Exception as e:
         logger.error(f"Upload FAILED: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Error al subir archivo: {str(e)}")
+
+
+@router.get("/sign")
+def get_upload_signature(
+    resource_type: str = "video",
+    current_admin: User = Depends(get_current_admin_user),
+):
+    """Genera firma para upload directo a Cloudinary (sin pasar por Render).
+    El cliente usa estos params para subir directamente a la API de Cloudinary."""
+    if resource_type not in ("video", "image", "raw"):
+        raise HTTPException(status_code=400, detail="resource_type debe ser video, image o raw")
+    
+    configure_cloudinary()
+    
+    timestamp = int(time.time())
+    params = {
+        "folder": "portfolio",
+        "timestamp": timestamp,
+    }
+    # Genera firma HMAC con api_secret
+    signature = cloudinary.utils.api_sign_request(params, settings.cloudinary_api_secret)
+    
+    return {
+        "cloud_name": settings.cloudinary_cloud_name,
+        "api_key": settings.cloudinary_api_key,
+        "timestamp": timestamp,
+        "signature": signature,
+        "folder": "portfolio",
+        "resource_type": resource_type,
+    }

@@ -750,17 +750,53 @@ class State(rx.State):
             self.subiendo_archivo = False
     
     async def upload_video(self, files: list[rx.UploadFile]):
+        """Sube video directamente a Cloudinary (sin pasar por Render).
+        1. Pide firma al backend (petición tiny)
+        2. Sube directo a Cloudinary API (evita timeout de Render)
+        """
         if not files:
             return
         self.subiendo_archivo = True
         yield
         try:
             file = files[0]
-            data = await file.read()
-            self.uploaded_video_url = await self._upload_to_cloudinary(data, file.filename, file.content_type or "video/mp4", timeout=300.0)
-            yield rx.toast.success("Video subido correctamente")
+            file_data = await file.read()
+            
+            # Paso 1: obtener firma de Cloudinary desde backend (petición tiny, <1s)
+            async with httpx.AsyncClient(timeout=15.0) as client:
+                sign_resp = await client.get(
+                    f"{API_URL}/api/upload/sign",
+                    params={"resource_type": "video"},
+                    headers={"Authorization": f"Bearer {self.token}"},
+                )
+            if sign_resp.status_code != 200:
+                yield rx.toast.error(f"Error al obtener firma: {sign_resp.text[:200]}")
+                return
+            
+            sign = sign_resp.json()
+            
+            # Paso 2: subir directamente a Cloudinary (Reflex Cloud → Cloudinary, sin Render)
+            upload_url = f"https://api.cloudinary.com/v1_1/{sign['cloud_name']}/video/upload"
+            async with httpx.AsyncClient(timeout=300.0) as client:
+                resp = await client.post(
+                    upload_url,
+                    data={
+                        "api_key": sign["api_key"],
+                        "timestamp": sign["timestamp"],
+                        "signature": sign["signature"],
+                        "folder": sign["folder"],
+                    },
+                    files={"file": (file.filename, file_data, file.content_type or "video/mp4")},
+                )
+            
+            if resp.status_code == 200:
+                self.uploaded_video_url = resp.json()["secure_url"]
+                yield rx.toast.success("Video subido correctamente")
+            else:
+                detail = resp.text[:300] if resp.text else str(resp.status_code)
+                yield rx.toast.error(f"Error Cloudinary: {detail}")
         except Exception as e:
-            yield rx.toast.error(f"Error al subir: {str(e)}")
+            yield rx.toast.error(f"Error al subir video: {str(e)}")
         finally:
             self.subiendo_archivo = False
     

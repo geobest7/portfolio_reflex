@@ -39,7 +39,7 @@ def _curso_card(curso) -> rx.Component:
             rx.hstack(
                 rx.text(
                     curso.tipo.upper(),
-                    color=rx.cond(curso.tipo == "diploma", "#FFD700", "#00CED1"),
+                    color=rx.cond(curso.tipo == "diploma", "#FFD700", rx.cond(curso.tipo == "curso", "#00CED1", "#FF9800")),
                     font_weight="bold",
                     size="2",
                 ),
@@ -92,7 +92,7 @@ def _curso_card(curso) -> rx.Component:
                             ),
                             size="1",
                             variant="outline",
-                            color_scheme=rx.cond(curso.tipo == "diploma", "yellow", "cyan"),
+                            color_scheme=rx.cond(curso.tipo == "diploma", "yellow", rx.cond(curso.tipo == "curso", "cyan", "orange")),
                         ),
                         href=curso.certificado_url,
                         is_external=True,
@@ -109,7 +109,7 @@ def _curso_card(curso) -> rx.Component:
                         ),
                         size="1",
                         variant="solid",
-                        color_scheme=rx.cond(curso.tipo == "diploma", "yellow", "cyan"),
+                        color_scheme=rx.cond(curso.tipo == "diploma", "yellow", rx.cond(curso.tipo == "curso", "cyan", "orange")),
                         on_click=State.abrir_diploma(curso.diploma_pdf),
                     ),
                 ),
