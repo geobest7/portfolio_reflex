@@ -154,6 +154,7 @@ def formulario_curso() -> rx.Component:
                                 ),
                                 rx.button(
                                     rx.cond(State.subiendo_archivo, rx.spinner(size="1"), rx.text("Subir Diploma")),
+                                    type="button",
                                     on_click=State.upload_diploma(rx.upload_files(upload_id="diploma_upload")),
                                     size="1",
                                     variant="outline",
@@ -189,6 +190,7 @@ def formulario_curso() -> rx.Component:
                                 ),
                                 rx.button(
                                     rx.cond(State.subiendo_archivo, rx.spinner(size="1"), rx.text("Subir Certificado")),
+                                    type="button",
                                     on_click=State.upload_certificado(rx.upload_files(upload_id="cert_upload")),
                                     size="1",
                                     variant="outline",

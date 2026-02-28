@@ -241,6 +241,7 @@ def formulario_proyecto() -> rx.Component:
                                 ),
                                 rx.button(
                                     rx.cond(State.subiendo_archivo, rx.spinner(size="1"), rx.text("Subir Video")),
+                                    type="button",
                                     on_click=State.upload_video(rx.upload_files(upload_id="video_upload")),
                                     size="1",
                                     variant="outline",
@@ -276,6 +277,7 @@ def formulario_proyecto() -> rx.Component:
                                 ),
                                 rx.button(
                                     rx.cond(State.subiendo_archivo, rx.spinner(size="1"), rx.text("Subir Imagen")),
+                                    type="button",
                                     on_click=State.upload_imagen(rx.upload_files(upload_id="imagen_upload")),
                                     size="1",
                                     variant="outline",
