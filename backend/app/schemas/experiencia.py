@@ -1,7 +1,6 @@
 from pydantic import BaseModel
 from typing import Optional, List
 
-
 class ExperienciaBase(BaseModel):
     tipo: str
     empresa: str
@@ -17,15 +16,14 @@ class ExperienciaBase(BaseModel):
     descripcion_it: Optional[str] = None
     descripcion_ca: Optional[str] = None
     tecnologias: Optional[List[str]] = []
+    imagen_url: Optional[str] = None
     video_url: Optional[str] = None
+    documento_url: Optional[str] = None
     orden: int = 0
     activo: bool = True
-    mostrar_en_web: bool = True
-
 
 class ExperienciaCreate(ExperienciaBase):
     pass
-
 
 class ExperienciaUpdate(ExperienciaBase):
     pass

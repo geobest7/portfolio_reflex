@@ -53,7 +53,7 @@ class Experiencia(BaseModel):
     cargo_en: str
     cargo_it: str
     cargo_ca: str
-    fecha_inicio: str
+    fecha_inicio: str = ""
     fecha_fin: str = ""
     actual: bool
     descripcion_es: str = ""
@@ -61,10 +61,11 @@ class Experiencia(BaseModel):
     descripcion_it: str = ""
     descripcion_ca: str = ""
     tecnologias: List[str]
+    imagen_url: str = ""
     video_url: str = ""
+    documento_url: str = ""
     orden: int
     activo: bool
-    mostrar_en_web: bool
 
 
 class GitHubRepo(BaseModel):

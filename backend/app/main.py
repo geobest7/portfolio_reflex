@@ -33,6 +33,27 @@ def migrar_columnas_visitas():
 migrar_columnas_visitas()
 
 
+def migrar_columnas_experiencias():
+    """Añadir columnas nuevas a la tabla experiencias si no existen"""
+    from sqlalchemy import text
+    db = SessionLocal()
+    try:
+        for col, tipo in [
+            ("imagen_url", "VARCHAR(500)"),
+            ("documento_url", "VARCHAR(500)"),
+        ]:
+            try:
+                db.execute(text(f"ALTER TABLE experiencias ADD COLUMN {col} {tipo}"))
+                db.commit()
+            except Exception:
+                db.rollback()
+    finally:
+        db.close()
+
+
+migrar_columnas_experiencias()
+
+
 def crear_admin_si_no_existe():
     """Crear usuario admin automaticamente si no existe (necesario porque SQLite se pierde en cada redeploy de Render)"""
     db = SessionLocal()

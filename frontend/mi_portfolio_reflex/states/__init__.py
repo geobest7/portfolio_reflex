@@ -4,7 +4,6 @@ import httpx
 from typing import List, Optional
 from ..translations import TRANSLATIONS
 from ..models import Proyecto, Curso, Experiencia, GitHubRepo
-from ..utils import convertir_youtube_url
 
 API_URL = os.environ.get("API_URL", "http://localhost:8001")
 
@@ -332,6 +331,13 @@ class State(rx.State):
         if len(self.repos_github) == 0:
             self.cargar_repos_github()
     
+    @staticmethod
+    def _limpiar_nulos(d: dict, campos: list[str]):
+        """Convierte None a '' para campos opcionales string"""
+        for c in campos:
+            if d.get(c) is None:
+                d[c] = ""
+    
     def cargar_proyectos(self):
         self.cargando_proyectos = True
         self.error_proyectos = ""
@@ -340,16 +346,11 @@ class State(rx.State):
             response = httpx.get(f"{API_URL}/api/proyectos/", params={"destacados": True})
             if response.status_code == 200:
                 data = response.json()
-                for proyecto in data:
-                    proyecto["github_url"] = proyecto.pop("url_github", "") or ""
-                    proyecto["demo_url"] = proyecto.pop("url_demo", "") or ""
-                    if proyecto.get("imagen_url") is None:
-                        proyecto["imagen_url"] = ""
-                    if proyecto.get("video_url") is None:
-                        proyecto["video_url"] = ""
-                    else:
-                        proyecto["video_url"] = convertir_youtube_url(proyecto["video_url"])
-                self.proyectos = [Proyecto(**proyecto) for proyecto in data]
+                for p in data:
+                    p["github_url"] = p.pop("url_github", "") or ""
+                    p["demo_url"] = p.pop("url_demo", "") or ""
+                    self._limpiar_nulos(p, ["imagen_url", "video_url"])
+                self.proyectos = [Proyecto(**p) for p in data]
             else:
                 self.error_proyectos = f"Error {response.status_code}"
         except Exception as e:
@@ -365,22 +366,13 @@ class State(rx.State):
             response = httpx.get(f"{API_URL}/api/cursos/")
             if response.status_code == 200:
                 data = response.json()
-                for curso in data:
-                    if curso.get("fecha_fin") is None:
-                        curso["fecha_fin"] = ""
-                    if curso.get("descripcion_es") is None:
-                        curso["descripcion_es"] = ""
-                    if curso.get("descripcion_en") is None:
-                        curso["descripcion_en"] = ""
-                    if curso.get("descripcion_it") is None:
-                        curso["descripcion_it"] = ""
-                    if curso.get("descripcion_ca") is None:
-                        curso["descripcion_ca"] = ""
-                    if curso.get("certificado_url") is None:
-                        curso["certificado_url"] = ""
-                    if curso.get("diploma_pdf") is None:
-                        curso["diploma_pdf"] = ""
-                self.cursos = [Curso(**curso) for curso in data]
+                for c in data:
+                    self._limpiar_nulos(c, [
+                        "fecha_fin", "descripcion_es", "descripcion_en",
+                        "descripcion_it", "descripcion_ca",
+                        "certificado_url", "diploma_pdf",
+                    ])
+                self.cursos = [Curso(**c) for c in data]
             else:
                 self.error_cursos = f"Error {response.status_code}"
         except Exception as e:
@@ -393,25 +385,17 @@ class State(rx.State):
         self.error_experiencias = ""
         
         try:
-            response = httpx.get(f"{API_URL}/api/experiencias/", params={"mostrar_en_web": True})
+            response = httpx.get(f"{API_URL}/api/experiencias/")
             if response.status_code == 200:
                 data = response.json()
-                for exp in data:
-                    if exp.get("fecha_fin") is None:
-                        exp["fecha_fin"] = ""
-                    if exp.get("descripcion_es") is None:
-                        exp["descripcion_es"] = ""
-                    if exp.get("descripcion_en") is None:
-                        exp["descripcion_en"] = ""
-                    if exp.get("descripcion_it") is None:
-                        exp["descripcion_it"] = ""
-                    if exp.get("descripcion_ca") is None:
-                        exp["descripcion_ca"] = ""
-                    if exp.get("video_url") is None:
-                        exp["video_url"] = ""
-                    else:
-                        exp["video_url"] = convertir_youtube_url(exp["video_url"])
-                self.experiencias = [Experiencia(**exp) for exp in data]
+                for e in data:
+                    self._limpiar_nulos(e, [
+                        "fecha_inicio", "fecha_fin",
+                        "descripcion_es", "descripcion_en",
+                        "descripcion_it", "descripcion_ca",
+                        "imagen_url", "video_url", "documento_url",
+                    ])
+                self.experiencias = [Experiencia(**e) for e in data]
             else:
                 self.error_experiencias = f"Error {response.status_code}"
         except Exception as e:
@@ -623,14 +607,11 @@ class State(rx.State):
             )
             if response.status_code == 200:
                 data = response.json()
-                for proyecto in data:
-                    proyecto["github_url"] = proyecto.pop("url_github", "") or ""
-                    proyecto["demo_url"] = proyecto.pop("url_demo", "") or ""
-                    if proyecto.get("imagen_url") is None:
-                        proyecto["imagen_url"] = ""
-                    if proyecto.get("video_url") is None:
-                        proyecto["video_url"] = ""
-                self.proyectos_admin = [Proyecto(**proyecto) for proyecto in data]
+                for p in data:
+                    p["github_url"] = p.pop("url_github", "") or ""
+                    p["demo_url"] = p.pop("url_demo", "") or ""
+                    self._limpiar_nulos(p, ["imagen_url", "video_url"])
+                self.proyectos_admin = [Proyecto(**p) for p in data]
             else:
                 self.error_proyectos_admin = f"Error {response.status_code}"
         except Exception as e:
@@ -722,107 +703,92 @@ class State(rx.State):
     uploaded_certificado_url: str = ""
     uploaded_video_url: str = ""
     uploaded_imagen_url: str = ""
+    uploaded_documento_url: str = ""
     subiendo_archivo: bool = False
     
+    def _upload_to_cloudinary(self, file_data: bytes, filename: str, content_type: str, timeout: float = 30.0) -> str:
+        """Sube archivo a Cloudinary via backend API. Retorna URL o lanza excepción."""
+        response = httpx.post(
+            f"{API_URL}/api/upload/",
+            files={"file": (filename, file_data, content_type)},
+            headers={"Authorization": f"Bearer {self.token}"},
+            timeout=timeout,
+        )
+        if response.status_code == 200:
+            return response.json()["url"]
+        detail = response.json().get("detail", response.text[:200]) if response.text else str(response.status_code)
+        raise Exception(f"Error {response.status_code}: {detail}")
+    
     async def upload_diploma(self, files: list[rx.UploadFile]):
-        """Subir diploma PDF a Cloudinary"""
         if not files:
             return
         self.subiendo_archivo = True
         yield
         try:
             file = files[0]
-            upload_data = await file.read()
-            response = httpx.post(
-                f"{API_URL}/api/upload/",
-                files={"file": (file.filename, upload_data, file.content_type or "application/pdf")},
-                headers={"Authorization": f"Bearer {self.token}"},
-                timeout=30.0,
-            )
-            if response.status_code == 200:
-                self.uploaded_diploma_url = response.json()["url"]
-                yield rx.toast.success("Diploma subido correctamente")
-            else:
-                detail = response.json().get("detail", response.text[:200]) if response.text else str(response.status_code)
-                yield rx.toast.error(f"Error: {detail}")
+            data = await file.read()
+            self.uploaded_diploma_url = self._upload_to_cloudinary(data, file.filename, file.content_type or "application/pdf")
+            yield rx.toast.success("Diploma subido correctamente")
         except Exception as e:
             yield rx.toast.error(f"Error al subir: {str(e)}")
         finally:
             self.subiendo_archivo = False
     
     async def upload_certificado(self, files: list[rx.UploadFile]):
-        """Subir certificado a Cloudinary"""
         if not files:
             return
         self.subiendo_archivo = True
         yield
         try:
             file = files[0]
-            upload_data = await file.read()
-            response = httpx.post(
-                f"{API_URL}/api/upload/",
-                files={"file": (file.filename, upload_data, file.content_type or "application/pdf")},
-                headers={"Authorization": f"Bearer {self.token}"},
-                timeout=30.0,
-            )
-            if response.status_code == 200:
-                self.uploaded_certificado_url = response.json()["url"]
-                yield rx.toast.success("Certificado subido correctamente")
-            else:
-                detail = response.json().get("detail", response.text[:200]) if response.text else str(response.status_code)
-                yield rx.toast.error(f"Error: {detail}")
+            data = await file.read()
+            self.uploaded_certificado_url = self._upload_to_cloudinary(data, file.filename, file.content_type or "application/pdf")
+            yield rx.toast.success("Certificado subido correctamente")
         except Exception as e:
             yield rx.toast.error(f"Error al subir: {str(e)}")
         finally:
             self.subiendo_archivo = False
     
     async def upload_video(self, files: list[rx.UploadFile]):
-        """Subir video a Cloudinary"""
         if not files:
             return
         self.subiendo_archivo = True
         yield
         try:
             file = files[0]
-            upload_data = await file.read()
-            response = httpx.post(
-                f"{API_URL}/api/upload/",
-                files={"file": (file.filename, upload_data, file.content_type or "video/mp4")},
-                headers={"Authorization": f"Bearer {self.token}"},
-                timeout=120.0,
-            )
-            if response.status_code == 200:
-                self.uploaded_video_url = response.json()["url"]
-                yield rx.toast.success("Video subido correctamente")
-            else:
-                detail = response.json().get("detail", response.text[:200]) if response.text else str(response.status_code)
-                yield rx.toast.error(f"Error: {detail}")
+            data = await file.read()
+            self.uploaded_video_url = self._upload_to_cloudinary(data, file.filename, file.content_type or "video/mp4", timeout=120.0)
+            yield rx.toast.success("Video subido correctamente")
         except Exception as e:
             yield rx.toast.error(f"Error al subir: {str(e)}")
         finally:
             self.subiendo_archivo = False
     
     async def upload_imagen(self, files: list[rx.UploadFile]):
-        """Subir imagen a Cloudinary"""
         if not files:
             return
         self.subiendo_archivo = True
         yield
         try:
             file = files[0]
-            upload_data = await file.read()
-            response = httpx.post(
-                f"{API_URL}/api/upload/",
-                files={"file": (file.filename, upload_data, file.content_type or "image/jpeg")},
-                headers={"Authorization": f"Bearer {self.token}"},
-                timeout=30.0,
-            )
-            if response.status_code == 200:
-                self.uploaded_imagen_url = response.json()["url"]
-                yield rx.toast.success("Imagen subida correctamente")
-            else:
-                detail = response.json().get("detail", response.text[:200]) if response.text else str(response.status_code)
-                yield rx.toast.error(f"Error: {detail}")
+            data = await file.read()
+            self.uploaded_imagen_url = self._upload_to_cloudinary(data, file.filename, file.content_type or "image/jpeg")
+            yield rx.toast.success("Imagen subida correctamente")
+        except Exception as e:
+            yield rx.toast.error(f"Error al subir: {str(e)}")
+        finally:
+            self.subiendo_archivo = False
+    
+    async def upload_documento(self, files: list[rx.UploadFile]):
+        if not files:
+            return
+        self.subiendo_archivo = True
+        yield
+        try:
+            file = files[0]
+            data = await file.read()
+            self.uploaded_documento_url = self._upload_to_cloudinary(data, file.filename, file.content_type or "application/pdf")
+            yield rx.toast.success("Documento subido correctamente")
         except Exception as e:
             yield rx.toast.error(f"Error al subir: {str(e)}")
         finally:
@@ -834,6 +800,7 @@ class State(rx.State):
         self.uploaded_certificado_url = ""
         self.uploaded_video_url = ""
         self.uploaded_imagen_url = ""
+        self.uploaded_documento_url = ""
     
     cursos_admin: List[Curso] = []
     cargando_cursos_admin: bool = False
@@ -853,22 +820,13 @@ class State(rx.State):
             )
             if response.status_code == 200:
                 data = response.json()
-                for curso in data:
-                    if curso.get("fecha_fin") is None:
-                        curso["fecha_fin"] = ""
-                    if curso.get("descripcion_es") is None:
-                        curso["descripcion_es"] = ""
-                    if curso.get("descripcion_en") is None:
-                        curso["descripcion_en"] = ""
-                    if curso.get("descripcion_it") is None:
-                        curso["descripcion_it"] = ""
-                    if curso.get("descripcion_ca") is None:
-                        curso["descripcion_ca"] = ""
-                    if curso.get("certificado_url") is None:
-                        curso["certificado_url"] = ""
-                    if curso.get("diploma_pdf") is None:
-                        curso["diploma_pdf"] = ""
-                self.cursos_admin = [Curso(**curso) for curso in data]
+                for c in data:
+                    self._limpiar_nulos(c, [
+                        "fecha_fin", "descripcion_es", "descripcion_en",
+                        "descripcion_it", "descripcion_ca",
+                        "certificado_url", "diploma_pdf",
+                    ])
+                self.cursos_admin = [Curso(**c) for c in data]
             else:
                 self.error_cursos_admin = f"Error {response.status_code}"
         except Exception as e:
@@ -891,8 +849,7 @@ class State(rx.State):
             return rx.toast.error(f"Error: {str(e)}")
     
     def abrir_formulario_curso(self, curso_id: int = 0):
-        self.uploaded_diploma_url = ""
-        self.uploaded_certificado_url = ""
+        self.reset_upload_urls()
         if curso_id > 0:
             curso = next((c for c in self.cursos_admin if c.id == curso_id), None)
             if curso:
@@ -977,20 +934,14 @@ class State(rx.State):
             )
             if response.status_code == 200:
                 data = response.json()
-                for exp in data:
-                    if exp.get("fecha_fin") is None:
-                        exp["fecha_fin"] = ""
-                    if exp.get("descripcion_es") is None:
-                        exp["descripcion_es"] = ""
-                    if exp.get("descripcion_en") is None:
-                        exp["descripcion_en"] = ""
-                    if exp.get("descripcion_it") is None:
-                        exp["descripcion_it"] = ""
-                    if exp.get("descripcion_ca") is None:
-                        exp["descripcion_ca"] = ""
-                    if exp.get("video_url") is None:
-                        exp["video_url"] = ""
-                self.experiencias_admin = [Experiencia(**exp) for exp in data]
+                for e in data:
+                    self._limpiar_nulos(e, [
+                        "fecha_inicio", "fecha_fin",
+                        "descripcion_es", "descripcion_en",
+                        "descripcion_it", "descripcion_ca",
+                        "imagen_url", "video_url", "documento_url",
+                    ])
+                self.experiencias_admin = [Experiencia(**e) for e in data]
             else:
                 self.error_experiencias_admin = f"Error {response.status_code}"
         except Exception as e:
@@ -1013,6 +964,7 @@ class State(rx.State):
             return rx.toast.error(f"Error: {str(e)}")
     
     def abrir_formulario_experiencia(self, experiencia_id: int = 0):
+        self.reset_upload_urls()
         if experiencia_id > 0:
             exp = next((e for e in self.experiencias_admin if e.id == experiencia_id), None)
             if exp:
@@ -1040,7 +992,7 @@ class State(rx.State):
                 "cargo_en": form_data["cargo_en"],
                 "cargo_it": form_data["cargo_it"],
                 "cargo_ca": form_data["cargo_ca"],
-                "fecha_inicio": form_data["fecha_inicio"],
+                "fecha_inicio": form_data.get("fecha_inicio", "").strip(),
                 "fecha_fin": fecha_fin,
                 "actual": form_data.get("actual") == "on",
                 "descripcion_es": form_data.get("descripcion_es", "") or None,
@@ -1048,9 +1000,10 @@ class State(rx.State):
                 "descripcion_it": form_data.get("descripcion_it", "") or None,
                 "descripcion_ca": form_data.get("descripcion_ca", "") or None,
                 "tecnologias": tecnologias,
-                "video_url": form_data.get("video_url", "").strip() or None,
+                "imagen_url": self.uploaded_imagen_url or form_data.get("imagen_url", "").strip() or form_data.get("imagen_url_manual", "").strip() or None,
+                "video_url": self.uploaded_video_url or form_data.get("video_url", "").strip() or form_data.get("video_url_manual", "").strip() or None,
+                "documento_url": self.uploaded_documento_url or form_data.get("documento_url", "").strip() or form_data.get("documento_url_manual", "").strip() or None,
                 "orden": int(form_data.get("orden", 0) or 0),
-                "mostrar_en_web": form_data.get("mostrar_en_web") == "on",
                 "activo": True,
             }
             

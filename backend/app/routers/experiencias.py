@@ -14,15 +14,10 @@ router = APIRouter()
 def get_experiencias(
     skip: int = 0,
     limit: int = 100,
-    mostrar_en_web: bool = None,
     db: Session = Depends(get_db)
 ):
     """Obtener lista de experiencias"""
     query = db.query(ExperienciaModel).filter(ExperienciaModel.activo == True)
-    
-    if mostrar_en_web is not None:
-        query = query.filter(ExperienciaModel.mostrar_en_web == mostrar_en_web)
-    
     experiencias = query.order_by(ExperienciaModel.orden).offset(skip).limit(limit).all()
     return experiencias
 

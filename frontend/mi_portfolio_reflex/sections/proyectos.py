@@ -69,9 +69,22 @@ def seccion_proyectos() -> rx.Component:
                                 size="2",
                             ),
                             
-                            # Video del proyecto (solo si es URL directa a video, no YouTube)
+                            # Imagen del proyecto
                             rx.cond(
-                                proyecto.video_url.contains(".mp4") | proyecto.video_url.contains(".webm") | proyecto.video_url.contains("cloudinary"),
+                                proyecto.imagen_url != "",
+                                rx.image(
+                                    src=proyecto.imagen_url,
+                                    width="100%",
+                                    max_height="300px",
+                                    object_fit="cover",
+                                    border_radius="8px",
+                                    margin_top="0.5em",
+                                ),
+                            ),
+                            
+                            # Video del proyecto (Cloudinary)
+                            rx.cond(
+                                proyecto.video_url != "",
                                 rx.box(
                                     rx.el.video(
                                         rx.el.source(src=proyecto.video_url, type="video/mp4"),
@@ -81,7 +94,7 @@ def seccion_proyectos() -> rx.Component:
                                         style={"border_radius": "8px", "max_height": "400px"},
                                     ),
                                     width="100%",
-                                    margin_top="1em",
+                                    margin_top="0.5em",
                                 ),
                             ),
                             

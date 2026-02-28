@@ -38,7 +38,7 @@ def admin_experiencias() -> rx.Component:
                                     rx.table.column_header_cell("Empresa"),
                                     rx.table.column_header_cell("Cargo (ES)"),
                                     rx.table.column_header_cell("Fecha Inicio"),
-                                    rx.table.column_header_cell("Mostrar Web"),
+                                    rx.table.column_header_cell("Activo"),
                                     rx.table.column_header_cell("Acciones"),
                                 ),
                             ),
@@ -51,7 +51,7 @@ def admin_experiencias() -> rx.Component:
                                         rx.table.cell(exp.empresa),
                                         rx.table.cell(exp.cargo_es),
                                         rx.table.cell(exp.fecha_inicio),
-                                        rx.table.cell(rx.cond(exp.mostrar_en_web, rx.badge("Sí", color_scheme="green"), rx.badge("No", color_scheme="gray"))),
+                                        rx.table.cell(rx.cond(exp.activo, rx.badge("Activo", color_scheme="blue"), rx.badge("Inactivo", color_scheme="red"))),
                                         rx.table.cell(
                                             rx.hstack(
                                                 rx.button(rx.icon("pencil", size=16), on_click=State.abrir_formulario_experiencia(exp.id), variant="soft", size="1", color_scheme="blue"),
@@ -74,6 +74,35 @@ def admin_experiencias() -> rx.Component:
             min_height="100vh",
         ),
         rx.fragment(rx.script("window.location.href = '/login'")),
+    )
+
+
+def _upload_zone(upload_id: str, label: str, handler, uploaded_url_check, max_size_bytes: int = 10 * 1024 * 1024) -> rx.Component:
+    """Componente reutilizable de zona de upload con on_drop"""
+    return rx.upload(
+        rx.vstack(
+            rx.cond(
+                State.subiendo_archivo,
+                rx.hstack(rx.spinner(size="1"), rx.text("Subiendo...", color="cyan", size="2"), spacing="2"),
+                rx.cond(
+                    uploaded_url_check,
+                    rx.hstack(rx.icon("check", size=16, color="green"), rx.text("Subido ✓", color="green", size="2"), spacing="2"),
+                    rx.hstack(rx.icon("upload", size=16, color="#999"), rx.text(label, color="#999", size="2"), spacing="2"),
+                ),
+            ),
+            align="center",
+            justify="center",
+            padding="1.5em",
+            border="1px dashed rgba(255,255,255,0.2)",
+            border_radius="8px",
+            width="100%",
+            cursor="pointer",
+        ),
+        id=upload_id,
+        max_files=1,
+        max_size=max_size_bytes,
+        no_keyboard=True,
+        on_drop=handler,
     )
 
 
@@ -121,12 +150,55 @@ def formulario_experiencia() -> rx.Component:
                         ),
                         rx.heading("Detalles", size="5", color="white", margin_top="1em", margin_bottom="0.5em"),
                         rx.grid(
-                            rx.vstack(rx.text("Fecha Inicio", color="#CCC", size="2"), rx.input(name="fecha_inicio", type="date", default_value=rx.cond(State.modo_edicion_experiencia, State.experiencia_editando.fecha_inicio, ""), required=True, width="100%"), spacing="1", width="100%"),
+                            rx.vstack(rx.text("Fecha Inicio", color="#CCC", size="2"), rx.input(name="fecha_inicio", type="date", default_value=rx.cond(State.modo_edicion_experiencia, State.experiencia_editando.fecha_inicio, ""), width="100%"), spacing="1", width="100%"),
                             rx.vstack(rx.text("Fecha Fin (opcional)", color="#CCC", size="2"), rx.input(name="fecha_fin", type="date", default_value=rx.cond(State.modo_edicion_experiencia, State.experiencia_editando.fecha_fin, ""), width="100%"), spacing="1", width="100%"),
                             rx.vstack(rx.text("Tecnologías (separadas por coma)", color="#CCC", size="2"), rx.input(name="tecnologias", placeholder="Python,FastAPI,React", default_value=rx.cond(State.modo_edicion_experiencia, State.experiencia_editando.tecnologias.join(","), ""), width="100%"), spacing="1", width="100%"),
                             rx.vstack(rx.text("Orden", color="#CCC", size="2"), rx.input(name="orden", type="number", placeholder="0", default_value=rx.cond(State.modo_edicion_experiencia, State.experiencia_editando.orden.to_string(), "0"), width="100%"), spacing="1", width="100%"),
                             rx.vstack(rx.text("Trabajo Actual", color="#CCC", size="2"), rx.checkbox(name="actual", default_checked=rx.cond(State.modo_edicion_experiencia, State.experiencia_editando.actual, False)), spacing="1", width="100%"),
-                            rx.vstack(rx.text("Mostrar en Web", color="#CCC", size="2"), rx.checkbox(name="mostrar_en_web", default_checked=rx.cond(State.modo_edicion_experiencia, State.experiencia_editando.mostrar_en_web, False)), spacing="1", width="100%"),
+                            columns="3", spacing="4", width="100%",
+                        ),
+                        rx.heading("Archivos", size="5", color="white", margin_top="1em", margin_bottom="0.5em"),
+                        rx.grid(
+                            rx.vstack(
+                                rx.text("Video", color="#CCC", size="2"),
+                                _upload_zone(
+                                    "exp_video_upload",
+                                    "Suelta un video aquí o haz clic (MP4)",
+                                    State.upload_video(rx.upload_files(upload_id="exp_video_upload")),
+                                    State.uploaded_video_url != "",
+                                    max_size_bytes=100 * 1024 * 1024,
+                                ),
+                                rx.input(name="video_url", type="hidden", value=rx.cond(State.uploaded_video_url != "", State.uploaded_video_url, rx.cond(State.modo_edicion_experiencia, State.experiencia_editando.video_url, ""))),
+                                rx.text("O pega URL:", color="#666", size="1"),
+                                rx.input(name="video_url_manual", placeholder="https://...", default_value=rx.cond(State.modo_edicion_experiencia, State.experiencia_editando.video_url, ""), width="100%"),
+                                spacing="2", width="100%",
+                            ),
+                            rx.vstack(
+                                rx.text("Imagen", color="#CCC", size="2"),
+                                _upload_zone(
+                                    "exp_imagen_upload",
+                                    "Suelta una imagen aquí o haz clic",
+                                    State.upload_imagen(rx.upload_files(upload_id="exp_imagen_upload")),
+                                    State.uploaded_imagen_url != "",
+                                ),
+                                rx.input(name="imagen_url", type="hidden", value=rx.cond(State.uploaded_imagen_url != "", State.uploaded_imagen_url, rx.cond(State.modo_edicion_experiencia, State.experiencia_editando.imagen_url, ""))),
+                                rx.text("O pega URL:", color="#666", size="1"),
+                                rx.input(name="imagen_url_manual", placeholder="https://...", default_value=rx.cond(State.modo_edicion_experiencia, State.experiencia_editando.imagen_url, ""), width="100%"),
+                                spacing="2", width="100%",
+                            ),
+                            rx.vstack(
+                                rx.text("Documento (PDF)", color="#CCC", size="2"),
+                                _upload_zone(
+                                    "exp_doc_upload",
+                                    "Suelta un PDF aquí o haz clic",
+                                    State.upload_documento(rx.upload_files(upload_id="exp_doc_upload")),
+                                    State.uploaded_documento_url != "",
+                                ),
+                                rx.input(name="documento_url", type="hidden", value=rx.cond(State.uploaded_documento_url != "", State.uploaded_documento_url, rx.cond(State.modo_edicion_experiencia, State.experiencia_editando.documento_url, ""))),
+                                rx.text("O pega URL:", color="#666", size="1"),
+                                rx.input(name="documento_url_manual", placeholder="https://...", default_value=rx.cond(State.modo_edicion_experiencia, State.experiencia_editando.documento_url, ""), width="100%"),
+                                spacing="2", width="100%",
+                            ),
                             columns="3", spacing="4", width="100%",
                         ),
                         rx.button(rx.cond(State.modo_edicion_experiencia, "Actualizar Experiencia", "Crear Experiencia"), type="submit", size="3", color_scheme="cyan", width="100%", margin_top="2em"),

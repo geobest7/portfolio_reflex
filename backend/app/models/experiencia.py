@@ -24,7 +24,9 @@ class Experiencia(Base):
     descripcion_ca = Column(Text)
     
     tecnologias = Column(JSON)
+    imagen_url = Column(String(500))
     video_url = Column(String(500))
+    documento_url = Column(String(500))
     
     orden = Column(Integer, default=0)
     activo = Column(Boolean, default=True)
