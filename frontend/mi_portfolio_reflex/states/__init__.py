@@ -779,18 +779,15 @@ class State(rx.State):
     async def upload_video(self, files: list[rx.UploadFile]):
         """Subir video a Cloudinary"""
         if not files:
-            yield rx.toast.error("No se seleccionó ningún archivo")
             return
         self.subiendo_archivo = True
         yield
         try:
             file = files[0]
             upload_data = await file.read()
-            content_type = file.content_type or "video/mp4"
-            yield rx.toast.info(f"Subiendo video ({len(upload_data) // 1024 // 1024}MB)...")
             response = httpx.post(
                 f"{API_URL}/api/upload/",
-                files={"file": (file.filename, upload_data, content_type)},
+                files={"file": (file.filename, upload_data, file.content_type or "video/mp4")},
                 headers={"Authorization": f"Bearer {self.token}"},
                 timeout=120.0,
             )
@@ -799,9 +796,9 @@ class State(rx.State):
                 yield rx.toast.success("Video subido correctamente")
             else:
                 detail = response.json().get("detail", response.text[:200]) if response.text else str(response.status_code)
-                yield rx.toast.error(f"Error {response.status_code}: {detail}")
+                yield rx.toast.error(f"Error: {detail}")
         except Exception as e:
-            yield rx.toast.error(f"Error al subir video: {str(e)}")
+            yield rx.toast.error(f"Error al subir: {str(e)}")
         finally:
             self.subiendo_archivo = False
     
