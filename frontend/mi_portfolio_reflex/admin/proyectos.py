@@ -235,8 +235,9 @@ def formulario_proyecto() -> rx.Component:
                                         cursor="pointer",
                                     ),
                                     id="video_upload",
-                                    accept={".mp4": ["video/mp4"], ".webm": ["video/webm"], ".mov": ["video/quicktime"]},
+                                    accept={".mp4": ["video/mp4"], ".webm": ["video/webm"], ".mov": ["video/quicktime"], ".avi": ["video/x-msvideo"]},
                                     max_files=1,
+                                    no_click=False,
                                     no_keyboard=True,
                                 ),
                                 rx.button(

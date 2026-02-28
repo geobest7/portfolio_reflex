@@ -81,7 +81,7 @@ def _curso_card(curso) -> rx.Component:
             ),
             rx.hstack(
                 rx.cond(
-                    curso.certificado_url.contains("http"),
+                    curso.certificado_url != "",
                     rx.link(
                         rx.button(
                             rx.hstack(
@@ -98,7 +98,7 @@ def _curso_card(curso) -> rx.Component:
                     ),
                 ),
                 rx.cond(
-                    curso.diploma_pdf.contains("http"),
+                    curso.diploma_pdf != "",
                     rx.link(
                         rx.button(
                             rx.hstack(
