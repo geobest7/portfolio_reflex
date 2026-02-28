@@ -84,8 +84,12 @@ def _curso_card(curso) -> rx.Component:
                     curso.certificado_url.contains("http"),
                     rx.link(
                         rx.button(
-                            rx.icon("award", size=14),
-                            State.ver_certificado,
+                            rx.hstack(
+                                rx.icon("award", size=14),
+                                rx.text(State.ver_certificado),
+                                spacing="2",
+                                align="center",
+                            ),
                             size="1",
                             variant="outline",
                         ),
@@ -97,8 +101,12 @@ def _curso_card(curso) -> rx.Component:
                     curso.diploma_pdf.contains("http"),
                     rx.link(
                         rx.button(
-                            rx.icon("graduation-cap", size=14),
-                            State.ver_diploma,
+                            rx.hstack(
+                                rx.icon("scroll-text", size=14),
+                                rx.text(State.ver_diploma),
+                                spacing="2",
+                                align="center",
+                            ),
                             size="1",
                             variant="solid",
                             color_scheme="yellow",

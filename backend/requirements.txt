@@ -12,3 +12,4 @@ email-validator
 httpx>=0.25.0
 psycopg2-binary>=2.9.0
 openpyxl>=3.1.0
+cloudinary>=1.36.0

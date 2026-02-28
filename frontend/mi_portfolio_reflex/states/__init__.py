@@ -709,6 +709,68 @@ class State(rx.State):
         except Exception as e:
             return rx.toast.error(f"Error: {str(e)}")
     
+    # ==================== UPLOAD STATE ====================
+    uploaded_diploma_url: str = ""
+    uploaded_certificado_url: str = ""
+    subiendo_archivo: bool = False
+    
+    async def upload_diploma(self, files: list[rx.UploadFile]):
+        """Subir diploma PDF a Cloudinary via backend"""
+        if not files:
+            return
+        self.subiendo_archivo = True
+        yield
+        try:
+            file = files[0]
+            upload_data = await file.read()
+            response = httpx.post(
+                f"{API_URL}/api/upload/",
+                files={"file": (file.filename, upload_data, file.content_type or "application/pdf")},
+                headers={"Authorization": f"Bearer {self.token}"},
+                timeout=30.0,
+            )
+            if response.status_code == 200:
+                self.uploaded_diploma_url = response.json()["url"]
+                yield rx.toast.success("Diploma subido correctamente")
+            else:
+                detail = response.json().get("detail", response.text[:200]) if response.text else str(response.status_code)
+                yield rx.toast.error(f"Error: {detail}")
+        except Exception as e:
+            yield rx.toast.error(f"Error al subir: {str(e)}")
+        finally:
+            self.subiendo_archivo = False
+    
+    async def upload_certificado(self, files: list[rx.UploadFile]):
+        """Subir certificado a Cloudinary via backend"""
+        if not files:
+            return
+        self.subiendo_archivo = True
+        yield
+        try:
+            file = files[0]
+            upload_data = await file.read()
+            response = httpx.post(
+                f"{API_URL}/api/upload/",
+                files={"file": (file.filename, upload_data, file.content_type or "application/pdf")},
+                headers={"Authorization": f"Bearer {self.token}"},
+                timeout=30.0,
+            )
+            if response.status_code == 200:
+                self.uploaded_certificado_url = response.json()["url"]
+                yield rx.toast.success("Certificado subido correctamente")
+            else:
+                detail = response.json().get("detail", response.text[:200]) if response.text else str(response.status_code)
+                yield rx.toast.error(f"Error: {detail}")
+        except Exception as e:
+            yield rx.toast.error(f"Error al subir: {str(e)}")
+        finally:
+            self.subiendo_archivo = False
+    
+    def reset_upload_urls(self):
+        """Resetear URLs de upload al abrir un formulario nuevo"""
+        self.uploaded_diploma_url = ""
+        self.uploaded_certificado_url = ""
+    
     cursos_admin: List[Curso] = []
     cargando_cursos_admin: bool = False
     error_cursos_admin: str = ""
@@ -765,6 +827,8 @@ class State(rx.State):
             return rx.toast.error(f"Error: {str(e)}")
     
     def abrir_formulario_curso(self, curso_id: int = 0):
+        self.uploaded_diploma_url = ""
+        self.uploaded_certificado_url = ""
         if curso_id > 0:
             curso = next((c for c in self.cursos_admin if c.id == curso_id), None)
             if curso:
@@ -800,8 +864,8 @@ class State(rx.State):
                 "descripcion_en": form_data.get("descripcion_en", "") or None,
                 "descripcion_it": form_data.get("descripcion_it", "") or None,
                 "descripcion_ca": form_data.get("descripcion_ca", "") or None,
-                "certificado_url": form_data.get("certificado_url", "").strip() or None,
-                "diploma_pdf": form_data.get("diploma_pdf", "").strip() or None,
+                "certificado_url": self.uploaded_certificado_url or form_data.get("certificado_url", "").strip() or form_data.get("certificado_url_manual", "").strip() or None,
+                "diploma_pdf": self.uploaded_diploma_url or form_data.get("diploma_pdf", "").strip() or form_data.get("diploma_pdf_manual", "").strip() or None,
                 "orden": int(form_data.get("orden", 0) or 0),
                 "activo": True,
             }

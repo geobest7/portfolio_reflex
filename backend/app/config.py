@@ -33,6 +33,11 @@ class Settings(BaseSettings):
     # Resend API para formulario de contacto
     resend_api_key: str = ""
     
+    # Cloudinary para upload de archivos
+    cloudinary_cloud_name: str = ""
+    cloudinary_api_key: str = ""
+    cloudinary_api_secret: str = ""
+    
     class Config:
         env_file = "../.env"
         env_file_encoding = "utf-8"

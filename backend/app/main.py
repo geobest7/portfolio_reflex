@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from .config import settings
 from .database import engine, Base, SessionLocal
-from .routers import proyectos, cursos, experiencias, github, auth, contacto, analytics
+from .routers import proyectos, cursos, experiencias, github, auth, contacto, analytics, upload
 from .models import proyecto, curso, experiencia, github_repo, user, visita
 from .models.user import User
 from .utils.auth import get_password_hash
@@ -76,6 +76,7 @@ app.include_router(github.router, prefix="/api/github", tags=["github"])
 app.include_router(auth.router, prefix="/api/auth", tags=["auth"])
 app.include_router(contacto.router, prefix="/api/contacto", tags=["contacto"])
 app.include_router(analytics.router, prefix="/api/analytics", tags=["analytics"])
+app.include_router(upload.router, prefix="/api/upload", tags=["upload"])
 
 
 @app.get("/")
