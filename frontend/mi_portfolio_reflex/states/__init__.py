@@ -717,35 +717,6 @@ class State(rx.State):
     uploaded_imagen_url: str = ""
     subiendo_archivo: bool = False
     
-    async def _upload_file(self, files: list[rx.UploadFile], default_type: str = "application/pdf"):
-        """Método genérico para subir un archivo a Cloudinary via backend. Retorna la URL o None."""
-        if not files:
-            return None
-        self.subiendo_archivo = True
-        yield
-        try:
-            file = files[0]
-            upload_data = await file.read()
-            response = httpx.post(
-                f"{API_URL}/api/upload/",
-                files={"file": (file.filename, upload_data, file.content_type or default_type)},
-                headers={"Authorization": f"Bearer {self.token}"},
-                timeout=60.0,
-            )
-            if response.status_code == 200:
-                url = response.json()["url"]
-                self.subiendo_archivo = False
-                return url
-            else:
-                detail = response.json().get("detail", response.text[:200]) if response.text else str(response.status_code)
-                self.subiendo_archivo = False
-                yield rx.toast.error(f"Error: {detail}")
-                return None
-        except Exception as e:
-            self.subiendo_archivo = False
-            yield rx.toast.error(f"Error al subir: {str(e)}")
-            return None
-    
     async def upload_diploma(self, files: list[rx.UploadFile]):
         """Subir diploma PDF a Cloudinary"""
         if not files:
