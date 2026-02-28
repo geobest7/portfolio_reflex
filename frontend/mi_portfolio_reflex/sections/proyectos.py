@@ -69,12 +69,16 @@ def seccion_proyectos() -> rx.Component:
                                 size="2",
                             ),
                             
-                            # Video de YouTube (si existe)
+                            # Video del proyecto (si existe)
                             rx.cond(
                                 proyecto.video_url != "",
                                 rx.box(
-                                    rx.html(
-                                        f'<iframe width="100%" height="315" src="{proyecto.video_url.replace("watch?v=", "embed/")}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>'
+                                    rx.el.video(
+                                        rx.el.source(src=proyecto.video_url, type="video/mp4"),
+                                        controls=True,
+                                        preload="metadata",
+                                        width="100%",
+                                        style={"border_radius": "8px", "max_height": "400px"},
                                     ),
                                     width="100%",
                                     margin_top="1em",

@@ -7,6 +7,20 @@ import cloudinary.uploader
 
 router = APIRouter()
 
+ALLOWED_TYPES = {
+    "application/pdf": "raw",
+    "image/jpeg": "image",
+    "image/png": "image",
+    "image/webp": "image",
+    "image/gif": "image",
+    "video/mp4": "video",
+    "video/webm": "video",
+    "video/quicktime": "video",
+}
+
+MAX_SIZE_PDF_IMG = 10 * 1024 * 1024   # 10MB
+MAX_SIZE_VIDEO = 100 * 1024 * 1024    # 100MB
+
 
 def configure_cloudinary():
     """Configura Cloudinary con las credenciales"""
@@ -25,30 +39,24 @@ async def upload_file(
     file: UploadFile = File(...),
     current_admin: User = Depends(get_current_admin_user),
 ):
-    """Subir archivo (PDF, imagen) a Cloudinary. Requiere autenticación admin."""
-    allowed_types = [
-        "application/pdf",
-        "image/jpeg",
-        "image/png",
-        "image/webp",
-        "image/gif",
-    ]
-    
-    if file.content_type not in allowed_types:
+    """Subir archivo (PDF, imagen, video) a Cloudinary. Requiere autenticación admin."""
+    resource_type = ALLOWED_TYPES.get(file.content_type)
+    if not resource_type:
+        allowed = ", ".join(ALLOWED_TYPES.keys())
         raise HTTPException(
             status_code=400,
-            detail=f"Tipo de archivo no permitido: {file.content_type}. Permitidos: PDF, JPEG, PNG, WebP, GIF",
+            detail=f"Tipo no permitido: {file.content_type}. Permitidos: {allowed}",
         )
     
-    max_size = 10 * 1024 * 1024  # 10MB
     contents = await file.read()
+    max_size = MAX_SIZE_VIDEO if resource_type == "video" else MAX_SIZE_PDF_IMG
     if len(contents) > max_size:
-        raise HTTPException(status_code=400, detail="Archivo demasiado grande (máximo 10MB)")
+        limit_mb = max_size // (1024 * 1024)
+        raise HTTPException(status_code=400, detail=f"Archivo demasiado grande (máximo {limit_mb}MB)")
     
     configure_cloudinary()
     
     try:
-        resource_type = "raw" if file.content_type == "application/pdf" else "image"
         result = cloudinary.uploader.upload(
             contents,
             folder="portfolio",
@@ -58,6 +66,7 @@ async def upload_file(
         return {
             "url": result["secure_url"],
             "public_id": result["public_id"],
+            "resource_type": resource_type,
             "format": result.get("format", ""),
             "size": result.get("bytes", 0),
         }

@@ -646,6 +646,7 @@ class State(rx.State):
             return rx.toast.error(f"Error: {str(e)}")
     
     def abrir_formulario_proyecto(self, proyecto_id: int = 0):
+        self.reset_upload_urls()
         if proyecto_id > 0:
             proyecto = next((p for p in self.proyectos_admin if p.id == proyecto_id), None)
             if proyecto:
@@ -675,10 +676,10 @@ class State(rx.State):
                 "descripcion_it": form_data["descripcion_it"],
                 "descripcion_ca": form_data["descripcion_ca"],
                 "tecnologias": tecnologias,
-                "url_github": form_data.get("github_url", "") or None,
-                "url_demo": form_data.get("demo_url", "") or None,
-                "imagen_url": form_data.get("imagen_url", "") or None,
-                "video_url": form_data.get("video_url", "") or None,
+                "url_github": form_data.get("github_url", "").strip() or None,
+                "url_demo": form_data.get("demo_url", "").strip() or None,
+                "imagen_url": self.uploaded_imagen_url or form_data.get("imagen_url", "").strip() or form_data.get("imagen_url_manual", "").strip() or None,
+                "video_url": self.uploaded_video_url or form_data.get("video_url", "").strip() or form_data.get("video_url_manual", "").strip() or None,
                 "destacado": form_data.get("destacado") == "on",
                 "orden": int(form_data.get("orden", 0) or 0),
                 "activo": True,
@@ -712,10 +713,41 @@ class State(rx.State):
     # ==================== UPLOAD STATE ====================
     uploaded_diploma_url: str = ""
     uploaded_certificado_url: str = ""
+    uploaded_video_url: str = ""
+    uploaded_imagen_url: str = ""
     subiendo_archivo: bool = False
     
+    async def _upload_file(self, files: list[rx.UploadFile], default_type: str = "application/pdf"):
+        """Método genérico para subir un archivo a Cloudinary via backend. Retorna la URL o None."""
+        if not files:
+            return None
+        self.subiendo_archivo = True
+        yield
+        try:
+            file = files[0]
+            upload_data = await file.read()
+            response = httpx.post(
+                f"{API_URL}/api/upload/",
+                files={"file": (file.filename, upload_data, file.content_type or default_type)},
+                headers={"Authorization": f"Bearer {self.token}"},
+                timeout=60.0,
+            )
+            if response.status_code == 200:
+                url = response.json()["url"]
+                self.subiendo_archivo = False
+                return url
+            else:
+                detail = response.json().get("detail", response.text[:200]) if response.text else str(response.status_code)
+                self.subiendo_archivo = False
+                yield rx.toast.error(f"Error: {detail}")
+                return None
+        except Exception as e:
+            self.subiendo_archivo = False
+            yield rx.toast.error(f"Error al subir: {str(e)}")
+            return None
+    
     async def upload_diploma(self, files: list[rx.UploadFile]):
-        """Subir diploma PDF a Cloudinary via backend"""
+        """Subir diploma PDF a Cloudinary"""
         if not files:
             return
         self.subiendo_archivo = True
@@ -741,7 +773,7 @@ class State(rx.State):
             self.subiendo_archivo = False
     
     async def upload_certificado(self, files: list[rx.UploadFile]):
-        """Subir certificado a Cloudinary via backend"""
+        """Subir certificado a Cloudinary"""
         if not files:
             return
         self.subiendo_archivo = True
@@ -766,10 +798,65 @@ class State(rx.State):
         finally:
             self.subiendo_archivo = False
     
+    async def upload_video(self, files: list[rx.UploadFile]):
+        """Subir video a Cloudinary"""
+        if not files:
+            return
+        self.subiendo_archivo = True
+        yield
+        try:
+            file = files[0]
+            upload_data = await file.read()
+            yield rx.toast.info("Subiendo video... esto puede tardar unos segundos")
+            response = httpx.post(
+                f"{API_URL}/api/upload/",
+                files={"file": (file.filename, upload_data, file.content_type or "video/mp4")},
+                headers={"Authorization": f"Bearer {self.token}"},
+                timeout=120.0,
+            )
+            if response.status_code == 200:
+                self.uploaded_video_url = response.json()["url"]
+                yield rx.toast.success("Video subido correctamente")
+            else:
+                detail = response.json().get("detail", response.text[:200]) if response.text else str(response.status_code)
+                yield rx.toast.error(f"Error: {detail}")
+        except Exception as e:
+            yield rx.toast.error(f"Error al subir: {str(e)}")
+        finally:
+            self.subiendo_archivo = False
+    
+    async def upload_imagen(self, files: list[rx.UploadFile]):
+        """Subir imagen a Cloudinary"""
+        if not files:
+            return
+        self.subiendo_archivo = True
+        yield
+        try:
+            file = files[0]
+            upload_data = await file.read()
+            response = httpx.post(
+                f"{API_URL}/api/upload/",
+                files={"file": (file.filename, upload_data, file.content_type or "image/jpeg")},
+                headers={"Authorization": f"Bearer {self.token}"},
+                timeout=30.0,
+            )
+            if response.status_code == 200:
+                self.uploaded_imagen_url = response.json()["url"]
+                yield rx.toast.success("Imagen subida correctamente")
+            else:
+                detail = response.json().get("detail", response.text[:200]) if response.text else str(response.status_code)
+                yield rx.toast.error(f"Error: {detail}")
+        except Exception as e:
+            yield rx.toast.error(f"Error al subir: {str(e)}")
+        finally:
+            self.subiendo_archivo = False
+    
     def reset_upload_urls(self):
         """Resetear URLs de upload al abrir un formulario nuevo"""
         self.uploaded_diploma_url = ""
         self.uploaded_certificado_url = ""
+        self.uploaded_video_url = ""
+        self.uploaded_imagen_url = ""
     
     cursos_admin: List[Curso] = []
     cargando_cursos_admin: bool = False
