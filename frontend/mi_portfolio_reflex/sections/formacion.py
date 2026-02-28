@@ -3,6 +3,126 @@ from ..states import State
 from ..components.skeletons import skeleton_curso
 
 
+def _titulo_curso(curso) -> rx.Component:
+    return rx.cond(
+        State.idioma == "es", curso.titulo_es,
+        rx.cond(
+            State.idioma == "en", curso.titulo_en,
+            rx.cond(State.idioma == "it", curso.titulo_it, curso.titulo_ca)
+        )
+    )
+
+
+def _institucion_curso(curso) -> rx.Component:
+    return rx.cond(
+        State.idioma == "es", curso.institucion_es,
+        rx.cond(
+            State.idioma == "en", curso.institucion_en,
+            rx.cond(State.idioma == "it", curso.institucion_it, curso.institucion_ca)
+        )
+    )
+
+
+def _descripcion_curso(curso) -> rx.Component:
+    return rx.cond(
+        State.idioma == "es", curso.descripcion_es,
+        rx.cond(
+            State.idioma == "en", curso.descripcion_en,
+            rx.cond(State.idioma == "it", curso.descripcion_it, curso.descripcion_ca)
+        )
+    )
+
+
+def _curso_card(curso) -> rx.Component:
+    return rx.box(
+        rx.vstack(
+            rx.hstack(
+                rx.text(
+                    curso.tipo.upper(),
+                    color=rx.cond(curso.tipo == "diploma", "#FFD700", "#00CED1"),
+                    font_weight="bold",
+                    size="2",
+                ),
+                rx.text(
+                    _titulo_curso(curso),
+                    color="white",
+                    font_weight="bold",
+                    size="4",
+                ),
+                spacing="3",
+                align_items="center",
+            ),
+            rx.text(
+                _institucion_curso(curso),
+                color="#CCCCCC",
+                size="2",
+            ),
+            rx.text(
+                rx.cond(
+                    curso.fecha_fin != "",
+                    f"{curso.fecha_inicio} - {curso.fecha_fin}",
+                    f"{curso.fecha_inicio}"
+                ),
+                color="#999999",
+                size="1",
+            ),
+            rx.cond(
+                curso.descripcion_es != "",
+                rx.box(
+                    rx.text(
+                        _descripcion_curso(curso),
+                        color="#AAAAAA",
+                        size="2",
+                        line_height="1.6",
+                    ),
+                    padding="0.8em 0",
+                    width="100%",
+                ),
+            ),
+            rx.hstack(
+                rx.cond(
+                    curso.certificado_url.contains("http"),
+                    rx.link(
+                        rx.button(
+                            rx.icon("award", size=14),
+                            State.ver_certificado,
+                            size="1",
+                            variant="outline",
+                        ),
+                        href=curso.certificado_url,
+                        is_external=True,
+                    ),
+                ),
+                rx.cond(
+                    curso.diploma_pdf.contains("http"),
+                    rx.link(
+                        rx.button(
+                            rx.icon("graduation-cap", size=14),
+                            State.ver_diploma,
+                            size="1",
+                            variant="solid",
+                            color_scheme="yellow",
+                        ),
+                        href=curso.diploma_pdf,
+                        is_external=True,
+                    ),
+                ),
+                spacing="3",
+            ),
+            spacing="2",
+            align_items="start",
+        ),
+        padding="1.5em",
+        border_radius="10px",
+        border="1px solid rgba(255,255,255,0.08)",
+        background_color="rgba(255,255,255,0.02)",
+        width="100%",
+        _hover={"border_color": "rgba(255,255,255,0.15)", "background_color": "rgba(255,255,255,0.04)"},
+        transition="all 0.3s ease",
+        class_name="fade-in-up",
+    )
+
+
 def seccion_formacion() -> rx.Component:
     """Seccion Formacion con datos dinamicos desde la API"""
     return rx.box(
@@ -27,99 +147,7 @@ def seccion_formacion() -> rx.Component:
             ),
             
             rx.vstack(
-                rx.foreach(
-                    State.cursos,
-                    lambda curso: rx.box(
-                        rx.vstack(
-                            rx.hstack(
-                                rx.text(
-                                    curso.tipo.upper(),
-                                    color=rx.cond(
-                                        curso.tipo == "diploma",
-                                        "#FFD700",
-                                        "#00CED1"
-                                    ),
-                                    font_weight="bold",
-                                    size="2",
-                                ),
-                                rx.text(
-                                    rx.cond(
-                                        State.idioma == "es",
-                                        curso.titulo_es,
-                                        rx.cond(
-                                            State.idioma == "en",
-                                            curso.titulo_en,
-                                            rx.cond(
-                                                State.idioma == "it",
-                                                curso.titulo_it,
-                                                curso.titulo_ca
-                                            )
-                                        )
-                                    ),
-                                    color="white",
-                                    font_weight="bold",
-                                    size="4",
-                                ),
-                                spacing="3",
-                                align_items="center",
-                            ),
-                            rx.text(
-                                rx.cond(
-                                    State.idioma == "es", curso.institucion_es,
-                                    rx.cond(
-                                        State.idioma == "en", curso.institucion_en,
-                                        rx.cond(
-                                            State.idioma == "it", curso.institucion_it,
-                                            curso.institucion_ca
-                                        )
-                                    )
-                                ),
-                                color="#CCCCCC",
-                                size="2",
-                            ),
-                            rx.text(
-                                rx.cond(
-                                    curso.fecha_fin != "",
-                                    f"{curso.fecha_inicio} - {curso.fecha_fin}",
-                                    f"{curso.fecha_inicio} - Actualidad"
-                                ),
-                                color="#999999",
-                                size="1",
-                            ),
-                            rx.cond(
-                                curso.certificado_url != "",
-                                rx.link(
-                                    rx.button("Ver certificado", size="1", variant="outline"),
-                                    href=curso.certificado_url,
-                                    is_external=True,
-                                ),
-                            ),
-                            rx.cond(
-                                curso.diploma_pdf != "",
-                                rx.link(
-                                    rx.button(
-                                        "Ver Diploma",
-                                        size="1",
-                                        variant="solid",
-                                        color_scheme="cyan",
-                                    ),
-                                    href=curso.diploma_pdf,
-                                    is_external=True,
-                                ),
-                            ),
-                            spacing="2",
-                            align_items="start",
-                        ),
-                        padding="1.5em",
-                        border_radius="10px",
-                        border="1px solid rgba(255,255,255,0.08)",
-                        background_color="rgba(255,255,255,0.02)",
-                        width="100%",
-                        _hover={"border_color": "rgba(255,255,255,0.15)", "background_color": "rgba(255,255,255,0.04)"},
-                        transition="all 0.3s ease",
-                        class_name="fade-in-up",
-                    )
-                ),
+                rx.foreach(State.cursos, _curso_card),
                 spacing="3",
                 width="100%",
                 max_width="800px",

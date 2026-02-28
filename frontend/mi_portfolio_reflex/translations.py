@@ -72,6 +72,10 @@ TRANSLATIONS = {
 
         # Sección Formación
         "formacion_titulo": "Formación",
+        "ver_diploma": "Ver Diploma",
+        "ver_certificado": "Ver Certificado",
+        "ver_descripcion": "Ver más",
+        "ocultar_descripcion": "Ver menos",
 
 
         # GitHub
@@ -159,6 +163,10 @@ TRANSLATIONS = {
 
         # Sección Formación
         "formacion_titulo": "Education",
+        "ver_diploma": "View Diploma",
+        "ver_certificado": "View Certificate",
+        "ver_descripcion": "Show more",
+        "ocultar_descripcion": "Show less",
 
 
         # GitHub
@@ -249,6 +257,10 @@ TRANSLATIONS = {
 
         # Sección Formación
         "formacion_titulo": "Formazione",
+        "ver_diploma": "Vedi Diploma",
+        "ver_certificado": "Vedi Certificato",
+        "ver_descripcion": "Mostra di più",
+        "ocultar_descripcion": "Mostra di meno",
 
 
         # GitHub
@@ -337,6 +349,10 @@ TRANSLATIONS = {
 
         # Sección Formación
         "formacion_titulo": "Formació",
+        "ver_diploma": "Veure Diploma",
+        "ver_certificado": "Veure Certificat",
+        "ver_descripcion": "Veure més",
+        "ocultar_descripcion": "Veure menys",
 
 
         # GitHub

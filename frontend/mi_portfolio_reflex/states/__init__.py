@@ -193,6 +193,22 @@ class State(rx.State):
     def formacion_titulo(self) -> str:
         return TRANSLATIONS.get(self.idioma, {}).get("formacion_titulo", "")
     
+    @rx.var
+    def ver_diploma(self) -> str:
+        return TRANSLATIONS.get(self.idioma, {}).get("ver_diploma", "")
+    
+    @rx.var
+    def ver_certificado(self) -> str:
+        return TRANSLATIONS.get(self.idioma, {}).get("ver_certificado", "")
+    
+    @rx.var
+    def ver_descripcion(self) -> str:
+        return TRANSLATIONS.get(self.idioma, {}).get("ver_descripcion", "")
+    
+    @rx.var
+    def ocultar_descripcion(self) -> str:
+        return TRANSLATIONS.get(self.idioma, {}).get("ocultar_descripcion", "")
+    
     # ==================== FORM STATE - Formulario de Contacto ====================
     form_nombre_value: str = ""
     form_email_value: str = ""
