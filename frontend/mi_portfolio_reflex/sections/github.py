@@ -44,7 +44,7 @@ def seccion_github_repos() -> rx.Component:
                             # Nombre del repo
                             rx.heading(
                                 repo.name,
-                                size="5",
+                                size="4",
                                 color="white",
                                 word_break="break-word",
                                 overflow_wrap="break-word",

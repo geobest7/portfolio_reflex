@@ -213,6 +213,30 @@ section {
     .contacto-info {
         align-items: flex-start !important;
     }
+
+    /* GitHub cards más compactas en móvil */
+    #github h3 {
+        font-size: 1.1rem !important;
+    }
+
+    /* Section headings más pequeños en móvil */
+    [data-radix-scroll-area-viewport] h2,
+    #sobre-mi h2, #experiencia h2, #formacion h2,
+    #proyectos h2, #github h2, #contacto h2 {
+        font-size: 1.8rem !important;
+    }
+
+    /* Reducir padding general de cards en móvil */
+    #github .fade-in-up,
+    #experiencia .fade-in-up,
+    #formacion .fade-in-up {
+        padding: 1em !important;
+    }
+
+    /* Texto descripción más compacto */
+    #sobre-mi p, #experiencia p, #formacion p, #github p {
+        font-size: 0.85rem !important;
+    }
 }
 
 /* ==================== RESPONSIVE - TABLET ==================== */
