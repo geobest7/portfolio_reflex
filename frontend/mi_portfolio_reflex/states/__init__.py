@@ -375,11 +375,28 @@ class State(rx.State):
             }
             if (!window._typingInit) {
                 window._typingInit = true;
-                const roles = ['Python Developer Junior', 'Aprendiendo Machine Learning', 'Backend con FastAPI', 'Siempre aprendiendo'];
-                let ri = 0, ci = 0, deleting = false;
+                const rolesMap = {
+                    'es': ['Python Developer Junior', 'Aprendiendo Machine Learning', 'Explorando Data Analysis', 'Siempre aprendiendo'],
+                    'en': ['Junior Python Developer', 'Learning Machine Learning', 'Exploring Data Analysis', 'Always learning'],
+                    'it': ['Python Developer Junior', 'Studiando Machine Learning', 'Esplorando Data Analysis', 'Sempre imparando'],
+                    'ca': ['Python Developer Junior', 'Aprenent Machine Learning', 'Explorant Data Analysis', 'Sempre aprenent'],
+                };
+                function getLang() {
+                    try {
+                        const s = JSON.parse(localStorage.getItem('reflex-state') || '{}');
+                        const keys = Object.keys(s);
+                        for (const k of keys) {
+                            if (s[k] && s[k].idioma) return s[k].idioma;
+                        }
+                    } catch(e) {}
+                    return 'es';
+                }
+                let ri = 0, ci = 0, deleting = false, currentLang = getLang();
                 const el = document.getElementById('typing-text');
                 if (el) {
                     function tick() {
+                        if (ri === 0 && ci === 0) currentLang = getLang();
+                        const roles = rolesMap[currentLang] || rolesMap['es'];
                         const word = roles[ri];
                         if (!deleting) {
                             el.textContent = word.substring(0, ci + 1);

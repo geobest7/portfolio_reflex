@@ -67,6 +67,14 @@ section {
     50% { border-color: transparent; }
 }
 #typing-text {
+    font-size: 1.15rem;
+    font-weight: 300;
+    letter-spacing: 0.05em;
+    color: #999;
+    min-height: 1.5em;
+    display: inline-block;
+    border-right: 2px solid #999;
+    padding-right: 4px;
     animation: blink-cursor 0.8s step-end infinite;
 }
 

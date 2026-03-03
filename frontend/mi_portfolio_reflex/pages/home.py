@@ -42,19 +42,8 @@ def home() -> rx.Component:
                 color="white",
                 class_name="portada-titulo",
             ),
-            rx.el.span(
-                id="typing-text",
-                style={
-                    "font_size": "1.15rem",
-                    "font_weight": "300",
-                    "letter_spacing": "0.05em",
-                    "color": "#999",
-                    "min_height": "1.5em",
-                    "display": "inline-block",
-                    "border_right": "2px solid #999",
-                    "padding_right": "4px",
-                },
-                class_name="portada-subtitulo",
+            rx.html(
+                "<div id='typing-text' class='portada-subtitulo'>&nbsp;</div>",
             ),
             padding="4em 2em",
             padding_top="7em",
