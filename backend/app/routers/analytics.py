@@ -244,7 +244,19 @@ def distribucion_referrers(
         Visita.referer != None,
     ).group_by(Visita.referer).order_by(desc("total")).limit(limit).all()
     
-    return [{"referrer": r[0], "total": r[1]} for r in resultados]
+    # Normalizar dominios antiguos al actual
+    DOMAIN_ALIASES = {
+        "portfolio-alessandro-teal-ring.reflex.run": "portfolio-alessandro-teal-moon.reflex.run",
+    }
+    merged: dict[str, int] = {}
+    for referrer, total in resultados:
+        normalized = referrer
+        for old, new in DOMAIN_ALIASES.items():
+            normalized = normalized.replace(old, new)
+        merged[normalized] = merged.get(normalized, 0) + total
+    
+    sorted_refs = sorted(merged.items(), key=lambda x: x[1], reverse=True)
+    return [{"referrer": r, "total": t} for r, t in sorted_refs[:limit]]
 
 
 @router.get("/visitas-por-dia")

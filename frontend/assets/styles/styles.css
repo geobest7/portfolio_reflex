@@ -215,27 +215,41 @@ section {
     }
 
     /* GitHub cards más compactas en móvil */
-    #github h3 {
-        font-size: 1.1rem !important;
+    #github h3, #github h4 {
+        font-size: 0.95rem !important;
+        line-height: 1.3 !important;
     }
 
     /* Section headings más pequeños en móvil */
     [data-radix-scroll-area-viewport] h2,
     #sobre-mi h2, #experiencia h2, #formacion h2,
     #proyectos h2, #github h2, #contacto h2 {
-        font-size: 1.8rem !important;
+        font-size: 1.6rem !important;
     }
 
     /* Reducir padding general de cards en móvil */
     #github .fade-in-up,
     #experiencia .fade-in-up,
     #formacion .fade-in-up {
-        padding: 1em !important;
+        padding: 0.8em !important;
     }
 
     /* Texto descripción más compacto */
     #sobre-mi p, #experiencia p, #formacion p, #github p {
-        font-size: 0.85rem !important;
+        font-size: 0.8rem !important;
+        line-height: 1.5 !important;
+    }
+
+    /* Badges y botones más pequeños en móvil */
+    #github button {
+        font-size: 0.75rem !important;
+        padding: 0.3em 0.6em !important;
+    }
+
+    /* Stats icons más compactos */
+    #github svg {
+        width: 14px !important;
+        height: 14px !important;
     }
 }
 
