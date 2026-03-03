@@ -61,6 +61,15 @@ section {
 .fade-in-up.visible:nth-child(3) { transition-delay: 0.2s; }
 .fade-in-up.visible:nth-child(4) { transition-delay: 0.3s; }
 
+/* Typing cursor blink */
+@keyframes blink-cursor {
+    0%, 100% { border-color: #999; }
+    50% { border-color: transparent; }
+}
+#typing-text {
+    animation: blink-cursor 0.8s step-end infinite;
+}
+
 /* Scroll-to-top button hover */
 #scroll-top-btn:hover {
     background: rgba(255,255,255,0.2) !important;

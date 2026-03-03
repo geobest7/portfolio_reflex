@@ -192,6 +192,23 @@ class State(rx.State):
     def formacion_titulo(self) -> str:
         return TRANSLATIONS.get(self.idioma, {}).get("formacion_titulo", "")
     
+    # Stats labels
+    @rx.var
+    def stats_label_proyectos(self) -> str:
+        return TRANSLATIONS.get(self.idioma, {}).get("stats_label_proyectos", "")
+    
+    @rx.var
+    def stats_label_tecnologias(self) -> str:
+        return TRANSLATIONS.get(self.idioma, {}).get("stats_label_tecnologias", "")
+    
+    @rx.var
+    def stats_label_certificaciones(self) -> str:
+        return TRANSLATIONS.get(self.idioma, {}).get("stats_label_certificaciones", "")
+    
+    @rx.var
+    def stats_label_idiomas(self) -> str:
+        return TRANSLATIONS.get(self.idioma, {}).get("stats_label_idiomas", "")
+    
     diploma_url_actual: str = ""
     
     def abrir_diploma(self, url: str):
@@ -355,6 +372,59 @@ class State(rx.State):
                         btn.style.pointerEvents = 'none';
                     }
                 }, {passive: true});
+            }
+            if (!window._typingInit) {
+                window._typingInit = true;
+                const roles = ['Python Developer', 'Backend Developer', 'FastAPI Specialist', 'Web Developer', 'Problem Solver'];
+                let ri = 0, ci = 0, deleting = false;
+                const el = document.getElementById('typing-text');
+                if (el) {
+                    function tick() {
+                        const word = roles[ri];
+                        if (!deleting) {
+                            el.textContent = word.substring(0, ci + 1);
+                            ci++;
+                            if (ci === word.length) { deleting = true; setTimeout(tick, 2000); return; }
+                            setTimeout(tick, 80);
+                        } else {
+                            el.textContent = word.substring(0, ci - 1);
+                            ci--;
+                            if (ci === 0) { deleting = false; ri = (ri + 1) % roles.length; setTimeout(tick, 400); return; }
+                            setTimeout(tick, 40);
+                        }
+                    }
+                    tick();
+                }
+            }
+            if (!window._statsInit) {
+                window._statsInit = true;
+                const counters = [
+                    {id: 'stat-proyectos', target: 5, suffix: '+'},
+                    {id: 'stat-tecnologias', target: 18, suffix: ''},
+                    {id: 'stat-certificaciones', target: 4, suffix: ''},
+                    {id: 'stat-idiomas', target: 4, suffix: ''},
+                ];
+                const obs = new IntersectionObserver((entries) => {
+                    entries.forEach(e => {
+                        if (!e.isIntersecting) return;
+                        const el = e.target;
+                        const c = counters.find(c => c.id === el.id);
+                        if (!c || el.dataset.counted) return;
+                        el.dataset.counted = '1';
+                        let n = 0;
+                        const step = Math.max(1, Math.floor(c.target / 30));
+                        const iv = setInterval(() => {
+                            n += step;
+                            if (n >= c.target) { n = c.target; clearInterval(iv); }
+                            el.textContent = n + c.suffix;
+                        }, 50);
+                        obs.unobserve(el);
+                    });
+                }, {threshold: 0.5});
+                counters.forEach(c => {
+                    const el = document.getElementById(c.id);
+                    if (el) obs.observe(el);
+                });
             }
             """
         )
@@ -1136,6 +1206,61 @@ class State(rx.State):
     analytics_recientes: list[dict[str, str]] = []
     cargando_analytics: bool = False
     error_analytics: str = ""
+    
+    # Computed properties for recharts
+    @rx.var
+    def analytics_visitas_hoy(self) -> str:
+        if not self.analytics_por_dia:
+            return "0"
+        from datetime import datetime
+        hoy = datetime.utcnow().strftime("%Y-%m-%d")
+        for item in self.analytics_por_dia:
+            if item.get("fecha", "") == hoy:
+                return item.get("visitas", "0")
+        return "0"
+    
+    @rx.var
+    def analytics_media_diaria(self) -> str:
+        if not self.analytics_por_dia or len(self.analytics_por_dia) == 0:
+            return "0"
+        total = sum(int(item.get("visitas", 0)) for item in self.analytics_por_dia)
+        media = total / len(self.analytics_por_dia)
+        return f"{media:.1f}"
+    
+    @rx.var
+    def analytics_por_dia_chart(self) -> list[dict[str, str]]:
+        return [
+            {"label": item.get("fecha", "")[5:10], "visitas": item.get("visitas", "0")}
+            for item in self.analytics_por_dia
+        ]
+    
+    @rx.var
+    def analytics_dispositivos_chart(self) -> list[dict]:
+        return [
+            {"name": item.get("dispositivo", ""), "value": int(item.get("total", 0))}
+            for item in self.analytics_dispositivos
+        ]
+    
+    @rx.var
+    def analytics_navegadores_chart(self) -> list[dict]:
+        return [
+            {"name": item.get("navegador", ""), "value": int(item.get("total", 0))}
+            for item in self.analytics_navegadores
+        ]
+    
+    @rx.var
+    def analytics_plataformas_chart(self) -> list[dict]:
+        return [
+            {"name": item.get("plataforma", ""), "value": int(item.get("total", 0))}
+            for item in self.analytics_plataformas
+        ]
+    
+    @rx.var
+    def analytics_paginas_chart(self) -> list[dict]:
+        return [
+            {"name": item.get("pagina", ""), "value": int(item.get("visitas", 0))}
+            for item in self.analytics_paginas
+        ]
     
     def descargar_excel_analytics(self):
         """Descargar Excel via backend con auth"""

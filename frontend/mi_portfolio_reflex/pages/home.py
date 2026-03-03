@@ -3,6 +3,7 @@ from ..states import State
 from ..components import navbar, footer
 from ..sections import (
     seccion_sobre_mi,
+    seccion_stats,
     seccion_experiencia,
     seccion_formacion,
     seccion_proyectos,
@@ -42,12 +43,18 @@ def home() -> rx.Component:
                 color="white",
                 class_name="portada-titulo",
             ),
-            rx.text(
-                State.hero_subtitulo,
-                size="5",
-                font_weight="300",
-                letter_spacing="0.05em",
-                color="#999",
+            rx.el.span(
+                id="typing-text",
+                style={
+                    "font_size": "1.15rem",
+                    "font_weight": "300",
+                    "letter_spacing": "0.05em",
+                    "color": "#999",
+                    "min_height": "1.5em",
+                    "display": "inline-block",
+                    "border_right": "2px solid #999",
+                    "padding_right": "4px",
+                },
                 class_name="portada-subtitulo",
             ),
             padding="4em 2em",
@@ -58,6 +65,7 @@ def home() -> rx.Component:
             id="inicio"
         ),
         seccion_sobre_mi(),
+        seccion_stats(),
         seccion_experiencia(),
         seccion_formacion(),
         seccion_proyectos(),
