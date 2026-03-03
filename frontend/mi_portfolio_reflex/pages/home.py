@@ -50,8 +50,8 @@ def home() -> rx.Component:
                 ),
                 rx.el.input(
                     type="hidden",
-                    id="current-lang",
-                    value=State.idioma,
+                    id="typing-roles-data",
+                    value=State.typing_roles_json,
                 ),
             ),
             padding="4em 2em",

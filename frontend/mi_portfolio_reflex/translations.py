@@ -56,11 +56,13 @@ TRANSLATIONS = {
         "btn_enviar": "Enviar mensaje",
 
 
-        # stats
-        "stats_label_proyectos": "Proyectos",
-        "stats_label_tecnologias": "Tecnologías",
-        "stats_label_certificaciones": "Certificaciones",
-        "stats_label_idiomas": "Idiomas",
+        # typing roles hero
+        "typing_roles": [
+            "Python Developer Junior",
+            "Aprendiendo Machine Learning",
+            "Explorando Data Analysis",
+            "Siempre aprendiendo",
+        ],
 
         # footer
         "footer_derechos": "Todos los derechos reservados",
@@ -153,11 +155,13 @@ TRANSLATIONS = {
         "btn_enviar": "Send message",
 
         
-        # stats
-        "stats_label_proyectos": "Projects",
-        "stats_label_tecnologias": "Technologies",
-        "stats_label_certificaciones": "Certifications",
-        "stats_label_idiomas": "Languages",
+        # typing roles hero
+        "typing_roles": [
+            "Junior Python Developer",
+            "Learning Machine Learning",
+            "Exploring Data Analysis",
+            "Always learning",
+        ],
 
         # footer
         "footer_derechos": "All rights reserved",
@@ -254,11 +258,13 @@ TRANSLATIONS = {
         "btn_enviar": "Invia messaggio",
 
 
-        # stats
-        "stats_label_proyectos": "Progetti",
-        "stats_label_tecnologias": "Tecnologie",
-        "stats_label_certificaciones": "Certificazioni",
-        "stats_label_idiomas": "Lingue",
+        # typing roles hero
+        "typing_roles": [
+            "Python Developer Junior",
+            "Studiando Machine Learning",
+            "Esplorando Data Analysis",
+            "Sempre imparando",
+        ],
 
         # footer
         "footer_derechos": "Tutti i diritti riservati",
@@ -351,11 +357,13 @@ TRANSLATIONS = {
         "btn_enviar": "Enviar missatge",
 
 
-        # stats
-        "stats_label_proyectos": "Projectes",
-        "stats_label_tecnologias": "Tecnologies",
-        "stats_label_certificaciones": "Certificacions",
-        "stats_label_idiomas": "Idiomes",
+        # typing roles hero
+        "typing_roles": [
+            "Python Developer Junior",
+            "Aprenent Machine Learning",
+            "Explorant Data Analysis",
+            "Sempre aprenent",
+        ],
 
         # footer
         "footer_derechos": "Tots els drets reservats",

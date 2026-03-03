@@ -61,6 +61,13 @@ class State(rx.State):
     def cerrar_menu(self):
         self.menu_abierto = False
     
+    # Typing roles from translations
+    @rx.var
+    def typing_roles_json(self) -> str:
+        import json
+        roles = TRANSLATIONS.get(self.idioma, {}).get("typing_roles", [])
+        return json.dumps(roles, ensure_ascii=False)
+    
     # Propiedades computadas para traducciones
     @rx.var
     def hero_titulo(self) -> str:
@@ -358,23 +365,25 @@ class State(rx.State):
             }
             if (!window._typingInit) {
                 window._typingInit = true;
-                const rolesMap = {
-                    'es': ['Python Developer Junior', 'Aprendiendo Machine Learning', 'Explorando Data Analysis', 'Siempre aprendiendo'],
-                    'en': ['Junior Python Developer', 'Learning Machine Learning', 'Exploring Data Analysis', 'Always learning'],
-                    'it': ['Python Developer Junior', 'Studiando Machine Learning', 'Esplorando Data Analysis', 'Sempre imparando'],
-                    'ca': ['Python Developer Junior', 'Aprenent Machine Learning', 'Explorant Data Analysis', 'Sempre aprenent'],
-                };
-                function getLang() {
-                    const inp = document.getElementById('current-lang');
-                    return (inp && inp.value) ? inp.value : 'es';
+                function getRoles() {
+                    try {
+                        const inp = document.getElementById('typing-roles-data');
+                        if (inp && inp.value) return JSON.parse(inp.value);
+                    } catch(e) {}
+                    return ['Python Developer Junior'];
                 }
-                let ri = 0, ci = 0, deleting = false, currentLang = getLang();
+                let ri = 0, ci = 0, deleting = false;
+                let prevRolesStr = '', roles = getRoles();
                 const el = document.getElementById('typing-text');
                 if (el) {
                     function tick() {
-                        if (ri === 0 && ci === 0) currentLang = getLang();
-                        const roles = rolesMap[currentLang] || rolesMap['es'];
-                        const word = roles[ri];
+                        const newStr = (document.getElementById('typing-roles-data') || {}).value || '';
+                        if (newStr !== prevRolesStr) {
+                            prevRolesStr = newStr;
+                            roles = getRoles();
+                            ri = 0; ci = 0; deleting = false;
+                        }
+                        const word = roles[ri % roles.length];
                         if (!deleting) {
                             el.textContent = word.substring(0, ci + 1);
                             ci++;
@@ -1198,41 +1207,6 @@ class State(rx.State):
         total = sum(int(item.get("visitas", 0)) for item in self.analytics_por_dia)
         media = total / len(self.analytics_por_dia)
         return f"{media:.1f}"
-    
-    @rx.var
-    def analytics_por_dia_chart(self) -> list[dict[str, str]]:
-        return [
-            {"label": item.get("fecha", "")[5:10], "visitas": item.get("visitas", "0")}
-            for item in self.analytics_por_dia
-        ]
-    
-    @rx.var
-    def analytics_dispositivos_chart(self) -> list[dict]:
-        return [
-            {"name": item.get("dispositivo", ""), "value": int(item.get("total", 0))}
-            for item in self.analytics_dispositivos
-        ]
-    
-    @rx.var
-    def analytics_navegadores_chart(self) -> list[dict]:
-        return [
-            {"name": item.get("navegador", ""), "value": int(item.get("total", 0))}
-            for item in self.analytics_navegadores
-        ]
-    
-    @rx.var
-    def analytics_plataformas_chart(self) -> list[dict]:
-        return [
-            {"name": item.get("plataforma", ""), "value": int(item.get("total", 0))}
-            for item in self.analytics_plataformas
-        ]
-    
-    @rx.var
-    def analytics_paginas_chart(self) -> list[dict]:
-        return [
-            {"name": item.get("pagina", ""), "value": int(item.get("visitas", 0))}
-            for item in self.analytics_paginas
-        ]
     
     def descargar_excel_analytics(self):
         """Descargar Excel via backend con auth"""

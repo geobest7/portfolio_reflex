@@ -42,12 +42,25 @@ def _stat_card(icon_name: str, icon_color: str, value, label: str, sublabel: str
     )
 
 
-def _data_row(label, value, color: str = "white") -> rx.Component:
-    """Fila label → valor alineado"""
+def _bar_row(label, value, color: str = "#00CED1") -> rx.Component:
+    """Fila con barra visual CSS"""
     return rx.hstack(
-        rx.text(label, color="#AAA", size="2"),
-        rx.spacer(),
-        rx.text(value, color=color, size="2", weight="bold"),
+        rx.text(label, color="#AAA", size="2", min_width="80px",
+                overflow="hidden", text_overflow="ellipsis", white_space="nowrap"),
+        rx.box(
+            rx.box(
+                bg=color,
+                height="100%",
+                width=value + "%",
+                border_radius="4px",
+                transition="width 0.5s ease",
+            ),
+            bg="#1a1a1a",
+            height="20px",
+            border_radius="4px",
+            width="100%",
+        ),
+        rx.text(value, color="white", size="2", weight="bold", min_width="35px", text_align="right"),
         spacing="2",
         align="center",
         width="100%",
@@ -55,7 +68,7 @@ def _data_row(label, value, color: str = "white") -> rx.Component:
 
 
 def admin_analytics() -> rx.Component:
-    """Página de analíticas del admin con gráficos"""
+    """Página de analíticas del admin - sin recharts, CSS puro"""
     return rx.cond(
         State.esta_autenticado,
         rx.box(
@@ -158,95 +171,79 @@ def admin_analytics() -> rx.Component:
                         width="100%",
                     ),
                     
-                    # ===== GRÁFICO: Visitas por día (Area Chart) =====
+                    # ===== Visitas por día (lista) =====
                     rx.cond(
                         State.analytics_por_dia.length() > 0,
                         _card(
                             "Visitas por día", "trending-up", "#00CED1",
-                            rx.recharts.area_chart(
-                                rx.recharts.area(
-                                    data_key="visitas",
-                                    stroke="#00CED1",
-                                    fill="#00CED1",
-                                    fill_opacity=0.15,
-                                    type_="monotone",
+                            rx.vstack(
+                                rx.foreach(
+                                    State.analytics_por_dia,
+                                    lambda item: rx.hstack(
+                                        rx.text(item["fecha"], color="#888", size="1", min_width="75px"),
+                                        rx.box(
+                                            rx.box(
+                                                bg="#00CED1",
+                                                height="100%",
+                                                width=item["visitas"] + "%",
+                                                max_width="100%",
+                                                border_radius="3px",
+                                            ),
+                                            bg="#1a1a1a",
+                                            height="16px",
+                                            border_radius="3px",
+                                            width="100%",
+                                        ),
+                                        rx.text(item["visitas"], color="white", size="1", weight="bold", min_width="25px", text_align="right"),
+                                        spacing="2",
+                                        align="center",
+                                        width="100%",
+                                    ),
                                 ),
-                                rx.recharts.x_axis(
-                                    data_key="label",
-                                    tick={"fill": "#888", "fontSize": 11},
-                                    stroke="#333",
-                                ),
-                                rx.recharts.y_axis(
-                                    tick={"fill": "#888", "fontSize": 11},
-                                    stroke="#333",
-                                    width=35,
-                                ),
-                                rx.recharts.cartesian_grid(stroke_dasharray="3 3", stroke="#222"),
-                                rx.recharts.tooltip(
-                                    content_style={"backgroundColor": "#1a1a1a", "border": "1px solid #333", "borderRadius": "8px"},
-                                    label_style={"color": "#aaa"},
-                                ),
-                                data=State.analytics_por_dia_chart,
+                                spacing="1",
                                 width="100%",
-                                height=250,
+                                max_height="300px",
+                                overflow_y="auto",
                             ),
                         ),
                     ),
                     
-                    # ===== FILA: Dispositivos (Pie) + Navegadores (Pie) =====
+                    # ===== Dispositivos + Navegadores =====
                     rx.grid(
                         _card(
                             "Dispositivos", "monitor-smartphone", "#e67e22",
-                            rx.cond(
-                                State.analytics_dispositivos.length() > 0,
-                                rx.recharts.pie_chart(
-                                    rx.recharts.pie(
-                                        data=State.analytics_dispositivos_chart,
-                                        data_key="value",
-                                        name_key="name",
-                                        cx="50%",
-                                        cy="50%",
-                                        outer_radius=70,
-                                        label=True,
-                                        fill="#e67e22",
+                            rx.vstack(
+                                rx.foreach(
+                                    State.analytics_dispositivos,
+                                    lambda item: rx.hstack(
+                                        rx.text(item["dispositivo"], color="#AAA", size="2", min_width="70px"),
+                                        rx.spacer(),
+                                        rx.badge(item["total"], color_scheme="orange", variant="solid", size="1"),
+                                        spacing="2",
+                                        align="center",
+                                        width="100%",
                                     ),
-                                    rx.recharts.tooltip(
-                                        content_style={"backgroundColor": "#1a1a1a", "border": "1px solid #333", "borderRadius": "8px"},
-                                    ),
-                                    rx.recharts.legend(
-                                        wrapper_style={"color": "#aaa", "fontSize": "12px"},
-                                    ),
-                                    width="100%",
-                                    height=220,
                                 ),
-                                rx.text("Sin datos aún", color="#555", size="2"),
+                                spacing="2",
+                                width="100%",
                             ),
                         ),
                         _card(
                             "Navegadores", "globe", "#9b59b6",
-                            rx.cond(
-                                State.analytics_navegadores.length() > 0,
-                                rx.recharts.pie_chart(
-                                    rx.recharts.pie(
-                                        data=State.analytics_navegadores_chart,
-                                        data_key="value",
-                                        name_key="name",
-                                        cx="50%",
-                                        cy="50%",
-                                        outer_radius=70,
-                                        label=True,
-                                        fill="#9b59b6",
+                            rx.vstack(
+                                rx.foreach(
+                                    State.analytics_navegadores,
+                                    lambda item: rx.hstack(
+                                        rx.text(item["navegador"], color="#AAA", size="2", min_width="70px"),
+                                        rx.spacer(),
+                                        rx.badge(item["total"], color_scheme="purple", variant="solid", size="1"),
+                                        spacing="2",
+                                        align="center",
+                                        width="100%",
                                     ),
-                                    rx.recharts.tooltip(
-                                        content_style={"backgroundColor": "#1a1a1a", "border": "1px solid #333", "borderRadius": "8px"},
-                                    ),
-                                    rx.recharts.legend(
-                                        wrapper_style={"color": "#aaa", "fontSize": "12px"},
-                                    ),
-                                    width="100%",
-                                    height=220,
                                 ),
-                                rx.text("Sin datos aún", color="#555", size="2"),
+                                spacing="2",
+                                width="100%",
                             ),
                         ),
                         columns=rx.breakpoints(initial="1", md="2"),
@@ -254,66 +251,44 @@ def admin_analytics() -> rx.Component:
                         width="100%",
                     ),
                     
-                    # ===== FILA: SO (Bar) + Páginas (Bar) =====
+                    # ===== SO + Páginas =====
                     rx.grid(
                         _card(
                             "Sistemas Operativos", "cpu", "#2ecc71",
-                            rx.cond(
-                                State.analytics_plataformas.length() > 0,
-                                rx.recharts.bar_chart(
-                                    rx.recharts.bar(
-                                        data_key="value",
-                                        fill="#2ecc71",
-                                        radius=[4, 4, 0, 0],
+                            rx.vstack(
+                                rx.foreach(
+                                    State.analytics_plataformas,
+                                    lambda item: rx.hstack(
+                                        rx.text(item["plataforma"], color="#AAA", size="2", min_width="70px"),
+                                        rx.spacer(),
+                                        rx.badge(item["total"], color_scheme="green", variant="solid", size="1"),
+                                        spacing="2",
+                                        align="center",
+                                        width="100%",
                                     ),
-                                    rx.recharts.x_axis(
-                                        data_key="name",
-                                        tick={"fill": "#888", "fontSize": 11},
-                                        stroke="#333",
-                                    ),
-                                    rx.recharts.y_axis(
-                                        tick={"fill": "#888", "fontSize": 11},
-                                        stroke="#333",
-                                        width=30,
-                                    ),
-                                    rx.recharts.tooltip(
-                                        content_style={"backgroundColor": "#1a1a1a", "border": "1px solid #333", "borderRadius": "8px"},
-                                    ),
-                                    data=State.analytics_plataformas_chart,
-                                    width="100%",
-                                    height=200,
                                 ),
-                                rx.text("Sin datos aún", color="#555", size="2"),
+                                spacing="2",
+                                width="100%",
                             ),
                         ),
                         _card(
                             "Páginas visitadas", "file-text", "#00CED1",
-                            rx.cond(
-                                State.analytics_paginas.length() > 0,
-                                rx.recharts.bar_chart(
-                                    rx.recharts.bar(
-                                        data_key="value",
-                                        fill="#00CED1",
-                                        radius=[4, 4, 0, 0],
+                            rx.vstack(
+                                rx.foreach(
+                                    State.analytics_paginas,
+                                    lambda item: rx.hstack(
+                                        rx.text(item["pagina"], color="#AAA", size="2",
+                                                overflow="hidden", text_overflow="ellipsis",
+                                                white_space="nowrap", width="100%"),
+                                        rx.spacer(),
+                                        rx.badge(item["visitas"], color_scheme="cyan", variant="solid", size="1"),
+                                        spacing="2",
+                                        align="center",
+                                        width="100%",
                                     ),
-                                    rx.recharts.x_axis(
-                                        data_key="name",
-                                        tick={"fill": "#888", "fontSize": 11},
-                                        stroke="#333",
-                                    ),
-                                    rx.recharts.y_axis(
-                                        tick={"fill": "#888", "fontSize": 11},
-                                        stroke="#333",
-                                        width=30,
-                                    ),
-                                    rx.recharts.tooltip(
-                                        content_style={"backgroundColor": "#1a1a1a", "border": "1px solid #333", "borderRadius": "8px"},
-                                    ),
-                                    data=State.analytics_paginas_chart,
-                                    width="100%",
-                                    height=200,
                                 ),
-                                rx.text("Sin datos aún", color="#555", size="2"),
+                                spacing="2",
+                                width="100%",
                             ),
                         ),
                         columns=rx.breakpoints(initial="1", md="2"),
