@@ -83,10 +83,12 @@ def seccion_contacto() -> rx.Component:
                             State.btn_enviar,
                             on_click=State.enviar_formulario,
                             loading=State.form_enviando,
+                            disabled=(State.form_nombre_value == "") | (State.form_email_value == "") | (State.form_mensaje_value == ""),
                             size="3",
                             width="100%",
                             style={"background": "white", "color": "black", "font-weight": "600"},
                             _hover={"opacity": "0.9"},
+                            _disabled={"opacity": "0.4", "cursor": "not-allowed"},
                         ),
                         rx.cond(
                             State.form_mensaje_estado != "",

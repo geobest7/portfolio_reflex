@@ -83,7 +83,7 @@ def seccion_proyectos() -> rx.Component:
                                 ),
                             ),
                             
-                            # Video del proyecto (Cloudinary)
+                            # Video del proyecto (Cloudinary) con poster auto-generado
                             rx.cond(
                                 proyecto.video_url != "",
                                 rx.box(
@@ -91,6 +91,7 @@ def seccion_proyectos() -> rx.Component:
                                         rx.el.source(src=proyecto.video_url, type="video/mp4"),
                                         controls=True,
                                         preload="none",
+                                        poster=proyecto.video_url.replace("/video/upload/", "/video/upload/so_0,w_600,q_auto/").replace(".mp4", ".jpg").replace(".webm", ".jpg").replace(".mov", ".jpg"),
                                         width="100%",
                                         style={"border_radius": "8px", "max_height": "400px", "background": "#111"},
                                     ),

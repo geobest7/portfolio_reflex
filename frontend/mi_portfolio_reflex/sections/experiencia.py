@@ -88,7 +88,7 @@ def _exp_card(exp) -> rx.Component:
                     loading="lazy",
                 ),
             ),
-            # Video (HTML5 nativo - Cloudinary)
+            # Video (HTML5 nativo - Cloudinary) con poster auto-generado
             rx.cond(
                 exp.video_url != "",
                 rx.box(
@@ -96,6 +96,7 @@ def _exp_card(exp) -> rx.Component:
                         rx.el.source(src=exp.video_url, type="video/mp4"),
                         controls=True,
                         preload="none",
+                        poster=exp.video_url.replace("/video/upload/", "/video/upload/so_0,w_600,q_auto/").replace(".mp4", ".jpg").replace(".webm", ".jpg").replace(".mov", ".jpg"),
                         width="100%",
                         style={"border_radius": "8px", "max_height": "400px", "background": "#111"},
                     ),

@@ -342,6 +342,20 @@ class State(rx.State):
                 observeAll();
                 new MutationObserver(observeAll).observe(document.body, {childList: true, subtree: true});
             }
+            if (!window._scrollTopInit) {
+                window._scrollTopInit = true;
+                window.addEventListener('scroll', () => {
+                    const btn = document.getElementById('scroll-top-btn');
+                    if (!btn) return;
+                    if (window.scrollY > 400) {
+                        btn.style.opacity = '1';
+                        btn.style.pointerEvents = 'auto';
+                    } else {
+                        btn.style.opacity = '0';
+                        btn.style.pointerEvents = 'none';
+                    }
+                }, {passive: true});
+            }
             """
         )
     

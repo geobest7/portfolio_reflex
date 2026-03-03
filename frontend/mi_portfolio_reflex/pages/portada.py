@@ -29,6 +29,7 @@ def portada() -> rx.Component:
             rx.vstack(
                 rx.image(
                     src="/foto_perfil.png",
+                    alt="Alessandro Febbrai - Python Developer",
                     width="140px",
                     height="140px",
                     border_radius="50%",
