@@ -1,4 +1,6 @@
 User-agent: *
 Allow: /
+Disallow: /admin/
+Disallow: /login
 
-Sitemap: https://alessandrofebbrai.com/sitemap.xml
+Sitemap: https://portfolio-alessandro-teal-moon.reflex.run/sitemap.xml

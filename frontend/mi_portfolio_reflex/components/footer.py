@@ -13,6 +13,7 @@ def footer() -> rx.Component:
                     color="white",
                     _hover={"color": "#808080"},
                     is_external=True,
+                    aria_label="GitHub de Alessandro Febbrai",
                 ),
                 rx.link(
                     rx.icon("linkedin", size=24),
@@ -20,6 +21,7 @@ def footer() -> rx.Component:
                     color="white",
                     _hover={"color": "#808080"},
                     is_external=True,
+                    aria_label="LinkedIn de Alessandro Febbrai",
                 ),
                 spacing="6",
                 class_name="footer-social"

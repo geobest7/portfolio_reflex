@@ -30,9 +30,11 @@ def _tech_card(nombre: str, icon_url: str) -> rx.Component:
             rx.box(
                 rx.image(
                     src=icon_url,
+                    alt=nombre,
                     width="100%",
                     height="100%",
                     object_fit="contain",
+                    loading="lazy",
                 ),
                 width="40px",
                 height="40px",
