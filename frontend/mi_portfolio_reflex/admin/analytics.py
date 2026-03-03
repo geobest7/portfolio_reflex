@@ -135,12 +135,12 @@ def admin_analytics() -> rx.Component:
                     rx.grid(
                         _stat_card(
                             "eye", "#00CED1",
-                            State.analytics_resumen.get("total_visitas", 0).to(str),
+                            State.analytics_total_visitas,
                             "Visitas totales", "Últimos 30 días",
                         ),
                         _stat_card(
                             "users", "#9b59b6",
-                            State.analytics_resumen.get("visitantes_unicos", 0).to(str),
+                            State.analytics_visitantes_unicos,
                             "Visitantes únicos", "Por IP anonimizada",
                         ),
                         _stat_card(

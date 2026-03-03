@@ -42,8 +42,17 @@ def home() -> rx.Component:
                 color="white",
                 class_name="portada-titulo",
             ),
-            rx.html(
-                "<div id='typing-text' class='portada-subtitulo'>&nbsp;</div>",
+            rx.box(
+                rx.text(
+                    " ",
+                    id="typing-text",
+                    class_name="portada-subtitulo",
+                ),
+                rx.el.input(
+                    type="hidden",
+                    id="current-lang",
+                    value=State.idioma,
+                ),
             ),
             padding="4em 2em",
             padding_top="7em",

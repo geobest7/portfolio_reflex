@@ -192,23 +192,6 @@ class State(rx.State):
     def formacion_titulo(self) -> str:
         return TRANSLATIONS.get(self.idioma, {}).get("formacion_titulo", "")
     
-    # Stats labels
-    @rx.var
-    def stats_label_proyectos(self) -> str:
-        return TRANSLATIONS.get(self.idioma, {}).get("stats_label_proyectos", "")
-    
-    @rx.var
-    def stats_label_tecnologias(self) -> str:
-        return TRANSLATIONS.get(self.idioma, {}).get("stats_label_tecnologias", "")
-    
-    @rx.var
-    def stats_label_certificaciones(self) -> str:
-        return TRANSLATIONS.get(self.idioma, {}).get("stats_label_certificaciones", "")
-    
-    @rx.var
-    def stats_label_idiomas(self) -> str:
-        return TRANSLATIONS.get(self.idioma, {}).get("stats_label_idiomas", "")
-    
     diploma_url_actual: str = ""
     
     def abrir_diploma(self, url: str):
@@ -382,14 +365,8 @@ class State(rx.State):
                     'ca': ['Python Developer Junior', 'Aprenent Machine Learning', 'Explorant Data Analysis', 'Sempre aprenent'],
                 };
                 function getLang() {
-                    try {
-                        const s = JSON.parse(localStorage.getItem('reflex-state') || '{}');
-                        const keys = Object.keys(s);
-                        for (const k of keys) {
-                            if (s[k] && s[k].idioma) return s[k].idioma;
-                        }
-                    } catch(e) {}
-                    return 'es';
+                    const inp = document.getElementById('current-lang');
+                    return (inp && inp.value) ? inp.value : 'es';
                 }
                 let ri = 0, ci = 0, deleting = false, currentLang = getLang();
                 const el = document.getElementById('typing-text');
@@ -1194,7 +1171,15 @@ class State(rx.State):
     cargando_analytics: bool = False
     error_analytics: str = ""
     
-    # Computed properties for recharts
+    # Computed properties for analytics stat cards
+    @rx.var
+    def analytics_total_visitas(self) -> str:
+        return str(self.analytics_resumen.get("total_visitas", 0))
+    
+    @rx.var
+    def analytics_visitantes_unicos(self) -> str:
+        return str(self.analytics_resumen.get("visitantes_unicos", 0))
+    
     @rx.var
     def analytics_visitas_hoy(self) -> str:
         if not self.analytics_por_dia:
