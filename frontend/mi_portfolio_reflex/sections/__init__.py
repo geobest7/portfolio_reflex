@@ -1,5 +1,4 @@
 from .sobre_mi import seccion_sobre_mi
-from .stats import seccion_stats
 from .experiencia import seccion_experiencia
 from .formacion import seccion_formacion
 from .proyectos import seccion_proyectos

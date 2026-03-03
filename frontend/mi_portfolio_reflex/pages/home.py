@@ -3,7 +3,6 @@ from ..states import State
 from ..components import navbar, footer
 from ..sections import (
     seccion_sobre_mi,
-    seccion_stats,
     seccion_experiencia,
     seccion_formacion,
     seccion_proyectos,
@@ -65,7 +64,6 @@ def home() -> rx.Component:
             id="inicio"
         ),
         seccion_sobre_mi(),
-        seccion_stats(),
         seccion_experiencia(),
         seccion_formacion(),
         seccion_proyectos(),

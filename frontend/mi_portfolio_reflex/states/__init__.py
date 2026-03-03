@@ -375,7 +375,7 @@ class State(rx.State):
             }
             if (!window._typingInit) {
                 window._typingInit = true;
-                const roles = ['Python Developer', 'Backend Developer', 'FastAPI Specialist', 'Web Developer', 'Problem Solver'];
+                const roles = ['Python Developer Junior', 'Aprendiendo Machine Learning', 'Backend con FastAPI', 'Siempre aprendiendo'];
                 let ri = 0, ci = 0, deleting = false;
                 const el = document.getElementById('typing-text');
                 if (el) {
@@ -395,36 +395,6 @@ class State(rx.State):
                     }
                     tick();
                 }
-            }
-            if (!window._statsInit) {
-                window._statsInit = true;
-                const counters = [
-                    {id: 'stat-proyectos', target: 5, suffix: '+'},
-                    {id: 'stat-tecnologias', target: 18, suffix: ''},
-                    {id: 'stat-certificaciones', target: 4, suffix: ''},
-                    {id: 'stat-idiomas', target: 4, suffix: ''},
-                ];
-                const obs = new IntersectionObserver((entries) => {
-                    entries.forEach(e => {
-                        if (!e.isIntersecting) return;
-                        const el = e.target;
-                        const c = counters.find(c => c.id === el.id);
-                        if (!c || el.dataset.counted) return;
-                        el.dataset.counted = '1';
-                        let n = 0;
-                        const step = Math.max(1, Math.floor(c.target / 30));
-                        const iv = setInterval(() => {
-                            n += step;
-                            if (n >= c.target) { n = c.target; clearInterval(iv); }
-                            el.textContent = n + c.suffix;
-                        }, 50);
-                        obs.unobserve(el);
-                    });
-                }, {threshold: 0.5});
-                counters.forEach(c => {
-                    const el = document.getElementById(c.id);
-                    if (el) obs.observe(el);
-                });
             }
             """
         )

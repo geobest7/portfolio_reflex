@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy import func, desc
 from datetime import datetime, timedelta
 from io import BytesIO
+from urllib.parse import urlparse
 from pydantic import BaseModel
 from typing import Optional
 from ..database import get_db
@@ -244,16 +245,40 @@ def distribucion_referrers(
         Visita.referer != None,
     ).group_by(Visita.referer).order_by(desc("total")).limit(limit).all()
     
-    # Normalizar dominios antiguos al actual
-    DOMAIN_ALIASES = {
-        "portfolio-alessandro-teal-ring.reflex.run": "portfolio-alessandro-teal-moon.reflex.run",
+    # Normalizar referrers: extraer dominio limpio y agrupar
+    DOMAIN_LABELS = {
+        "linkedin.com": "LinkedIn",
+        "www.linkedin.com": "LinkedIn",
+        "github.com": "GitHub",
+        "www.github.com": "GitHub",
+        "google.com": "Google",
+        "www.google.com": "Google",
+        "google.es": "Google",
+        "t.co": "Twitter/X",
+        "twitter.com": "Twitter/X",
+        "x.com": "Twitter/X",
+        "facebook.com": "Facebook",
+        "www.facebook.com": "Facebook",
+        "instagram.com": "Instagram",
+        "www.instagram.com": "Instagram",
+        "cloud.reflex.dev": "Reflex Cloud",
     }
+    # Self-referrals to ignore
+    SELF_DOMAINS = {"portfolio-alessandro-teal-moon.reflex.run", "portfolio-alessandro-teal-ring.reflex.run"}
+    
     merged: dict[str, int] = {}
     for referrer, total in resultados:
-        normalized = referrer
-        for old, new in DOMAIN_ALIASES.items():
-            normalized = normalized.replace(old, new)
-        merged[normalized] = merged.get(normalized, 0) + total
+        try:
+            parsed = urlparse(referrer if "://" in referrer else f"https://{referrer}")
+            domain = (parsed.hostname or referrer).lower()
+        except Exception:
+            domain = referrer.lower()
+        
+        if domain in SELF_DOMAINS:
+            continue
+        
+        label = DOMAIN_LABELS.get(domain, domain)
+        merged[label] = merged.get(label, 0) + total
     
     sorted_refs = sorted(merged.items(), key=lambda x: x[1], reverse=True)
     return [{"referrer": r, "total": t} for r, t in sorted_refs[:limit]]
