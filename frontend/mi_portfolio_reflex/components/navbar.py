@@ -89,6 +89,7 @@ def navbar() -> rx.Component:
                 _mobile_link(State.nav_inicio, "/home#inicio", State.cerrar_menu_y_limpiar),
                 _mobile_link(State.nav_sobre_mi, "/home#sobre-mi", State.cerrar_menu_y_limpiar),
                 _mobile_link(State.nav_experiencia, "/home#experiencia", State.cerrar_menu_y_limpiar),
+                _mobile_link(State.nav_formacion, "/home#formacion", State.cerrar_menu_y_limpiar),
                 _mobile_link(State.nav_proyectos, "/home#proyectos", State.cerrar_menu_y_limpiar),
                 _mobile_link(State.nav_github, "/home#github", State.cerrar_menu_y_limpiar),
                 _mobile_link(State.nav_contacto, "/home#contacto", State.cerrar_menu_y_limpiar),

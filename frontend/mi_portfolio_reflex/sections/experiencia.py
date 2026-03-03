@@ -85,6 +85,7 @@ def _exp_card(exp) -> rx.Component:
                     object_fit="cover",
                     border_radius="8px",
                     margin_top="0.5em",
+                    loading="lazy",
                 ),
             ),
             # Video (HTML5 nativo - Cloudinary)
@@ -94,9 +95,9 @@ def _exp_card(exp) -> rx.Component:
                     rx.el.video(
                         rx.el.source(src=exp.video_url, type="video/mp4"),
                         controls=True,
-                        preload="metadata",
+                        preload="none",
                         width="100%",
-                        style={"border_radius": "8px", "max_height": "400px"},
+                        style={"border_radius": "8px", "max_height": "400px", "background": "#111"},
                     ),
                     width="100%",
                     margin_top="0.5em",

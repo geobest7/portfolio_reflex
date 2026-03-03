@@ -330,6 +330,20 @@ class State(rx.State):
             self.cargar_experiencias()
         if len(self.repos_github) == 0:
             self.cargar_repos_github()
+        return rx.call_script(
+            """
+            if (!window._fadeObserver) {
+                window._fadeObserver = new IntersectionObserver((entries) => {
+                    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); window._fadeObserver.unobserve(e.target); } });
+                }, {threshold: 0.1});
+                function observeAll() {
+                    document.querySelectorAll('.fade-in-up:not(.visible)').forEach(el => window._fadeObserver.observe(el));
+                }
+                observeAll();
+                new MutationObserver(observeAll).observe(document.body, {childList: true, subtree: true});
+            }
+            """
+        )
     
     @staticmethod
     def _limpiar_nulos(d: dict, campos: list[str]):
