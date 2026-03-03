@@ -8,9 +8,10 @@ Portfolio personal full-stack desarrollado con **Reflex** (frontend) y **FastAPI
 
 - **Multi-idioma** — ES / EN / IT / CA con traducciones completas (100+ textos)
 - **Diseño minimalista** — Interfaz B/N, glassmorphism navbar, animaciones CSS, cards con hover
+- **Typing animation** — Roles rotativos en hero (JS typing effect), cambia idioma instantáneamente desde `translations.py`
 - **Panel admin protegido** — CRUD completo para proyectos, cursos/formación y experiencias
 - **Media uploads (Cloudinary)** — Imágenes, PDFs y videos subidos a Cloudinary
-- **Analíticas** — Tracking de visitas con dashboard: dispositivos, SO, navegadores, referrers, export Excel
+- **Analíticas** — Tracking de visitas con dashboard CSS puro (sin recharts): stat cards, barras visuales, badges, export Excel
 - **Formulario de contacto** — Envío de emails via Resend API
 - **Autenticación JWT** — Login seguro con cambio de contraseña y username
 - **GitHub API** — Repositorios cargados automáticamente con cache 6h
@@ -110,7 +111,6 @@ mi_portfolio_reflex/
 │   │   ├── foto_perfil.png           # Foto de perfil
 │   │   ├── favicon.ico               # Favicon
 │   │   ├── robots.txt                # SEO
-│   │   ├── tracking.js               # Script analytics (legacy)
 │   │   └── styles/
 │   │       └── styles.css            # CSS: animaciones, responsive, glassmorphism
 │   └── rxconfig.py                   # Configuración Reflex (puerto 3000)
@@ -173,7 +173,7 @@ mi_portfolio_reflex/
 | `/admin/cursos/form` | Formulario crear/editar curso |
 | `/admin/experiencias` | Lista + CRUD experiencias |
 | `/admin/experiencias/form` | Formulario crear/editar experiencia |
-| `/admin/analytics` | Dashboard analíticas con gráficas y export Excel |
+| `/admin/analytics` | Dashboard analíticas (CSS bars + badges) y export Excel |
 
 ---
 
@@ -251,7 +251,7 @@ El tracking funciona con **`rx.call_script`** ejecutado en el navegador del visi
 2. El JS recoge: user agent, resolución pantalla, idioma, plataforma, referrer, página
 3. El callback `State.enviar_tracking` recibe el JSON via websocket y envía al backend con `httpx.post`
 4. El backend (`POST /api/analytics/track`) detecta dispositivo, navegador y SO, y almacena la visita en PostgreSQL
-5. El dashboard admin muestra gráficas y métricas + export a Excel
+5. El dashboard admin muestra métricas con CSS bars, badges y stat cards + export a Excel
 
 > **Nota técnica:** En Reflex 0.8 (Vite), `rx.script`, `head_components` y `rx.el.script` **no funcionan** en producción (Reflex Cloud). La única forma fiable es `rx.call_script` con callback.
 
