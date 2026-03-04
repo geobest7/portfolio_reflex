@@ -105,7 +105,7 @@ def root():
     return {"message": "Portfolio API", "status": "running"}
 
 
-@app.get("/health")
+@app.api_route("/health", methods=["GET", "HEAD"])
 def health_check():
     """Health check — verifica API + conexión DB. Usado por UptimeRobot cada 5 min."""
     from sqlalchemy import text
