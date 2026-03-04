@@ -40,11 +40,12 @@ Los videos se suben directamente desde el navegador a Cloudinary usando una firm
 | Capa | Tecnología |
 |------|-----------|
 | **Frontend** | Reflex 0.8+ (Python → React/Vite), CSS custom |
-| **Backend** | FastAPI, SQLAlchemy, PostgreSQL (prod) / SQLite (local) |
+| **Backend** | FastAPI, SQLAlchemy, PostgreSQL (Neon serverless) |
 | **Auth** | JWT (python-jose), bcrypt |
 | **Email** | Resend API |
 | **Media** | Cloudinary (image, raw, video) |
 | **Analytics** | `rx.call_script` + callback websocket + FastAPI endpoint |
+| **Monitoring** | UptimeRobot (ping `/health` cada 5 min) |
 | **Hosting** | Reflex Cloud (frontend) + Render (backend) + Neon (PostgreSQL) |
 | **Control de versiones** | Git + GitHub |
 
@@ -119,7 +120,7 @@ mi_portfolio_reflex/
 │   ├── app/
 │   │   ├── main.py                   # FastAPI app, CORS, migraciones auto, crear admin
 │   │   ├── config.py                 # Settings (pydantic-settings, lee .env)
-│   │   ├── database.py               # SQLAlchemy engine (postgres:// → postgresql://)
+│   │   ├── database.py               # SQLAlchemy engine (Neon SSL + pool_pre_ping)
 │   │   ├── models/
 │   │   │   ├── proyecto.py           # Modelo Proyecto (multi-idioma, imagen, video)
 │   │   │   ├── curso.py              # Modelo Curso (tipo, certificado, diploma)
@@ -146,6 +147,10 @@ mi_portfolio_reflex/
 │   │   │   └── analytics.py          # Middleware analytics (legacy)
 │   │   └── utils/
 │   │       └── auth.py               # JWT encode/decode, password hashing (bcrypt)
+│   ├── scripts/
+│   │   ├── migrate_render_to_neon.py # Migración DB via SQLAlchemy (env vars)
+│   │   ├── verify_db.py              # Verificación tablas y datos
+│   │   └── MIGRATION_NEON.md         # Guía de migración
 │   ├── create_admin.py               # Script manual para crear admin
 │   ├── render.yaml                   # Config despliegue Render
 │   └── requirements.txt              # Dependencias backend
