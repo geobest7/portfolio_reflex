@@ -45,7 +45,7 @@ Los videos se suben directamente desde el navegador a Cloudinary usando una firm
 | **Email** | Resend API |
 | **Media** | Cloudinary (image, raw, video) |
 | **Analytics** | `rx.call_script` + callback websocket + FastAPI endpoint |
-| **Hosting** | Reflex Cloud (frontend) + Render (backend + PostgreSQL) |
+| **Hosting** | Reflex Cloud (frontend) + Render (backend) + Neon (PostgreSQL) |
 | **Control de versiones** | Git + GitHub |
 
 ---
@@ -56,7 +56,7 @@ Los videos se suben directamente desde el navegador a Cloudinary usando una firm
 |----------|-----------|-----|
 | **Frontend** | Reflex Cloud | `https://portfolio-alessandro-teal-moon.reflex.run` |
 | **Backend** | Render (free tier) | `https://portfolio-reflex-pwdv.onrender.com` |
-| **Base de datos** | Render PostgreSQL | Interna (no accesible desde fuera) |
+| **Base de datos** | Neon PostgreSQL (serverless) | Conectada via `DATABASE_URL` con SSL |
 
 ### Flujo de trabajo
 
@@ -65,7 +65,7 @@ Los videos se suben directamente desde el navegador a Cloudinary usando una firm
 | **Backend** | `git push origin main` → Render redeploy automático |
 | **Frontend** | `git push origin main` + ejecutar `reflex deploy --app-name portfolio-alessandro` desde `frontend/` |
 
-> **Nota:** El free tier de Render entra en sleep tras 15 min de inactividad. La primera request puede tardar ~50s.
+> **Nota:** El free tier de Render entra en sleep tras 15 min de inactividad. Se usa UptimeRobot (ping cada 5 min a `/health`) para mantenerlo activo.
 
 ---
 
@@ -298,7 +298,7 @@ Crear archivo `.env` en la **raíz** del proyecto:
 
 ```env
 # Base de datos
-DATABASE_URL=sqlite:///./portfolio.db
+DATABASE_URL=postgresql://user:pass@host/dbname  # Neon o PostgreSQL local
 
 # Seguridad
 SECRET_KEY=tu-clave-secreta-muy-larga
