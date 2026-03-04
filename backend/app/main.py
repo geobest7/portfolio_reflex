@@ -107,4 +107,14 @@ def root():
 
 @app.get("/health")
 def health_check():
-    return {"status": "healthy"}
+    """Health check — verifica API + conexión DB. Usado por UptimeRobot cada 5 min."""
+    from sqlalchemy import text
+    db = SessionLocal()
+    try:
+        db.execute(text("SELECT 1"))
+        db_status = "connected"
+    except Exception as e:
+        db_status = f"error: {str(e)[:100]}"
+    finally:
+        db.close()
+    return {"status": "healthy", "database": db_status}
