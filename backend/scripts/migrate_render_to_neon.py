@@ -17,8 +17,12 @@ from sqlalchemy import create_engine, text, inspect, MetaData
 from sqlalchemy.orm import sessionmaker
 
 # ============ CONFIGURACIÓN ============
-RENDER_URL = "postgresql://portfolio_db_yn9o_user:LsGcC9dHANi8uNg6V5C5nMjvn0SkjwtO@dpg-d6360lsoud1c73ckddj0-a.oregon-postgres.render.com/portfolio_db_yn9o"
-NEON_URL = "postgresql://neondb_owner:npg_WHiNTD3XEMO6@ep-little-field-alveteyb-pooler.c-3.eu-central-1.aws.neon.tech/neondb?sslmode=require"
+# Pasar URLs como variables de entorno:
+#   set SOURCE_DB_URL=postgresql://user:pass@host/db
+#   set DEST_DB_URL=postgresql://user:pass@host/db
+#   python -m scripts.migrate_render_to_neon
+RENDER_URL = os.environ.get("SOURCE_DB_URL", "")
+NEON_URL = os.environ.get("DEST_DB_URL", "")
 # =======================================
 
 
