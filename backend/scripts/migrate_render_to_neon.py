@@ -1,12 +1,14 @@
 """
-Migración directa Render PostgreSQL → Neon PostgreSQL via Python/SQLAlchemy.
+Migración directa entre bases de datos PostgreSQL via Python/SQLAlchemy.
 No requiere pg_dump/psql.
 
 Uso:
     cd backend
-    python -m scripts.migrate_render_to_neon
+    set SOURCE_DB_URL=postgresql://user:pass@host/db
+    set DEST_DB_URL=postgresql://user:pass@host/db
+    python -m scripts.migrate_db
 
-Lee todas las tablas de Render, crea la estructura en Neon, e inserta los datos.
+Lee todas las tablas del source, crea la estructura en destino, e inserta los datos.
 """
 import sys
 import os
@@ -21,40 +23,40 @@ from sqlalchemy.orm import sessionmaker
 #   set SOURCE_DB_URL=postgresql://user:pass@host/db
 #   set DEST_DB_URL=postgresql://user:pass@host/db
 #   python -m scripts.migrate_render_to_neon
-RENDER_URL = os.environ.get("SOURCE_DB_URL", "")
-NEON_URL = os.environ.get("DEST_DB_URL", "")
+SOURCE_URL = os.environ.get("SOURCE_DB_URL", "")
+DEST_URL = os.environ.get("DEST_DB_URL", "")
 # =======================================
 
 
 def migrate():
     print(f"\n{'='*60}")
-    print(f"  MIGRACIÓN RENDER → NEON")
+    print(f"  MIGRACIÓN PostgreSQL → PostgreSQL")
     print(f"{'='*60}")
 
-    # 1. Conectar a Render (source)
-    print(f"\n--- 1. Conectando a Render (source) ---")
+    # 1. Conectar a source
+    print(f"\n--- 1. Conectando a source ---")
     try:
-        src_engine = create_engine(RENDER_URL, pool_pre_ping=True)
+        src_engine = create_engine(SOURCE_URL, pool_pre_ping=True)
         with src_engine.connect() as conn:
             conn.execute(text("SELECT 1"))
-        print(f"  ✓ Render conectado")
+        print(f"  ✓ Source conectado")
     except Exception as e:
-        print(f"  ✗ ERROR conectando a Render: {e}")
+        print(f"  ✗ ERROR conectando a source: {e}")
         sys.exit(1)
 
-    # 2. Conectar a Neon (destination)
-    print(f"\n--- 2. Conectando a Neon (destination) ---")
+    # 2. Conectar a destino
+    print(f"\n--- 2. Conectando a destino ---")
     try:
-        dst_engine = create_engine(NEON_URL, pool_pre_ping=True)
+        dst_engine = create_engine(DEST_URL, pool_pre_ping=True)
         with dst_engine.connect() as conn:
             conn.execute(text("SELECT 1"))
-        print(f"  ✓ Neon conectado")
+        print(f"  ✓ Destino conectado")
     except Exception as e:
-        print(f"  ✗ ERROR conectando a Neon: {e}")
+        print(f"  ✗ ERROR conectando a destino: {e}")
         sys.exit(1)
 
-    # 3. Reflejar estructura de Render
-    print(f"\n--- 3. Leyendo estructura de Render ---")
+    # 3. Reflejar estructura de source
+    print(f"\n--- 3. Leyendo estructura de source ---")
     src_meta = MetaData()
     src_meta.reflect(bind=src_engine)
     tables = list(src_meta.tables.keys())
@@ -65,7 +67,7 @@ def migrate():
         return
 
     # 4. Contar registros en source
-    print(f"\n--- 4. Registros en Render ---")
+    print(f"\n--- 4. Registros en source ---")
     src_counts = {}
     with src_engine.connect() as conn:
         for table_name in tables:
@@ -73,14 +75,14 @@ def migrate():
             src_counts[table_name] = count
             print(f"  {table_name}: {count}")
 
-    # 5. Limpiar y crear tablas en Neon
-    print(f"\n--- 5. Creando estructura en Neon ---")
+    # 5. Limpiar y crear tablas en destino
+    print(f"\n--- 5. Creando estructura en destino ---")
     dst_meta_existing = MetaData()
     dst_meta_existing.reflect(bind=dst_engine)
     existing_tables = list(dst_meta_existing.tables.keys())
 
     if existing_tables:
-        print(f"  Tablas existentes en Neon: {', '.join(existing_tables)}")
+        print(f"  Tablas existentes en destino: {', '.join(existing_tables)}")
         print(f"  Eliminando tablas existentes...")
         with dst_engine.connect() as conn:
             for t in reversed(list(dst_meta_existing.sorted_tables)):
@@ -89,7 +91,7 @@ def migrate():
             conn.commit()
 
     src_meta.create_all(bind=dst_engine)
-    print(f"  ✓ Tablas creadas en Neon")
+    print(f"  ✓ Tablas creadas en destino")
 
     # 6. Copiar datos tabla por tabla
     print(f"\n--- 6. Copiando datos ---")
@@ -161,16 +163,14 @@ def migrate():
             match = "✓" if dst_count == src_count else "✗ MISMATCH"
             if dst_count != src_count:
                 all_ok = False
-            print(f"  {table_name}: Render={src_count} → Neon={dst_count} {match}")
+            print(f"  {table_name}: source={src_count} → destino={dst_count} {match}")
 
     print(f"\n{'='*60}")
     if all_ok:
         print(f"  ✓ MIGRACIÓN COMPLETADA EXITOSAMENTE")
         print(f"\n  Próximo paso:")
-        print(f"  1. Actualizar DATABASE_URL en Render (Environment Variables)")
-        print(f"     Nuevo valor: {NEON_URL}")
-        print(f"  2. Render hará redeploy automático")
-        print(f"  3. Verificar: curl https://portfolio-reflex-pwdv.onrender.com/health")
+        print(f"  1. Actualizar DATABASE_URL en tu hosting")
+        print(f"  2. Verificar el health endpoint")
     else:
         print(f"  ⚠ MIGRACIÓN CON ERRORES — revisar conteos arriba")
     print(f"{'='*60}\n")

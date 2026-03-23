@@ -3,24 +3,14 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from .config import settings
 
-# Render usa postgres:// pero SQLAlchemy necesita postgresql://
+# Railway/Render usan postgres:// pero SQLAlchemy necesita postgresql://
 database_url = settings.database_url
 if database_url.startswith("postgres://"):
     database_url = database_url.replace("postgres://", "postgresql://", 1)
 
-# Neon requiere SSL — añadir sslmode si es conexión PostgreSQL remota y no tiene ya params SSL
-if "postgresql://" in database_url and "neon.tech" in database_url and "sslmode" not in database_url:
-    separator = "&" if "?" in database_url else "?"
-    database_url = database_url + separator + "sslmode=require"
-
-connect_args = {}
-if "sqlite" in database_url:
-    connect_args = {"check_same_thread": False}
-
 engine = create_engine(
     database_url,
-    connect_args=connect_args,
-    pool_pre_ping=True,  # Reconnect automático si la conexión se pierde (importante para Neon serverless)
+    pool_pre_ping=True,  # Reconnect automático si la conexión se pierde
 )
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
