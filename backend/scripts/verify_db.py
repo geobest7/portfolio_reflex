@@ -39,11 +39,6 @@ def get_database_url():
     if url.startswith("postgres://"):
         url = url.replace("postgres://", "postgresql://", 1)
     
-    # Neon SSL
-    if "neon.tech" in url and "sslmode" not in url:
-        separator = "&" if "?" in url else "?"
-        url = url + separator + "sslmode=require"
-    
     return url
 
 

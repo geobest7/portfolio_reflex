@@ -55,7 +55,7 @@ migrar_columnas_experiencias()
 
 
 def crear_admin_si_no_existe():
-    """Crear usuario admin automaticamente si no existe (necesario porque SQLite se pierde en cada redeploy de Render)"""
+    """Crear usuario admin automaticamente si no existe"""
     db = SessionLocal()
     try:
         existing = db.query(User).filter(User.username == "admin").first()
@@ -107,7 +107,7 @@ def root():
 
 @app.api_route("/health", methods=["GET", "HEAD"])
 def health_check():
-    """Health check — verifica API + conexión DB. Usado por UptimeRobot cada 5 min."""
+    """Health check — verifica API + conexión DB."""
     from sqlalchemy import text
     db = SessionLocal()
     try:

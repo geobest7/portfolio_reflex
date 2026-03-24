@@ -27,11 +27,11 @@ Portfolio personal full-stack desarrollado con **Reflex** (frontend) y **FastAPI
 
 | Tipo | Flujo | Límite |
 |------|-------|--------|
-| **Imagen** | Browser → Reflex Cloud → Render backend → Cloudinary | 10 MB |
-| **PDF** | Browser → Reflex Cloud → Render backend → Cloudinary | 10 MB |
-| **Video** | Browser → **Cloudinary directo** (1 salto, sin pasar por Render) | 100 MB |
+| **Imagen** | Browser → Reflex Cloud → Railway backend → Cloudinary | 10 MB |
+| **PDF** | Browser → Reflex Cloud → Railway backend → Cloudinary | 10 MB |
+| **Video** | Browser → **Cloudinary directo** (1 salto, sin pasar por backend) | 100 MB |
 
-Los videos se suben directamente desde el navegador a Cloudinary usando una firma generada por el backend (`GET /api/upload/sign`). Esto evita los timeouts y límites de tamaño de Reflex Cloud y Render.
+Los videos se suben directamente desde el navegador a Cloudinary usando una firma generada por el backend (`GET /api/upload/sign`). Esto evita los timeouts y límites de tamaño.
 
 ---
 
@@ -40,13 +40,12 @@ Los videos se suben directamente desde el navegador a Cloudinary usando una firm
 | Capa | Tecnología |
 |------|-----------|
 | **Frontend** | Reflex 0.8+ (Python → React/Vite), CSS custom |
-| **Backend** | FastAPI, SQLAlchemy, PostgreSQL (Neon serverless) |
+| **Backend** | FastAPI, SQLAlchemy, PostgreSQL |
 | **Auth** | JWT (python-jose), bcrypt |
 | **Email** | Resend API |
 | **Media** | Cloudinary (image, raw, video) |
 | **Analytics** | `rx.call_script` + callback websocket + FastAPI endpoint |
-| **Monitoring** | UptimeRobot (ping `/health` cada 5 min) |
-| **Hosting** | Reflex Cloud (frontend) + Render (backend) + Neon (PostgreSQL) |
+| **Hosting** | Reflex Cloud (frontend) + Railway (backend + PostgreSQL) |
 | **Control de versiones** | Git + GitHub |
 
 ---
@@ -56,17 +55,24 @@ Los videos se suben directamente desde el navegador a Cloudinary usando una firm
 | Servicio | Plataforma | URL |
 |----------|-----------|-----|
 | **Frontend** | Reflex Cloud | `https://portfolio-alessandro-teal-moon.reflex.run` |
-| **Backend** | Render (free tier) | `https://portfolio-reflex-pwdv.onrender.com` |
-| **Base de datos** | Neon PostgreSQL (serverless) | Conectada via `DATABASE_URL` con SSL |
+| **Backend** | Railway | `https://portfolioreflex-production.up.railway.app` |
+| **Base de datos** | Railway PostgreSQL | Conectada via `DATABASE_URL` (red interna, sin egress) |
+
+### ¿Por qué Railway?
+
+Railway unifica backend + PostgreSQL en un solo servicio:
+- **Sin sleep** — no necesita pings ni UptimeRobot (a diferencia de Render free tier)
+- **Sin límite de compute hours** — a diferencia de Neon que bloquea tras 100 CU-hrs/mes
+- **$5/mes de crédito gratis** — suficiente para un portfolio (~$1-2/mes de uso real)
+- **Auto-deploy desde GitHub** — cada `git push` redeploya automáticamente
+- **DB interna** — backend y PostgreSQL se comunican por red privada (sin costes de egress)
 
 ### Flujo de trabajo
 
 | Cambio | Acción |
 |--------|--------|
-| **Backend** | `git push origin main` → Render redeploy automático |
-| **Frontend** | `git push origin main` + ejecutar `reflex deploy --app-name portfolio-alessandro` desde `frontend/` |
-
-> **Nota:** El free tier de Render entra en sleep tras 15 min de inactividad. Se usa UptimeRobot (ping cada 5 min a `/health`) para mantenerlo activo.
+| **Backend** | `git push origin main` → Railway redeploy automático |
+| **Frontend** | `reflex deploy --app-name portfolio-alessandro --env API_URL=https://portfolioreflex-production.up.railway.app` desde `frontend/` |
 
 ---
 
@@ -120,7 +126,7 @@ mi_portfolio_reflex/
 │   ├── app/
 │   │   ├── main.py                   # FastAPI app, CORS, migraciones auto, crear admin
 │   │   ├── config.py                 # Settings (pydantic-settings, lee .env)
-│   │   ├── database.py               # SQLAlchemy engine (Neon SSL + pool_pre_ping)
+│   │   ├── database.py               # SQLAlchemy engine (pool_pre_ping)
 │   │   ├── models/
 │   │   │   ├── proyecto.py           # Modelo Proyecto (multi-idioma, imagen, video)
 │   │   │   ├── curso.py              # Modelo Curso (tipo, certificado, diploma)
@@ -148,11 +154,10 @@ mi_portfolio_reflex/
 │   │   └── utils/
 │   │       └── auth.py               # JWT encode/decode, password hashing (bcrypt)
 │   ├── scripts/
-│   │   ├── migrate_render_to_neon.py # Migración DB via SQLAlchemy (env vars)
-│   │   ├── verify_db.py              # Verificación tablas y datos
-│   │   └── MIGRATION_NEON.md         # Guía de migración
-│   ├── create_admin.py               # Script manual para crear admin
-│   ├── render.yaml                   # Config despliegue Render
+│   │   ├── migrate_db.py             # Migración DB PostgreSQL→PostgreSQL (env vars)
+│   │   ├── setup_railway.py          # Setup inicial Railway (tablas + seed data)
+│   │   └── verify_db.py              # Verificación tablas y datos
+│   ├── railway.json                  # Config despliegue Railway (Nixpacks + uvicorn)
 │   └── requirements.txt              # Dependencias backend
 │
 ├── .env                              # Variables de entorno (NO en Git)
@@ -303,7 +308,7 @@ Crear archivo `.env` en la **raíz** del proyecto:
 
 ```env
 # Base de datos
-DATABASE_URL=postgresql://user:pass@host/dbname  # Neon o PostgreSQL local
+DATABASE_URL=postgresql://user:pass@host/dbname  # Railway o PostgreSQL local
 
 # Seguridad
 SECRET_KEY=tu-clave-secreta-muy-larga
@@ -342,14 +347,14 @@ reflex run
 ### Desplegar a producción
 
 ```bash
-# 1. Push (Render redeploy automático del backend)
+# 1. Push (Railway redeploy automático del backend)
 git add .
 git commit -m "descripción del cambio"
 git push origin main
 
 # 2. Deploy frontend (solo si hay cambios en frontend/)
 cd frontend
-reflex deploy --app-name portfolio-alessandro
+reflex deploy --app-name portfolio-alessandro --env API_URL=https://portfolioreflex-production.up.railway.app
 ```
 
 ---
