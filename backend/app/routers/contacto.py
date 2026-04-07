@@ -27,11 +27,6 @@ async def enviar_contacto(form: ContactForm):
             detail="El servicio de email no está configurado"
         )
     
-    # Debug temporal: ver los primeros/últimos chars de la key
-    key = settings.resend_api_key
-    print(f"[DEBUG RESEND] key length={len(key)}, starts='{key[:6]}...', ends='...{key[-4:]}', repr='{repr(key[:20])}'")
-    print(f"[DEBUG RESEND] contact_email_to='{settings.contact_email_to}'")
-    
     try:
         async with httpx.AsyncClient() as client:
             response = await client.post(
