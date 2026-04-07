@@ -25,6 +25,7 @@ class Settings(BaseSettings):
     
     # Resend API para formulario de contacto
     resend_api_key: str = ""
+    contact_email_to: str = "febbrai.alessandro@libero.it"
     
     # Cloudinary para upload de archivos
     cloudinary_cloud_name: str = ""
